@@ -2,43 +2,37 @@
 const valores = [
   {
     nombre: 'Honestidad',
-    texto:
-      'Actuamos de manera transparente y auténtica en todos los ámbitos. La clave del éxito es ser claras, sinceras y accesibles.',
+    texto: 'Si un proyecto no tiene sentido, te lo decimos antes de que inviertas en él.',
   },
   {
     nombre: 'Eficiencia',
     texto:
-      'Nuestros 20 años desarrollando proyectos de telecomunicaciones nos permiten conocer el mercado y ofrecer resultados de calidad.',
+      'Conocemos el mercado desde dentro, así que vamos directas a lo que funciona y no te hacemos perder tiempo.',
   },
   {
     nombre: 'Pasión',
     texto:
-      'Dedicamos toda nuestra energía a lo que hacemos. Nos esforzamos, aprendemos y nos superamos para dar lo mejor de nosotras.',
+      'Nos gusta este sector y se nota. Seguimos aprendiendo con cada operador al que acompañamos.',
   },
   {
     nombre: 'Compromiso',
     texto:
-      'Somos conscientes de la importancia que tiene la responsabilidad de hacer un trabajo bien hecho.',
+      'Nos implicamos en cada proyecto como si fuera nuestro y respondemos de lo que entregamos.',
   },
 ];
 
-const extra = [
-  'Transparencia',
-  'Diferencia',
-  'Orientación al cliente',
-  'Calidad',
-  'Responsabilidad social',
-];
+const extra = ['Diferenciación', 'Orientación al cliente', 'Responsabilidad social'];
 ---
 
 <section id="valores" class="seccion seccion-niebla" aria-labelledby="valores-title">
   <div class="seccion-interior">
     <p class="eyebrow">Valores</p>
-    <h2 id="valores-title">Los valores que guían cada proyecto</h2>
+    <h2 id="valores-title">Cómo trabajamos</h2>
 
     <div class="mt-12 grid grid-cols-4 border-t border-l border-mist-deep max-[860px]:grid-cols-2 max-[480px]:grid-cols-1">
-      {valores.map((v) => (
-        <div class="reveal border-r border-b border-mist-deep px-7 py-8">
+      {/* --i escalona la entrada de las cuatro tarjetas (60 ms entre una y otra, ver .reveal). */}
+      {valores.map((v, i) => (
+        <div class="reveal border-r border-b border-mist-deep px-7 py-8" style={`--i: ${i}`}>
           <h3>{v.nombre}</h3>
           <p class="m-0 text-[0.95rem] text-ink-soft">{v.texto}</p>
         </div>

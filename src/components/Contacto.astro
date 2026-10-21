@@ -1,12 +1,12 @@
 ---
-import { correo, mailtoHref, linkedinHref } from '../lib/contacto';
+import { correo, mailtoConsultaHref, linkedinHref } from '../lib/contacto';
 import { iconoCorreo, iconoLinkedin } from '../lib/iconos';
 import { nombreSitio } from '../lib/sitio';
 import Boton from './Boton.astro';
 import Icono from './Icono.astro';
 
 const enlace =
-  'font-display font-bold text-inherit no-underline hover:underline focus-visible:underline';
+  'font-display font-bold text-inherit no-underline transition-colors duration-200 ease-suave hover:text-white hover:underline focus-visible:text-white focus-visible:underline';
 ---
 
 <section id="contacto" class="seccion seccion-oscura" aria-labelledby="contacto-title">
@@ -22,7 +22,7 @@ const enlace =
       <ul class="mt-6 mb-0 grid list-none gap-4 p-0">
         <li class="flex items-center gap-3 text-teal-light">
           <Icono d={iconoCorreo} />
-          <a class={enlace} href={mailtoHref}>
+          <a class={enlace} href={mailtoConsultaHref}>
             {correo}
           </a>
         </li>
@@ -39,7 +39,7 @@ const enlace =
       <div class="rounded-lg border border-white/10 bg-carbon-soft p-8 shadow-dark">
         <p class="eyebrow eyebrow-oscuro">Escríbenos</p>
         <p>Contacto directo con nuestro equipo, sin formularios ni intermediarios.</p>
-        <Boton href={mailtoHref}>Enviar un correo</Boton>
+        <Boton href={mailtoConsultaHref}>Escríbenos por correo</Boton>
         {/* Si algún día se conecta un backend de formularios, el formulario iría aquí en lugar
             del botón mailto, con los campos de la web anterior: nombre, correo, asunto y
             mensaje (opcional). Antes hay que ampliar la CSP (form-action en public/_headers)

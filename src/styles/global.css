@@ -208,6 +208,8 @@
       transition:
         opacity 0.4s var(--ease-suave),
         transform 0.4s var(--ease-suave);
+      /* Escalonado opcional: un grupo pone --i (0, 1, 2…) en cada elemento. */
+      transition-delay: calc(var(--i, 0) * 60ms);
 
       &.is-visible {
         opacity: 1;
@@ -248,6 +250,30 @@
     }
   }
 
+  /* ---- Menú móvil: el panel cae 8 px desde la cabecera mientras aparece (200 ms) y se
+     recoge algo más rápido (150 ms). Cambia `display` (lo pone [hidden]), así que la
+     transición necesita allow-discrete y @starting-style. data-animar lo pone el script
+     después del primer cierre al cargar, para que no se vea salir al abrir la página. ---- */
+  @media (max-width: 780px) and (prefers-reduced-motion: no-preference) {
+    #nav[data-animar] {
+      transition:
+        opacity 0.2s var(--ease-suave),
+        transform 0.2s var(--ease-suave),
+        display 0.2s allow-discrete;
+
+      @starting-style {
+        opacity: 0;
+        transform: translateY(-8px);
+      }
+
+      &[hidden] {
+        opacity: 0;
+        transform: translateY(-8px);
+        transition-duration: 0.15s;
+      }
+    }
+  }
+
   [aria-expanded='true'] > .nav-toggle-barras {
     background: transparent;
 
@@ -262,10 +288,11 @@
     }
   }
 
-  /* ---- Indicador de scroll del hero: la «rueda» baja y se desvanece ---- */
+  /* ---- Indicador de scroll del hero: la «rueda» baja y se desvanece tres veces y se
+     queda quieta (WCAG 2.2.2: nada se mueve más de 5 s sin forma de pararlo) ---- */
   @media (prefers-reduced-motion: no-preference) {
     .indicador-scroll {
-      animation: indicador-scroll 1.8s var(--ease-suave) infinite;
+      animation: indicador-scroll 1.8s var(--ease-suave) 3;
     }
   }
 
@@ -299,35 +326,57 @@
 
     & img {
       filter: grayscale(1) contrast(1.05);
+    }
+  }
+
+  /* Solo con puntero real: en táctil el hover se quedaría pegado tras tocar. El cambio de
+     color no es movimiento; el zoom y las transiciones sí, y van aparte. */
+  @media (hover: hover) {
+    .tira-foto:hover img {
+      filter: grayscale(0.4) contrast(1.05);
+    }
+  }
+
+  @media (hover: hover) and (prefers-reduced-motion: no-preference) {
+    .tira-foto:hover img {
+      transform: scale(1.04);
+    }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .tira-foto img {
       transition:
         filter 0.3s var(--ease-suave),
         transform 0.4s var(--ease-suave);
     }
   }
 
-  @media (prefers-reduced-motion: no-preference) {
-    .tira-foto:hover img {
-      filter: grayscale(0.4) contrast(1.05);
-      transform: scale(1.04);
-    }
-  }
-
-  /* ---- Retratos de Nosotras: en gris, a color al pasar por encima o con el foco
-     dentro de la tarjeta ---- */
+  /* ---- Retratos de Nosotras: en gris, a color al pasar por encima o con el foco dentro
+     de la tarjeta. Con movimiento reducido cambian igual, solo que sin transición. ---- */
   .retrato img {
     filter: grayscale(1);
-    transition: filter 0.4s var(--ease-suave);
   }
 
-  @media (prefers-reduced-motion: no-preference) {
-    .miembro:hover .retrato img,
-    .miembro:focus-within .retrato img {
+  .miembro:focus-within .retrato img {
+    filter: grayscale(0);
+  }
+
+  @media (hover: hover) {
+    .miembro:hover .retrato img {
       filter: grayscale(0);
     }
   }
 
+  @media (prefers-reduced-motion: no-preference) {
+    .retrato img {
+      transition: filter 0.4s var(--ease-suave);
+    }
+  }
+
   /* ---- «Ver más» de cada socia: <details> nativo, sin JS. El marcador nativo se
-     suprime para que se vea igual en todos los navegadores; lo sustituye un +/–. ---- */
+     suprime para que se vea igual en todos los navegadores; lo sustituye un + dibujado
+     con dos barras que pierde la vertical al abrirse (queda un −). Dibujado y no como
+     texto: así no hay ningún carácter de raya en la página. ---- */
   .ver-mas > summary {
     list-style: none;
 
@@ -336,15 +385,49 @@
     }
 
     &::after {
-      content: '+';
+      content: '';
       display: inline-block;
-      margin-left: 0.35rem;
-      font-weight: 800;
+      inline-size: 0.6em;
+      block-size: 0.6em;
+      margin-left: 0.4rem;
+      vertical-align: 0.05em;
+      background:
+        linear-gradient(currentColor 0 0) center / 100% 2px no-repeat,
+        linear-gradient(currentColor 0 0) center / 2px 100% no-repeat;
     }
   }
 
   .ver-mas[open] > summary::after {
-    content: '–';
+    background-size:
+      100% 2px,
+      2px 0;
+  }
+
+  /* El texto se despliega en vez de aparecer de golpe. ::details-content e interpolate-size
+     solo existen en navegadores recientes; en los demás se abre al instante, como siempre. */
+  @media (prefers-reduced-motion: no-preference) {
+    .ver-mas {
+      interpolate-size: allow-keywords;
+    }
+
+    .ver-mas > summary::after {
+      transition: background-size 0.2s var(--ease-suave);
+    }
+
+    .ver-mas::details-content {
+      block-size: 0;
+      overflow: clip;
+      opacity: 0;
+      transition:
+        block-size 0.25s var(--ease-suave),
+        opacity 0.2s var(--ease-suave),
+        content-visibility 0.25s allow-discrete;
+    }
+
+    .ver-mas[open]::details-content {
+      block-size: auto;
+      opacity: 1;
+    }
   }
 
   /* ---- Lista de valores secundarios, separados por un punto teal ---- */

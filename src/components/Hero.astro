@@ -2,11 +2,9 @@
 import { withBase } from '../lib/withBase';
 import Boton from './Boton.astro';
 
-const confianza = [
-  '20+ años en telecomunicaciones',
-  '800+ operadores locales',
-  '50+ empresas consolidadas',
-];
+// Las cifras (20 años, 800 operadores) ya están en la frase de encima: la franja enseña en su
+// lugar los OMV de referencia en cuyo lanzamiento participaron las socias.
+const hitos = ['Cablemóvil, primer OMV completo de España', 'Ion Mobile', 'Avatel Móvil'];
 ---
 
 <section
@@ -45,17 +43,26 @@ const confianza = [
     </p>
 
     <div class="mt-7 mb-10 flex flex-wrap gap-4">
-      <Boton href="#servicios">Descubre nuestros servicios</Boton>
-      <Boton href="#contacto" variante="contorno">
-        Escríbenos
+      {/* La conversión es el correo: el botón principal lleva a contacto. */}
+      <Boton href="#contacto">Cuéntanos tu proyecto</Boton>
+      <Boton href="#servicios" variante="contorno">
+        Ver servicios
       </Boton>
     </div>
 
-    <ul class="m-0 flex max-w-[44ch] list-none flex-wrap gap-x-8 gap-y-2 border-t border-white/15 p-0 pt-6 font-display text-[0.9rem] font-bold text-teal-light">
-      {confianza.map((texto) => (
-        <li>{texto}</li>
-      ))}
-    </ul>
+    <div class="max-w-[60ch] border-t border-white/15 pt-6">
+      <p id="hero-hitos" class="mb-2 text-[0.85rem] text-white/70">
+        Hemos formado parte del lanzamiento de
+      </p>
+      <ul
+        class="m-0 flex list-none flex-wrap gap-x-8 gap-y-2 p-0 font-display text-[0.9rem] font-bold text-teal-light"
+        aria-labelledby="hero-hitos"
+      >
+        {hitos.map((texto) => (
+          <li>{texto}</li>
+        ))}
+      </ul>
+    </div>
   </div>
 
   <a
@@ -72,12 +79,33 @@ const confianza = [
 
 <script>
   // El atributo autoplay del <video> no puede condicionarse por CSS: quien pide movimiento
-  // reducido lo pierde aquí y el vídeo se queda fijo en el poster (su primer fotograma).
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    const video = document.querySelector<HTMLVideoElement>('[data-hero-video]');
-    if (video) {
-      video.removeAttribute('autoplay');
-      video.pause();
+  // reducido lo pierde aquí y el vídeo se queda fijo en el poster (su primer fotograma). La
+  // preferencia se vigila en vivo, y fuera de pantalla el vídeo se pausa: no hay movimiento
+  // que nadie esté viendo ni consumo de batería para nada.
+  const video = document.querySelector<HTMLVideoElement>('[data-hero-video]');
+  const reducido = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+  if (video) {
+    let enPantalla = true;
+
+    const actualizar = () => {
+      if (reducido.matches || !enPantalla) {
+        video.pause();
+      } else {
+        video.play().catch(() => {});
+      }
+    };
+
+    if (reducido.matches) video.removeAttribute('autoplay');
+    reducido.addEventListener('change', actualizar);
+
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(([entrada]) => {
+        enPantalla = entrada.isIntersecting;
+        actualizar();
+      }).observe(video);
     }
+
+    actualizar();
   }
 </script>

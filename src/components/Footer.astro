@@ -9,7 +9,7 @@ const ancla = (id: string) => (enHome ? `#${id}` : withBase(`/#${id}`));
 const enlaces = [...secciones, contacto];
 
 const enlace =
-  'text-[0.9rem] text-inherit no-underline hover:text-teal-light focus-visible:text-teal-light';
+  'text-[0.9rem] text-inherit no-underline transition-colors duration-200 ease-suave hover:text-teal-light focus-visible:text-teal-light';
 ---
 
 <footer class="border-t border-teal bg-carbon py-12 text-white/70">
@@ -49,7 +49,7 @@ const enlace =
         const href = withBase(l.ruta);
         return (
           <a
-            class="text-[0.8rem] text-inherit no-underline opacity-75 hover:text-teal-light hover:opacity-100 focus-visible:text-teal-light focus-visible:opacity-100"
+            class="text-[0.8rem] text-inherit no-underline opacity-75 transition-[color,opacity] duration-200 ease-suave hover:text-teal-light hover:opacity-100 focus-visible:text-teal-light focus-visible:opacity-100"
             href={href}
             aria-current={Astro.url.pathname === href ? 'page' : undefined}
           >

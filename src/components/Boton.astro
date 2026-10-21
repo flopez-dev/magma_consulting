@@ -7,7 +7,7 @@ interface Props {
 const { href, variante = 'primario' } = Astro.props;
 
 const base =
-  'inline-flex items-center gap-2 rounded-sm border-2 px-[1.7rem] py-[0.85rem] font-display text-[0.92rem] font-bold tracking-[0.01em] no-underline transition duration-200 ease-suave hover:-translate-y-px';
+  'inline-flex items-center gap-2 rounded-sm border-2 px-[1.7rem] py-[0.85rem] font-display text-[0.92rem] font-bold tracking-[0.01em] no-underline transition duration-200 ease-suave active:translate-y-0 motion-safe:hover:-translate-y-px';
 const variantes = {
   primario:
     'border-teal bg-teal text-carbon hover:border-teal-light hover:bg-teal-light focus-visible:border-teal-light focus-visible:bg-teal-light',

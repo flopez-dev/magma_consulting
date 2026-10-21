@@ -22,12 +22,12 @@ export const fases: Fase[] = [
       {
         nombre: 'Telefonía móvil',
         texto:
-          'Te ayudamos a lanzar tu propio Operador Móvil Virtual (OMV): de la marca blanca al canal de distribución, listo para vender.',
+          'Te ayudamos a lanzar tu propio operador móvil virtual (OMV), desde la marca blanca hasta el canal de distribución, listo para vender.',
       },
       {
         nombre: 'Planes de negocio',
         texto:
-          'Tu hoja de ruta antes de invertir: planes estratégicos, técnicos y comerciales para operadores locales y empresas de telecomunicaciones.',
+          'Planes estratégicos, técnicos y comerciales para que sepas si tu proyecto sale a cuenta antes de invertir en él.',
       },
     ],
   },
@@ -38,15 +38,15 @@ export const fases: Fase[] = [
       {
         nombre: 'Servicios de FTTH',
         texto:
-          'Vende fibra sin desplegar red propia: servicio mayorista de bitstream FTTH, pensado para operadores locales y revendedores.',
+          'Vende fibra sin desplegar red propia con nuestro servicio mayorista de bitstream FTTH, pensado para operadores locales y revendedores.',
       },
       {
         nombre: 'Infraestructura de redes',
         texto:
-          'Diseño, monitorización y respaldo de la red: la infraestructura troncal completa para que tu operador no se quede nunca sin servicio.',
+          'Diseñamos tu red troncal, la monitorizamos y le damos respaldo para que tus clientes sigan conectados aunque algo falle.',
         lista: [
           'Infraestructura troncal',
-          'Servicios de tránsito IP',
+          'Tránsito IP',
           'Monitorización de redes',
           'Conexiones punto a punto',
           'Líneas de respaldo',
@@ -55,7 +55,7 @@ export const fases: Fase[] = [
         ],
       },
       {
-        nombre: 'Compra/venta de redes',
+        nombre: 'Compraventa de redes',
         texto:
           'Te acompañamos en todo el proceso, tanto si compras una red como si vendes la tuya.',
       },
@@ -68,12 +68,12 @@ export const fases: Fase[] = [
       {
         nombre: 'Formación en ventas',
         texto:
-          'Formamos a tu equipo de ventas, gestores de cuentas y atención al cliente para que vendan con soltura desde el primer día.',
+          'Formamos a tus comerciales, a tus gestores de cuentas y a tu equipo de atención al cliente para que vendan con soltura desde el primer día.',
       },
       {
-        nombre: 'Servicios empresa',
+        nombre: 'Servicios para empresas',
         texto:
-          'Haz crecer tu negocio entre las empresas de tu zona con WiFi profesional, conectividad avanzada y ciberseguridad. Servicios de valor añadido para diferenciar tu oferta, captar nuevos clientes y vender más a tu cartera actual.',
+          'Haz crecer tu negocio entre las empresas de tu zona con wifi profesional, conectividad avanzada y ciberseguridad. Servicios de valor añadido para diferenciar tu oferta, captar nuevos clientes y vender más a tu cartera actual.',
       },
     ],
   },

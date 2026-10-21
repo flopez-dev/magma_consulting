@@ -87,14 +87,15 @@ for (const path of PAGES) {
       expect(sinNombre).toBe(0);
     });
 
-    // Lo que no debe llegar nunca a producción: marcadores sin rellenar y los guiones
-    // largos o dobles que delatan un texto sin revisar. Se mira el texto visible y el de
-    // los desplegables, no los scripts ni los estilos.
-    test('el texto no lleva marcadores [ ] ni «--» ni rayas largas', async ({ page }) => {
+    // Lo que no debe llegar nunca a producción: marcadores sin rellenar y los guiones dobles
+    // o rayas que delatan un texto sin revisar (o escrito por una IA). Se mira el texto
+    // visible y el de los desplegables, y también lo que no se ve pero se lee: title, metas,
+    // alt, aria-label, JSON-LD y el `content` de los pseudoelementos de los «Ver más».
+    test('ningún texto lleva marcadores [ ] ni «--» ni rayas', async ({ page }) => {
       await page.goto(path);
 
-      const texto = await page.evaluate(() => {
-        const trozos: string[] = [];
+      const textos = await page.evaluate(() => {
+        const trozos: string[] = [document.title];
         const recorrido = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
         while (recorrido.nextNode()) {
           const nodo = recorrido.currentNode;
@@ -102,11 +103,27 @@ for (const path of PAGES) {
           if (padre === 'SCRIPT' || padre === 'STYLE' || padre === 'NOSCRIPT') continue;
           trozos.push(nodo.textContent ?? '');
         }
+        document
+          .querySelectorAll(
+            'meta[name="description"], meta[property^="og:"], meta[name^="twitter:"]',
+          )
+          .forEach((m) => trozos.push(m.getAttribute('content') ?? ''));
+        document
+          .querySelectorAll('[alt], [aria-label]')
+          .forEach((e) =>
+            trozos.push(e.getAttribute('alt') ?? '', e.getAttribute('aria-label') ?? ''),
+          );
+        document
+          .querySelectorAll('script[type="application/ld+json"]')
+          .forEach((e) => trozos.push(e.textContent ?? ''));
+        document
+          .querySelectorAll('summary')
+          .forEach((e) => trozos.push(getComputedStyle(e, '::after').content));
         return trozos.join(' ');
       });
 
-      expect(texto).not.toMatch(/\[[A-Z_]{4,}\]|REPLACE_WITH/);
-      expect(texto).not.toMatch(/--|—/);
+      expect(textos).not.toMatch(/\[[A-Z_]{4,}\]|REPLACE_WITH/);
+      expect(textos).not.toMatch(/--|\u2014|\u2013/);
     });
 
     test('SEO: un canonical absoluto en el dominio, JSON-LD válido y robots coherente', async ({
@@ -150,14 +167,23 @@ for (const path of PAGES) {
   });
 }
 
-test('el JSON-LD de la home declara los siete servicios y las dos socias', async ({ page }) => {
+test('el JSON-LD de la home declara la consultora, el sitio, los siete servicios y las dos socias', async ({
+  page,
+}) => {
   await page.goto('');
-  const datos = JSON.parse(
+  const { '@graph': grafo } = JSON.parse(
     (await page.locator('script[type="application/ld+json"]').textContent()) ?? '',
   );
-  expect(datos['@type']).toBe('ProfessionalService');
-  expect(datos.hasOfferCatalog.itemListElement).toHaveLength(7);
-  expect(datos.founder).toHaveLength(2);
+  const consultora = grafo.find((n: { '@type': string }) => n['@type'] === 'ProfessionalService');
+  const web = grafo.find((n: { '@type': string }) => n['@type'] === 'WebSite');
+
+  expect(consultora.address.postalCode).toBe('28028');
+  expect(consultora.hasOfferCatalog.itemListElement).toHaveLength(7);
+  for (const oferta of consultora.hasOfferCatalog.itemListElement) {
+    expect(oferta.itemOffered.provider['@id']).toBe(consultora['@id']);
+  }
+  expect(consultora.founder).toHaveLength(2);
+  expect(web.publisher['@id']).toBe(consultora['@id']);
   await expect(page.locator('#servicios article')).toHaveCount(7);
   await expect(page.locator('#nosotras article')).toHaveCount(2);
 });
@@ -230,4 +256,33 @@ test('robots.txt coincide con el entorno de build', async ({ request }) => {
     expect(cuerpo).toContain('User-agent: GPTBot');
     expect(cuerpo).toMatch(/Sitemap: https:\/\/.+\/sitemap-index\.xml/);
   }
+});
+
+test('el menú marca la sección que se está leyendo', async ({ page, isMobile }) => {
+  test.skip(isMobile, 'En móvil el menú está recogido');
+
+  await page.goto('');
+  const enlace = page.locator('#nav a[href="#credenciales"]');
+  await expect(enlace).toHaveText('Trayectoria');
+  await expect(enlace).not.toHaveAttribute('aria-current');
+
+  await page.locator('#credenciales').scrollIntoViewIfNeeded();
+  await page.evaluate(() => {
+    const seccion = document.getElementById('credenciales')!;
+    window.scrollTo(0, seccion.offsetTop - window.innerHeight / 3);
+  });
+  await expect(enlace).toHaveAttribute('aria-current', 'true');
+  await expect(page.locator('#nav a[aria-current]')).toHaveCount(1);
+});
+
+test('el contacto abre el correo con el asunto puesto', async ({ page }) => {
+  await page.goto('');
+  await expect(page.getByRole('link', { name: 'Escríbenos por correo' })).toHaveAttribute(
+    'href',
+    'mailto:info@magma-consulting.com?subject=Consulta%20desde%20la%20web',
+  );
+  await expect(page.getByRole('link', { name: 'Cuéntanos tu proyecto' })).toHaveAttribute(
+    'href',
+    '#contacto',
+  );
 });

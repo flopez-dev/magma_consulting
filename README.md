@@ -70,6 +70,14 @@ y el apex apunta al WordPress. Antes del primer deploy:
 4. En **Security → Bots**, dejar desactivado Bot Fight Mode / JavaScript Detections: si no,
    Cloudflare instala la cookie `cf_clearance` y `/cookies/` dejaría de ser cierta.
 
+5. En **Rules → Redirect Rules**, crear una regla «Redirect from WWW to root» (plantilla de
+   Cloudflare): `https://www.magma-consulting.com/*` → `https://magma-consulting.com/${1}`, 301,
+   conservando la query string. Hoy el WordPress hace ese 301; sin la regla, `www` serviría una
+   copia con código 200. `_redirects` no puede hacerlo porque cambia de dominio.
+6. En **SSL/TLS → Edge Certificates**, activar «Always Use HTTPS».
+7. El día del cambio, en Google Search Console: verificar el dominio por DNS, enviar
+   `https://magma-consulting.com/sitemap-index.xml` y retirar el antiguo `wp-sitemap.xml`.
+
 `public/_redirects` lleva las URLs del WordPress (`/servicios/`, `/nosotras/`,
 `/politica-de-privacidad-2/`…) a sus equivalentes, así que no se pierden enlaces ni
 posicionamiento al cambiar.

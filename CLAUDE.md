@@ -38,9 +38,13 @@ sitio a la cabecera fija.
     script le pone `data-scrolled` y se rellena de `carbon`. Menú móvil por debajo de 780 px
     (Escape cierra y devuelve el foco, el Tab da la vuelta dentro) y scroll suave a las anclas
     descontando la cabecera. En la home los enlaces son `#ancla`; en el resto,
-    `withBase('/#ancla')`.
-  - `Hero.astro` — vídeo de fondo (`public/img/hero-bg.webm|mp4` + poster). Con movimiento
-    reducido el script le quita el autoplay. El comentario del componente documenta su
+    `withBase('/#ancla')`. El menú es Servicios, Trayectoria (`#credenciales`), Nosotras y
+    Contacto (`src/lib/secciones.ts`); Valores no está a propósito. En la home, un
+    IntersectionObserver marca con `aria-current` el enlace de la sección que ocupa el centro.
+  - `Hero.astro` — vídeo de fondo (`public/img/hero-bg.webm|mp4` + poster, precargado en
+    `index.astro`). El script lo pausa con movimiento reducido (también si la preferencia
+    cambia en vivo) y cuando sale de pantalla. CTA principal a `#contacto`; la franja de abajo
+    enseña los OMV de referencia (las cifras ya están en la entradilla). El comentario del componente documenta su
     procedencia y licencia (Pexels): mantenlo junto al asset.
   - `Servicios.astro` (datos en `src/lib/servicios.ts`), `TiraFotos.astro`,
     `Credenciales.astro`, `Nosotras.astro` (datos en `src/lib/equipo.ts`), `Valores.astro`,
@@ -54,8 +58,10 @@ sitio a la cabecera fija.
 - `src/lib/` — `sitio.ts` (nombre, título, descripciones, alt de la imagen OG), `contacto.ts`
   (correo, LinkedIn y los datos del titular que usan las páginas legales), `secciones.ts`
   (anclas del menú y del pie, rutas legales), `servicios.ts`, `equipo.ts`, `iconos.ts`,
-  `jsonld.ts` (el `ProfessionalService` se genera desde `servicios.ts` y `equipo.ts`, así que
-  no puede divergir de la página visible) y `withBase.ts`.
+  `jsonld.ts` (un `@graph` con el `ProfessionalService`, con `address`, `vatID`, catálogo y
+  socias, y el `WebSite`; se genera desde `contacto.ts`, `servicios.ts` y `equipo.ts`, así que no
+  puede divergir de la página visible) y `withBase.ts`. `contacto.ts` tiene `mailtoHref` (a
+  secas, para las legales) y `mailtoConsultaHref` (con asunto, para la sección de contacto).
 - `src/styles/global.css` — `@font-face`, tokens de Tailwind v4 (`@theme`), capa `base` y capa
   `components` (secciones, eyebrow, reveal, barras del menú, duotono de la tira de fotos,
   retratos en gris, `<details>` de «Ver más», texto legal). Un único fichero; no crear otros
@@ -70,10 +76,12 @@ sitio a la cabecera fija.
   llevan hash). `public/_redirects` — URLs de la web anterior en WordPress → sus equivalentes.
   `public/.well-known/security.txt` — su `Expires` caduca el 2027-10-20 y hay que renovarlo.
 - `tests/smoke.spec.ts` — en `/` y las tres legales: un `h1`, sin errores de consola ni overflow,
-  menú móvil, «Ir al contenido», landmarks, sin marcadores `[ ]`/«--»/rayas largas, canonical en
+  menú móvil, «Ir al contenido», landmarks, sin marcadores `[ ]` ni «--» ni rayas (en el texto,
+  title, metas, alt, aria-label, JSON-LD y `content` de los «Ver más»), canonical en
   `magma-consulting.com`, JSON-LD que parsea, sin `noindex`, imágenes cargadas. Además: el
-  JSON-LD declara 7 servicios y 2 socias, «Ver más», enlaces externos en pestaña nueva, legales
-  → home, 404 y `robots.txt`.
+  `@graph` (dirección, 7 servicios con `provider`, 2 socias, WebSite), «Ver más», enlaces
+  externos en pestaña nueva, sección activa en el menú, mailto con asunto, legales → home, 404
+  y `robots.txt`.
 
 ## Reglas no obvias
 
@@ -106,6 +114,16 @@ sitio a la cabecera fija.
   cliente; el vídeo del hero es de Pexels (uso comercial libre). Cualquier stock nuevo necesita
   una licencia que permita explícitamente su uso comercial, anotada junto al asset.
 - El sitio es `lang="es"`: copy, comentarios de código y mensajes de commit en español.
+- **Nada de «--» ni rayas (—, –) en ningún texto que llegue al usuario**, incluidos metas, alt y
+  `content:` de CSS: delatan un texto escrito a máquina. El «Ver más» dibuja su +/− con
+  gradientes por eso. Lo comprueba un test. Evitar también los dos puntos encadenados y las
+  tríadas de adjetivos en el texto propio.
+- **Movimiento**: todo lo que se mueve va detrás de `prefers-reduced-motion: no-preference`
+  (los cambios de color, como el de los retratos, no cuentan y se aplican siempre). Lo que
+  anima: reveal al hacer scroll (escalonado con `--i` en Valores), menú móvil (opacidad y 8 px,
+  `@starting-style`), «Ver más» (`::details-content` + `interpolate-size`), cabecera al hacer
+  scroll, hover de botones y fotos (solo con `hover: hover`), indicador de scroll (3 veces).
+  Descartado a propósito: entrada animada del hero (retrasaría el LCP), contadores, parallax.
 - Prettier ordena las clases de Tailwind (`prettier-plugin-tailwindcss`) — no reordenarlas a
   mano. Los textos con un enlace o un `<span>` en medio necesitan `{' '}` explícito donde Prettier
   parte la línea (ver el pie y `/privacidad/`), o las palabras se pegan.
@@ -146,8 +164,12 @@ despliega desde este repo.
   proveedor de correo o se añade cualquier tratamiento nuevo, hay que actualizarla y cambiar su
   constante `actualizado`.
 - El copy de la home sigue el documento de cambios del cliente de octubre de 2026: «Trayectoria»
-  es solo texto (sin las cifras grandes, que siguen en la franja del hero) y las socias no
-  llevan cargo, ni en la página ni en el JSON-LD. No los repongas.
+  es solo texto (sin las cifras grandes) y las socias no llevan cargo, ni en la página ni en el
+  JSON-LD. No los repongas. Los textos que vienen de ese documento (entradilla del hero, h2 de
+  Servicios, Servicios para empresas, los dos párrafos de Trayectoria, textos de Contacto) solo
+  admiten correcciones ortográficas sin consultar al cliente.
+- `www` se sirve desde el Worker pero tiene que redirigir al apex con una Redirect Rule del
+  panel de Cloudflare (`_redirects` no puede cambiar de dominio). Ver `README.md`.
 - No hay formulario de contacto a propósito: el contacto es un `mailto:`. El comentario de
   `Contacto.astro` recoge qué habría que tocar si se añade uno.
 

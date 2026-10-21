@@ -9,7 +9,7 @@ const enHome = Astro.url.pathname === withBase('/');
 const ancla = (id: string) => (enHome ? `#${id}` : withBase(`/#${id}`));
 
 const enlace =
-  'border-b-2 border-transparent py-1 font-display text-[0.9rem] font-bold tracking-[0.02em] text-white no-underline transition-colors duration-200 ease-suave hover:border-teal-light focus-visible:border-teal-light max-[780px]:border-b max-[780px]:border-white/10 max-[780px]:px-4 max-[780px]:py-[0.9rem]';
+  'border-b-2 border-transparent py-1 font-display text-[0.9rem] font-bold tracking-[0.02em] text-white no-underline transition-colors duration-200 ease-suave hover:border-teal-light focus-visible:border-teal-light aria-[current=true]:border-teal-light max-[780px]:border-b max-[780px]:border-white/10 max-[780px]:px-4 max-[780px]:py-[0.9rem]';
 ---
 
 <header
@@ -132,6 +132,39 @@ const enlace =
 
     movil.addEventListener('change', sincronizar);
     sincronizar();
+    // La transición de apertura/cierre (global.css) se activa ya cerrado, en el siguiente
+    // fotograma: si no, al cargar en móvil se vería el menú recogerse.
+    requestAnimationFrame(() => nav.setAttribute('data-animar', ''));
+  }
+
+  // ---- Sección activa en el menú --------------------------------------------------
+  // Marca con aria-current el enlace de la sección que ocupa el centro de la pantalla.
+  // Solo en la home, donde los enlaces son anclas.
+  if (nav) {
+    const enlaces = new Map<Element, HTMLAnchorElement>();
+    nav.querySelectorAll<HTMLAnchorElement>('a[href^="#"]').forEach((a) => {
+      const seccion = document.querySelector(a.getAttribute('href') ?? '');
+      if (seccion) enlaces.set(seccion, a);
+    });
+
+    if (enlaces.size && 'IntersectionObserver' in window) {
+      const observador = new IntersectionObserver(
+        (entradas) => {
+          entradas.forEach((entrada) => {
+            const enlace = enlaces.get(entrada.target);
+            if (!enlace) return;
+            if (entrada.isIntersecting) {
+              enlaces.forEach((a) => a.removeAttribute('aria-current'));
+              enlace.setAttribute('aria-current', 'true');
+            } else if (enlace.getAttribute('aria-current')) {
+              enlace.removeAttribute('aria-current');
+            }
+          });
+        },
+        { rootMargin: '-45% 0px -50% 0px' },
+      );
+      enlaces.forEach((_, seccion) => observador.observe(seccion));
+    }
   }
 
   // ---- Fondo de la cabecera al hacer scroll -------------------------------------

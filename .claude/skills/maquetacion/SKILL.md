@@ -60,5 +60,8 @@ sección de `src/components/` y `src/styles/global.css`.
   (se abre en una pestaña nueva)</span>` (lo comprueba un test).
 - Iconos decorativos con `aria-hidden` (el componente `Icono` lo hace solo).
 - Nada se mueve con `prefers-reduced-motion: reduce` (ni el vídeo del hero, ni el reveal, ni el
-  indicador de scroll, ni el zoom de las fotos); sin JS, todo el contenido sigue visible.
+  menú móvil, ni el «Ver más», ni el indicador de scroll, ni los botones o el zoom de las fotos;
+  usa `motion-safe:` en las utilidades de movimiento); sin JS, todo el contenido sigue visible.
+  Los hover que cambian algo más que el color van en `@media (hover: hover)`.
+- Ningún «--» ni raya (—, –) en texto visible, metas, alt ni `content:` de CSS.
 - Los textos con un enlace en medio necesitan `{' '}` explícito donde Prettier parte la línea.
