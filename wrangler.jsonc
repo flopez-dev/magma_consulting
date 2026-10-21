@@ -1,0 +1,29 @@
+{
+  // La landing como Worker con Static Assets, en el dominio propio del cliente.
+  // `workers_dev` y `preview_urls` están apagados: el dominio (apex y www, ver
+  // `routes`) ya sirve la web, así que el subdominio de workers.dev solo sería una
+  // segunda URL pública con el mismo contenido. Si algún día falla el DNS del dominio
+  // y hace falta una vía de emergencia, poner `workers_dev` a true y desplegar.
+  "name": "magma-consulting",
+  "compatibility_date": "2026-10-01",
+  "workers_dev": false,
+  "preview_urls": false,
+
+  // `custom_domain` hace que Cloudflare cree y gestione el registro DNS, pero la zona
+  // magma-consulting.com tiene que existir ya en la misma cuenta de Cloudflare — si no,
+  // el deploy falla aquí. Se sirven el apex y www; el `canonical` de todas las páginas
+  // apunta al primero (SITE_URL en deploy-cloudflare.yml), así que no compiten en
+  // buscadores. Si ya hay registros A/CNAME para el apex o www (los del WordPress),
+  // hay que borrarlos antes: Wrangler no los sobrescribe. Los MX y TXT del correo
+  // (Microsoft 365) no se tocan.
+  "routes": [
+    { "pattern": "magma-consulting.com", "custom_domain": true },
+    { "pattern": "www.magma-consulting.com", "custom_domain": true },
+  ],
+
+  // dist/ se construye en CI y no se versiona.
+  "assets": {
+    "directory": "./dist",
+    "not_found_handling": "404-page",
+  },
+}

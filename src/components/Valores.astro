@@ -1,0 +1,54 @@
+---
+const valores = [
+  {
+    nombre: 'Honestidad',
+    texto:
+      'Actuamos de manera transparente y auténtica en todos los ámbitos. La clave del éxito es ser claras, sinceras y accesibles.',
+  },
+  {
+    nombre: 'Eficiencia',
+    texto:
+      'Nuestros 20 años desarrollando proyectos de telecomunicaciones nos permiten conocer el mercado y ofrecer resultados de calidad.',
+  },
+  {
+    nombre: 'Pasión',
+    texto:
+      'Dedicamos toda nuestra energía a lo que hacemos. Nos esforzamos, aprendemos y nos superamos para dar lo mejor de nosotras.',
+  },
+  {
+    nombre: 'Compromiso',
+    texto:
+      'Somos conscientes de la importancia que tiene la responsabilidad de hacer un trabajo bien hecho.',
+  },
+];
+
+const extra = [
+  'Transparencia',
+  'Diferencia',
+  'Orientación al cliente',
+  'Calidad',
+  'Responsabilidad social',
+];
+---
+
+<section id="valores" class="seccion seccion-niebla" aria-labelledby="valores-title">
+  <div class="seccion-interior">
+    <p class="eyebrow">Valores</p>
+    <h2 id="valores-title">Los valores que guían cada proyecto</h2>
+
+    <div class="mt-12 grid grid-cols-4 border-t border-l border-mist-deep max-[860px]:grid-cols-2 max-[480px]:grid-cols-1">
+      {valores.map((v) => (
+        <div class="reveal border-r border-b border-mist-deep px-7 py-8">
+          <h3>{v.nombre}</h3>
+          <p class="m-0 text-[0.95rem] text-ink-soft">{v.texto}</p>
+        </div>
+      ))}
+    </div>
+
+    <ul class="valores-extra reveal mt-10 flex list-none flex-wrap gap-x-5 gap-y-[0.6rem] p-0 font-display text-[0.9rem] font-bold text-ink-soft">
+      {extra.map((v) => (
+        <li>{v}</li>
+      ))}
+    </ul>
+  </div>
+</section>

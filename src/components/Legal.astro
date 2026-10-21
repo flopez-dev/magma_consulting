@@ -1,0 +1,40 @@
+---
+import Base from '../layouts/Base.astro';
+import Header from './Header.astro';
+import Footer from './Footer.astro';
+import { nombreSitio } from '../lib/sitio';
+
+interface Props {
+  titulo: string;
+  description: string;
+  /** Nombre accesible de la sección de contenido («Contenido del aviso legal»). */
+  etiqueta: string;
+}
+
+const { titulo, description, etiqueta } = Astro.props;
+---
+
+<Base title={`${titulo} | ${nombreSitio}`} description={description}>
+  <Header />
+
+  <main id="main">
+    {/* El relleno superior deja sitio a la cabecera fija, que aquí va sobre la franja oscura. */}
+    <section
+      class="seccion seccion-oscura pt-[calc(var(--spacing-cabecera)+1.5rem)]"
+      aria-labelledby="legal-title"
+    >
+      <div class="seccion-interior">
+        <p class="eyebrow eyebrow-oscuro">Legal</p>
+        <h1 id="legal-title">{titulo}</h1>
+      </div>
+    </section>
+
+    <section class="seccion" aria-label={etiqueta}>
+      <div class="seccion-interior legal-contenido">
+        <slot />
+      </div>
+    </section>
+  </main>
+
+  <Footer />
+</Base>

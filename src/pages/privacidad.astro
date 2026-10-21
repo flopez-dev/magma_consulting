@@ -1,0 +1,63 @@
+---
+import Legal from '../components/Legal.astro';
+import { correo, mailtoHref, titular } from '../lib/contacto';
+import { nombreSitio } from '../lib/sitio';
+
+// Adaptada a lo que este sitio hace de verdad, no una copia genérica: es estático, sin
+// formularios, sin backend y sin cookies, así que la mayoría de las cláusulas habituales
+// (retención en base de datos, cesión a proveedores de analítica…) no aplican. Ver también
+// /cookies/. Si se añade un formulario, analítica o cualquier recurso de terceros, hay que
+// reescribir esta página y ampliar la CSP de public/_headers.
+---
+
+<Legal
+  titulo="Política de privacidad"
+  description="Cómo trata Magma Consulting los datos personales: este sitio no tiene formularios ni cookies, solo un enlace de correo directo."
+  etiqueta="Contenido de la política de privacidad"
+>
+  <h2>Responsable del tratamiento</h2>
+  <p>
+    <strong>{titular.razonSocial}</strong> ({nombreSitio})<br />
+    NIF: {titular.nif}
+    <br />
+    Domicilio: {titular.domicilio}
+    <br />
+    Correo electrónico: <a href={mailtoHref}>{correo}</a>
+  </p>
+
+  <h2>Qué datos tratamos</h2>
+  <p>
+    Esta web no tiene formularios ni sistemas de registro: no recopilamos, almacenamos ni procesamos
+    ningún dato personal a través de ella. El único punto de contacto es un enlace
+    <code>mailto:</code> que abre tu propio cliente de correo. Lo que decidas enviarnos por ese
+    medio (nombre, correo, y cualquier otro dato que incluyas en tu mensaje) nos llega directamente
+    a <a href={mailtoHref}>{correo}</a> y lo tratamos únicamente para responder a tu consulta.
+  </p>
+
+  <h2>Base legal y finalidad</h2>
+  <p>
+    Si nos escribes, la base legal del tratamiento es tu consentimiento, expresado al enviarnos el
+    mensaje, y la finalidad es exclusivamente responder a tu consulta comercial o profesional.
+  </p>
+
+  <h2>Conservación</h2>
+  <p>
+    Conservamos tu correspondencia mientras dure la relación comercial que pueda derivarse de ella,
+    o hasta que ejerzas tu derecho de supresión.
+  </p>
+
+  <h2>Destinatarios</h2>
+  <p>No cedemos tus datos a terceros, salvo obligación legal.</p>
+
+  <h2>Tus derechos</h2>
+  <p>
+    Puedes ejercer tus derechos de acceso, rectificación, supresión, oposición, limitación del
+    tratamiento y portabilidad escribiendo a <a href={mailtoHref}>{correo}</a> con el asunto
+    «PROTECCIÓN DE DATOS». También puedes presentar una reclamación ante la Agencia Española de
+    Protección de Datos (AEPD) en{' '}
+    <a href="https://www.aepd.es" target="_blank" rel="noopener">
+      www.aepd.es <span class="sr-only">(se abre en una pestaña nueva)</span>
+    </a>
+    .
+  </p>
+</Legal>

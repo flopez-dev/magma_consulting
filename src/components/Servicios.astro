@@ -1,0 +1,47 @@
+---
+import { fases } from '../lib/servicios';
+---
+
+<section id="servicios" class="seccion" aria-labelledby="servicios-title">
+  <div class="seccion-interior">
+    <p class="eyebrow">Servicios</p>
+    <h2 id="servicios-title">Siete capacidades, un mismo equipo</h2>
+    <p class="seccion-entradilla">
+      De la idea a la operación diaria, en tres fases: lanzar tu proyecto, conectar tu red y operar
+      con un equipo formado. Esto es lo que hacemos en cada una.
+    </p>
+
+    {/* Sigue leyéndose como documento de capacidades, no como tarjetas: filetes entre fases y
+        uno corto teal a la izquierda de cada servicio, el mismo lenguaje de líneas que la
+        línea de falla del hero. */}
+    <div class="mt-12 border-t border-mist-deep">
+      {fases.map((fase) => (
+        <div class="reveal grid grid-cols-[14rem_1fr] gap-8 border-b border-mist-deep py-10 max-[720px]:grid-cols-1 max-[720px]:gap-4 max-[720px]:py-8">
+          <div class="flex items-baseline gap-[0.85rem]">
+            <span class="font-display text-[1.6rem] font-extrabold text-teal">{fase.numero}</span>
+            <h3 class="m-0 text-[1.4rem] tracking-[0.04em] uppercase max-[480px]:text-[1.2rem]">
+              {fase.nombre}
+            </h3>
+          </div>
+          <div class="grid gap-7">
+            {fase.servicios.map((s) => (
+              <article class="border-l-2 border-teal pl-[1.1rem]">
+                <h4 class="mb-[0.4rem] font-display text-[1.2rem] font-bold text-carbon">
+                  {s.nombre}
+                </h4>
+                <p class="m-0 max-w-[60ch] text-ink-soft">{s.texto}</p>
+                {s.lista && (
+                  <ul class="mt-3 list-none columns-2 gap-x-8 p-0 text-ink-soft max-[480px]:columns-1">
+                    {s.lista.map((item) => (
+                      <li class="break-inside-avoid py-[0.2rem]">{item}</li>
+                    ))}
+                  </ul>
+                )}
+              </article>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>

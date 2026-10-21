@@ -1,0 +1,57 @@
+name: CI
+
+# El único workflow de despliegue es el de Cloudflare, que solo se dispara en
+# main. Esto corre en el resto de ramas (develop incluida, que no se publica en
+# ningún sitio) y en cada pull request, para detectar un build roto antes de
+# llegar a main.
+on:
+  pull_request:
+  push:
+    branches-ignore: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Formato
+        run: npm run format:check
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Tipos
+        run: npm run check
+
+      # Con un base path que no es la raíz (el de producción sí lo es), que es el
+      # que de verdad ejercita withBase() en los enlaces internos.
+      - name: Build
+        run: npm run build
+        env:
+          SITE_URL: https://magma-consulting.com
+          BASE_PATH: /magma_consulting/
+
+      - name: Instalar navegador de Playwright
+        run: npx playwright install --with-deps chromium
+
+      # test:e2e vuelve a construir (mismo comando que el paso Build, con los
+      # mismos env — los defaults de astro.config.mjs ya coinciden, pero se
+      # fijan explícitos para no depender de que sigan coincidiendo) y
+      # levanta/para el preview server de Astro alrededor de los tests.
+      - name: Tests e2e
+        run: npm run test:e2e
+        env:
+          SITE_URL: https://magma-consulting.com
+          BASE_PATH: /magma_consulting/

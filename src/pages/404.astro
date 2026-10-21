@@ -1,0 +1,28 @@
+---
+import Base from '../layouts/Base.astro';
+import Boton from '../components/Boton.astro';
+import { withBase } from '../lib/withBase';
+import { nombreSitio } from '../lib/sitio';
+---
+
+<Base title={`Página no encontrada | ${nombreSitio}`} description="Esta página no existe." noindex>
+  <main id="main" class="grid min-h-screen place-items-center bg-carbon px-4 py-16 text-center">
+    <div>
+      <img
+        class="mx-auto mb-10 h-[28px] w-[140px]"
+        src={withBase('/img/logo.svg')}
+        alt={nombreSitio}
+        width="140"
+        height="28"
+      />
+      <p class="eyebrow eyebrow-oscuro">404</p>
+      <h1>Página no encontrada</h1>
+      <p class="mx-auto text-white/85">
+        La página que buscas no existe o ha cambiado de dirección.
+      </p>
+      <div class="mt-7 flex justify-center">
+        <Boton href={withBase('/')}>Volver al inicio</Boton>
+      </div>
+    </div>
+  </main>
+</Base>

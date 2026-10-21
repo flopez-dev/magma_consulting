@@ -1,0 +1,25 @@
+# Actualizaciones semanales de dependencias y de las acciones de los workflows.
+# `target-branch: develop` a propósito: la rama por defecto es `main`, que se
+# despliega directamente a producción (Cloudflare). Las actualizaciones pasan
+# primero por `develop`, igual que cualquier otro cambio.
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    target-branch: develop
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    groups:
+      astro:
+        patterns: ['astro', '@astrojs/*']
+      lint-y-formato:
+        patterns: ['eslint*', '@eslint/*', '@typescript-eslint/*', 'prettier*', 'typescript']
+      tailwind:
+        patterns: ['tailwindcss', '@tailwindcss/*']
+
+  - package-ecosystem: github-actions
+    directory: /
+    target-branch: develop
+    schedule:
+      interval: weekly

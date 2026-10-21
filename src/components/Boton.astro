@@ -1,0 +1,21 @@
+---
+interface Props {
+  href: string;
+  variante?: 'primario' | 'contorno';
+}
+
+const { href, variante = 'primario' } = Astro.props;
+
+const base =
+  'inline-flex items-center gap-2 rounded-sm border-2 px-[1.7rem] py-[0.85rem] font-display text-[0.92rem] font-bold tracking-[0.01em] no-underline transition duration-200 ease-suave hover:-translate-y-px';
+const variantes = {
+  primario:
+    'border-teal bg-teal text-carbon hover:border-teal-light hover:bg-teal-light focus-visible:border-teal-light focus-visible:bg-teal-light',
+  contorno:
+    'border-white/60 bg-transparent text-white hover:border-white hover:bg-white hover:text-carbon focus-visible:border-white focus-visible:bg-white focus-visible:text-carbon',
+};
+---
+
+<a href={href} class:list={[base, variantes[variante]]}>
+  <slot />
+</a>

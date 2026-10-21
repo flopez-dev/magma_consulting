@@ -1,0 +1,24 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run check)",
+      "Bash(npm run build)",
+      "Bash(npm run dev)",
+      "Bash(npm run preview)",
+      "Bash(npm ci)",
+      "Bash(npx astro:*)",
+      "Bash(git status:*)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)",
+      "Bash(git show:*)",
+      "Bash(git branch:*)",
+      "Bash(gh run list:*)",
+      "Bash(gh run view:*)",
+      "Bash(gh pr view:*)",
+      "WebFetch(domain:docs.astro.build)",
+      "WebFetch(domain:tailwindcss.com)",
+      "WebFetch(domain:developers.cloudflare.com)"
+    ],
+    "deny": ["Read(./.env)", "Read(./.env.*)"]
+  }
+}

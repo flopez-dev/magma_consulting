@@ -1,0 +1,8 @@
+dist/
+.astro/
+node_modules/
+package-lock.json
+public/
+
+# Markdown se cuida a mano (prosa/tablas ya formateadas con criterio).
+*.md

@@ -1,0 +1,46 @@
+# Despliega el sitio como un Worker en magma-consulting.com, el dominio del cliente.
+# La ruta con custom_domain está en wrangler.jsonc.
+# Requiere los secretos CLOUDFLARE_API_TOKEN_MAGMA_CONSULTING y CLOUDFLARE_ACCOUNT_ID.
+name: Deploy site to Cloudflare Workers
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: site-cloudflare
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      # Servido desde la raíz del Worker, sin BASE_PATH. SITE_URL es lo que
+      # acaba en canonical, en las etiquetas Open Graph, en el JSON-LD y en el
+      # sitemap, así que apunta siempre al dominio propio.
+      # NOINDEX_SITE (ver Base.astro) se deja sin definir a propósito: este es el
+      # dominio real, tiene que ser indexable.
+      - run: npm run build
+        env:
+          SITE_URL: https://magma-consulting.com
+          BASE_PATH: /
+
+      # Misma versión que en local: la del lockfile.
+      - id: wrangler
+        run: echo "version=$(node -p "require('./package-lock.json').packages['node_modules/wrangler'].version")" >> "$GITHUB_OUTPUT"
+
+      - uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN_MAGMA_CONSULTING }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          wranglerVersion: ${{ steps.wrangler.outputs.version }}

@@ -1,0 +1,69 @@
+---
+import { secciones, contacto, legales } from '../lib/secciones';
+import { linkedinHref } from '../lib/contacto';
+import { nombreSitio } from '../lib/sitio';
+import { withBase } from '../lib/withBase';
+
+const enHome = Astro.url.pathname === withBase('/');
+const ancla = (id: string) => (enHome ? `#${id}` : withBase(`/#${id}`));
+const enlaces = [...secciones, contacto];
+
+const enlace =
+  'text-[0.9rem] text-inherit no-underline hover:text-teal-light focus-visible:text-teal-light';
+---
+
+<footer class="border-t border-teal bg-carbon py-12 text-white/70">
+  <div class="mx-auto flex max-w-ancho flex-wrap items-center gap-x-10 gap-y-6 px-4">
+    <a
+      class="mr-auto flex"
+      href={enHome ? '#hero' : withBase('/')}
+      aria-label={`${nombreSitio}, inicio`}
+    >
+      <img
+        class="opacity-90 brightness-0 invert"
+        src={withBase('/img/logo.svg')}
+        alt={nombreSitio}
+        width="110"
+        height="22"
+      />
+    </a>
+
+    <nav class="flex flex-wrap gap-x-6 gap-y-2" aria-label="Enlaces del pie">
+      {enlaces.map((e) => (
+        <a class={enlace} href={ancla(e.id)}>
+          {e.texto}
+        </a>
+      ))}
+      <a class={enlace} href={linkedinHref} target="_blank" rel="noopener">
+        LinkedIn <span class="sr-only">(se abre en una pestaña nueva)</span>
+      </a>
+    </nav>
+
+    <p class="m-0 w-full max-w-none text-[0.85rem]">
+      &copy; <span data-year>{new Date().getFullYear()}</span> {nombreSitio}. Todos los derechos
+      reservados.
+    </p>
+
+    <nav class="flex flex-wrap gap-x-5 gap-y-[0.4rem]" aria-label="Enlaces legales">
+      {legales.map((l) => {
+        const href = withBase(l.ruta);
+        return (
+          <a
+            class="text-[0.8rem] text-inherit no-underline opacity-75 hover:text-teal-light hover:opacity-100 focus-visible:text-teal-light focus-visible:opacity-100"
+            href={href}
+            aria-current={Astro.url.pathname === href ? 'page' : undefined}
+          >
+            {l.texto}
+          </a>
+        );
+      })}
+    </nav>
+  </div>
+</footer>
+
+<script>
+  // El año del pie se actualiza en el navegador: el sitio es estático y, sin esto, se
+  // quedaría en el año del último despliegue.
+  const anio = document.querySelector('[data-year]');
+  if (anio) anio.textContent = String(new Date().getFullYear());
+</script>

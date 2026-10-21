@@ -1,0 +1,13 @@
+---
+interface Props {
+  /** Trazado SVG (viewBox 24×24). */
+  d: string;
+  class?: string;
+}
+
+const { d, class: clase = 'size-[1.25em] flex-none' } = Astro.props;
+---
+
+<svg class={clase} viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+  <path fill="currentColor" d={d}></path>
+</svg>

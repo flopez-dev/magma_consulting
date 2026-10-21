@@ -1,0 +1,6 @@
+# Contacto para comunicar problemas de seguridad de esta web (RFC 9116).
+# Expires no puede superar un año: renovar la fecha antes de que llegue.
+Contact: mailto:info@magma-consulting.com
+Expires: 2027-10-20T00:00:00.000Z
+Preferred-Languages: es
+Canonical: https://magma-consulting.com/.well-known/security.txt

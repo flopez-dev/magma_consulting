@@ -1,0 +1,81 @@
+---
+import '../styles/global.css';
+import raleway from '../fonts/raleway.woff2?url';
+import { withBase } from '../lib/withBase';
+import { nombreSitio, imagenAlt } from '../lib/sitio';
+
+interface Props {
+  title: string;
+  description: string;
+  /** Texto de la tarjeta al compartir el enlace; por defecto, `description`. */
+  socialDescription?: string;
+  noindex?: boolean;
+}
+
+const { title, description, socialDescription = description, noindex = false } = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const ogImage = new URL(withBase('/img/og.jpg'), Astro.site);
+
+// Cierra la indexación de todo el sitio cuando se publique una copia que no sea el
+// dominio real (una preview): si no, compite como contenido duplicado. Hoy ningún
+// workflow lo pone; se conserva por si vuelve a hacer falta. En Cloudflare y en local
+// queda sin definir. Se combina con el `noindex` de la propia página (la 404 ya lo lleva).
+const sitioNoIndexado = process.env.NOINDEX_SITE === 'true';
+---
+
+<html lang="es">
+  <head>
+    <script is:inline>
+      // Marca el documento como con JS para que el CSS ponga detrás de html.js el estado
+      // oculto de .reveal: si el script no carga, el contenido queda entero y visible.
+      document.documentElement.classList.add('js');
+    </script>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    {/* Una página noindex no declara canonical: el de la 404 sería una URL que no existe. */}
+    {!noindex && <link rel="canonical" href={canonical} />}
+    {(noindex || sitioNoIndexado) && (
+      <meta name="robots" content={sitioNoIndexado ? 'noindex, nofollow' : 'noindex, follow'} />
+    )}
+
+    <!-- Open Graph / redes sociales -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={nombreSitio} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={socialDescription} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={imagenAlt} />
+    <meta property="og:locale" content="es_ES" />
+    <meta property="og:url" content={canonical} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={socialDescription} />
+    <meta name="twitter:image" content={ogImage} />
+
+    <link rel="icon" href={withBase('/img/favicon.ico')} sizes="any" />
+    <link rel="icon" href={withBase('/img/favicon.png')} type="image/png" />
+    <link rel="apple-touch-icon" href={withBase('/img/apple-touch-icon.png')} />
+    <meta name="theme-color" content="#14201e" />
+
+    <!-- Precarga de Raleway: el h1 (elemento LCP probable) usa esta fuente, y sin precarga
+         hay un salto de fuente que retrasa su pintado. -->
+    <link rel="preload" as="font" type="font/woff2" href={raleway} crossorigin />
+
+    <slot name="head" />
+  </head>
+  <body>
+    <a
+      class="absolute -top-full left-4 z-1000 rounded-sm bg-carbon px-5 py-3 font-bold text-white no-underline transition-[top] duration-200 ease-suave focus:top-4"
+      href="#main"
+    >
+      Ir al contenido
+    </a>
+    <slot />
+  </body>
+</html>

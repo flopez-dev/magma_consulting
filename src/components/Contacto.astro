@@ -1,0 +1,53 @@
+---
+import { correo, mailtoHref, linkedinHref } from '../lib/contacto';
+import { iconoCorreo, iconoLinkedin } from '../lib/iconos';
+import { nombreSitio } from '../lib/sitio';
+import Boton from './Boton.astro';
+import Icono from './Icono.astro';
+
+const enlace =
+  'font-display font-bold text-inherit no-underline hover:underline focus-visible:underline';
+---
+
+<section id="contacto" class="seccion seccion-oscura" aria-labelledby="contacto-title">
+  <div class="seccion-interior grid grid-cols-[1.1fr_0.9fr] items-start gap-12 max-[780px]:grid-cols-1">
+    <div class="reveal">
+      <p class="eyebrow eyebrow-oscuro">Contacto</p>
+      <h2 id="contacto-title">Hablemos de tu próximo proyecto</h2>
+      <p>
+        Escríbenos si quieres hablar de un OMV, una red que dar de alta o vender, o cualquiera de
+        los servicios de arriba. Respondemos siempre desde el mismo correo.
+      </p>
+
+      <ul class="mt-6 mb-0 grid list-none gap-4 p-0">
+        <li class="flex items-center gap-3 text-teal-light">
+          <Icono d={iconoCorreo} />
+          <a class={enlace} href={mailtoHref}>
+            {correo}
+          </a>
+        </li>
+        <li class="flex items-center gap-3 text-teal-light">
+          <Icono d={iconoLinkedin} />
+          <a class={enlace} href={linkedinHref} target="_blank" rel="noopener">
+            {nombreSitio} en LinkedIn <span class="sr-only">(se abre en una pestaña nueva)</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    <div class="reveal">
+      <div class="rounded-lg border border-white/10 bg-carbon-soft p-8 shadow-dark">
+        <p class="eyebrow eyebrow-oscuro">Escríbenos</p>
+        <p>
+          Cuéntanos qué necesitas y te contestamos directamente por correo, sin formularios ni
+          intermediarios.
+        </p>
+        <Boton href={mailtoHref}>Enviar un correo</Boton>
+        {/* Si algún día se conecta un backend de formularios, el formulario iría aquí en lugar
+            del botón mailto, con los campos de la web anterior: nombre, correo, asunto y
+            mensaje (opcional). Antes hay que ampliar la CSP (form-action en public/_headers)
+            y reescribir /privacidad/ y /cookies/, que hoy afirman que no hay formularios. */}
+      </div>
+    </div>
+  </div>
+</section>

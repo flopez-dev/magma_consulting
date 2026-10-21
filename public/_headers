@@ -1,0 +1,23 @@
+# Cabeceras de Cloudflare Workers (assets estáticos).
+#
+# La CSP deja `'unsafe-inline'` en script-src porque Astro incrusta en el HTML los scripts de
+# cada página y sus hashes cambian en cada build, y porque el JSON-LD va en <script> inline.
+# Lo que sí impone es que no se cargue nada de terceros, que es lo que afirman /privacidad/ y
+# /cookies/. Si algún día se añade un recurso externo (fuentes, analítica, mapas, vídeo
+# incrustado) o un formulario, hay que ampliar esta política y actualizar esas dos páginas.
+/*
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; media-src 'self'; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'; frame-ancestors 'none'
+  Strict-Transport-Security: max-age=31536000
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=()
+
+# Los ficheros de /_astro/ llevan el hash en el nombre: cambian de URL si cambian.
+/_astro/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# Imágenes, vídeo e iconos de public/img/: no llevan hash, así que no pueden ser
+# `immutable`. Una semana evita revalidarlos en cada visita y limita lo que tarda en verse
+# un cambio si se sustituye el fichero.
+/img/*
+  Cache-Control: public, max-age=604800

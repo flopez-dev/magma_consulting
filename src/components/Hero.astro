@@ -1,0 +1,83 @@
+---
+import { withBase } from '../lib/withBase';
+import Boton from './Boton.astro';
+
+const confianza = [
+  '20+ años en telecomunicaciones',
+  '800+ operadores locales',
+  '50+ empresas consolidadas',
+];
+---
+
+<section
+  id="hero"
+  class="relative flex min-h-[92vh] items-center overflow-hidden bg-carbon pt-[calc(var(--spacing-cabecera)+2rem)] pb-16 after:absolute after:inset-x-0 after:bottom-0 after:h-px after:bg-teal max-[560px]:min-h-0 max-[560px]:pt-[calc(var(--spacing-cabecera)+2.5rem)]"
+  aria-labelledby="hero-title"
+>
+  {/* Elemento de firma: vídeo de fondo, misma idea que el hero de la web anterior (un bucle
+      de «red de datos» en el mismo estilo). No es el archivo original — ese es un asset de
+      stock con licencia no transferible a otro dominio — sino un clip equivalente de Pexels
+      (licencia Pexels: libre para uso comercial, sin atribución requerida), recortado a 10 s y
+      recomprimido de 20,7 MB a ~600 KB. Con movimiento reducido, el script de abajo quita el
+      autoplay y lo deja en el primer fotograma (el poster): nunca se reproduce para quien lo
+      pide. Opacidad baja sobre el fondo carbón para que no compita con el texto. */}
+  <div class="pointer-events-none absolute inset-0 z-0 overflow-hidden" aria-hidden="true">
+    <video
+      class="size-full object-cover opacity-40"
+      autoplay
+      muted
+      loop
+      playsinline
+      poster={withBase('/img/hero-bg-poster.jpg')}
+      data-hero-video
+    >
+      <source src={withBase('/img/hero-bg.webm')} type="video/webm" />
+      <source src={withBase('/img/hero-bg.mp4')} type="video/mp4" />
+    </video>
+  </div>
+
+  <div class="relative z-1 mx-auto w-full max-w-ancho px-4">
+    <p class="eyebrow eyebrow-oscuro">Consultoría para operadores de telecomunicaciones</p>
+    <h1 id="hero-title">Ayudamos a operadores locales a conectar España</h1>
+    <p class="max-w-[42ch] text-[1.2rem] text-white/85">
+      20 años lanzando OMV, redes de FTTH e infraestructura de telecomunicaciones, con más de 800
+      operadores locales a nuestras espaldas.
+    </p>
+
+    <div class="mt-7 mb-10 flex flex-wrap gap-4">
+      <Boton href="#servicios">Descubre nuestros servicios</Boton>
+      <Boton href="#contacto" variante="contorno">
+        Escríbenos
+      </Boton>
+    </div>
+
+    <ul class="m-0 flex max-w-[44ch] list-none flex-wrap gap-x-8 gap-y-2 border-t border-white/15 p-0 pt-6 font-display text-[0.9rem] font-bold text-teal-light">
+      {confianza.map((texto) => (
+        <li>{texto}</li>
+      ))}
+    </ul>
+  </div>
+
+  <a
+    class="absolute bottom-8 left-1/2 z-1 h-[42px] w-[26px] -translate-x-1/2 rounded-[20px] border-2 border-white/50 max-[560px]:hidden"
+    href="#servicios"
+    aria-label="Ir a servicios"
+  >
+    <span
+      class="indicador-scroll absolute top-2 left-1/2 -ml-[2px] h-2 w-1 rounded-[2px] bg-teal-light"
+      aria-hidden="true"
+    ></span>
+  </a>
+</section>
+
+<script>
+  // El atributo autoplay del <video> no puede condicionarse por CSS: quien pide movimiento
+  // reducido lo pierde aquí y el vídeo se queda fijo en el poster (su primer fotograma).
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    const video = document.querySelector<HTMLVideoElement>('[data-hero-video]');
+    if (video) {
+      video.removeAttribute('autoplay');
+      video.pause();
+    }
+  }
+</script>
