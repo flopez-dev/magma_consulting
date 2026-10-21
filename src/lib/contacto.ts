@@ -21,6 +21,8 @@ export const direccion = {
 /** Titular del sitio, tal como figura en el aviso legal y en la política de privacidad. */
 export const titular = {
   razonSocial: 'MDC STRATEGIC CONSULTING, S.L.',
+  /** La misma razón social en minúsculas, para el pie y el JSON-LD. */
+  nombreLegal: 'MDC Strategic Consulting, S.L.',
   nif: 'B-56406150',
   domicilio: `${direccion.calle}, ${direccion.codigoPostal} ${direccion.localidad}`,
   registro:

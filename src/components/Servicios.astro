@@ -1,5 +1,7 @@
 ---
 import { fases } from '../lib/servicios';
+import { iconos, viewBoxPhosphor } from '../lib/iconos';
+import Icono from './Icono.astro';
 ---
 
 <section id="servicios" class="seccion" aria-labelledby="servicios-title">
@@ -11,9 +13,9 @@ import { fases } from '../lib/servicios';
       escríbenos para empezar por ahí.
     </p>
 
-    {/* Sigue leyéndose como documento de capacidades, no como tarjetas: filetes entre fases y
-        uno corto teal a la izquierda de cada servicio, el mismo lenguaje de líneas que la
-        línea de falla del hero. */}
+    {/* Sigue leyéndose como documento de capacidades, no como tarjetas: filetes entre fases y,
+        en cada servicio, un icono en un cuadro teal suave que da un ancla visual al recorrer la
+        lista. Los iconos son decorativos (el nombre del servicio ya lo dice todo). */}
     <div class="mt-12 border-t border-mist-deep">
       {fases.map((fase) => (
         <div class="reveal grid grid-cols-[14rem_1fr] gap-8 border-b border-mist-deep py-10 max-[720px]:grid-cols-1 max-[720px]:gap-4 max-[720px]:py-8">
@@ -25,18 +27,29 @@ import { fases } from '../lib/servicios';
           </div>
           <div class="grid gap-7">
             {fase.servicios.map((s) => (
-              <article class="border-l-2 border-teal pl-[1.1rem]">
-                <h4 class="mb-[0.4rem] font-display text-[1.2rem] font-bold text-carbon">
+              <article class="grid grid-cols-[2.75rem_1fr] items-start gap-x-4 max-[720px]:grid-cols-[2.25rem_1fr] max-[720px]:items-center max-[720px]:gap-x-3">
+                {/* En escritorio el icono queda en su columna junto a todo el bloque; en móvil
+                    solo acompaña al título y el texto usa el ancho completo. */}
+                <span class="row-span-2 flex size-11 items-center justify-center rounded-lg bg-teal/10 text-teal-deep max-[720px]:row-span-1 max-[720px]:size-9">
+                  <Icono
+                    d={iconos[s.icono]}
+                    viewBox={viewBoxPhosphor}
+                    class="size-6 max-[720px]:size-5"
+                  />
+                </span>
+                <h4 class="mt-[0.45rem] mb-0 self-start font-display text-[1.2rem] font-bold text-carbon max-[720px]:mt-0 max-[720px]:self-center">
                   {s.nombre}
                 </h4>
-                <p class="m-0 max-w-[60ch] text-ink-soft">{s.texto}</p>
-                {s.lista && (
-                  <ul class="mt-3 list-none columns-2 gap-x-8 p-0 text-ink-soft max-[480px]:columns-1">
-                    {s.lista.map((item) => (
-                      <li class="break-inside-avoid py-[0.2rem]">{item}</li>
-                    ))}
-                  </ul>
-                )}
+                <div class="col-start-2 mt-[0.4rem] max-[720px]:col-span-2 max-[720px]:col-start-1 max-[720px]:mt-2">
+                  <p class="m-0 max-w-[60ch] text-ink-soft">{s.texto}</p>
+                  {s.lista && (
+                    <ul class="mt-3 max-w-[36rem] list-none columns-2 gap-x-8 p-0 text-ink-soft max-[480px]:columns-1">
+                      {s.lista.map((item) => (
+                        <li class="break-inside-avoid py-[0.2rem]">{item}</li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
               </article>
             ))}
           </div>

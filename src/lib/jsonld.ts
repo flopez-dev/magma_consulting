@@ -21,7 +21,7 @@ export function grafo(url: string, imagen: string, logo: string) {
         '@type': 'ProfessionalService',
         '@id': idConsultora,
         name: nombreSitio,
-        legalName: 'MDC Strategic Consulting, S.L.',
+        legalName: titular.nombreLegal,
         vatID: `ES${titular.nif.replace('-', '')}`,
         description:
           'Consultoría de telecomunicaciones especializada en operadores móviles virtuales, infraestructura de redes y servicios de FTTH para operadores locales y empresas.',

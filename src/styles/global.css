@@ -430,12 +430,6 @@
     }
   }
 
-  /* ---- Lista de valores secundarios, separados por un punto teal ---- */
-  .valores-extra > li + li::before {
-    content: '· ';
-    color: var(--color-teal);
-  }
-
   /* ---- Texto largo de las páginas legales, limitado al ancho de lectura ---- */
   .legal-contenido {
     max-width: var(--container-lectura);

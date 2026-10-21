@@ -58,7 +58,9 @@ sección de `src/components/` y `src/styles/global.css`.
 - Foco visible global (`:focus-visible`, 3 px teal); no quitarlo.
 - Enlaces que abren pestaña nueva: `target="_blank" rel="noopener"` y un `<span class="sr-only">
   (se abre en una pestaña nueva)</span>` (lo comprueba un test).
-- Iconos decorativos con `aria-hidden` (el componente `Icono` lo hace solo).
+- Iconos decorativos con `aria-hidden` (el componente `Icono` lo hace solo). Siempre de
+  `src/lib/iconos.ts`: Phosphor peso regular (`viewBox={viewBoxPhosphor}`), en `text-teal` o
+  `text-teal-deep`; nunca otra familia de iconos ni una librería externa.
 - Nada se mueve con `prefers-reduced-motion: reduce` (ni el vídeo del hero, ni el reveal, ni el
   menú móvil, ni el «Ver más», ni el indicador de scroll, ni los botones o el zoom de las fotos;
   usa `motion-safe:` en las utilidades de movimiento); sin JS, todo el contenido sigue visible.

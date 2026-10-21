@@ -1,5 +1,8 @@
+import type { NombreIcono } from './iconos';
+
 export interface Servicio {
   nombre: string;
+  icono: NombreIcono;
   texto: string;
   lista?: string[];
 }
@@ -21,11 +24,13 @@ export const fases: Fase[] = [
     servicios: [
       {
         nombre: 'Telefonía móvil',
+        icono: 'movil',
         texto:
           'Te ayudamos a lanzar tu propio operador móvil virtual (OMV), desde la marca blanca hasta el canal de distribución, listo para vender.',
       },
       {
         nombre: 'Planes de negocio',
+        icono: 'planes',
         texto:
           'Planes estratégicos, técnicos y comerciales para que sepas si tu proyecto sale a cuenta antes de invertir en él.',
       },
@@ -37,11 +42,13 @@ export const fases: Fase[] = [
     servicios: [
       {
         nombre: 'Servicios de FTTH',
+        icono: 'fibra',
         texto:
           'Vende fibra sin desplegar red propia con nuestro servicio mayorista de bitstream FTTH, pensado para operadores locales y revendedores.',
       },
       {
         nombre: 'Infraestructura de redes',
+        icono: 'red',
         texto:
           'Diseñamos tu red troncal, la monitorizamos y le damos respaldo para que tus clientes sigan conectados aunque algo falle.',
         lista: [
@@ -56,6 +63,7 @@ export const fases: Fase[] = [
       },
       {
         nombre: 'Compraventa de redes',
+        icono: 'compraventa',
         texto:
           'Te acompañamos en todo el proceso, tanto si compras una red como si vendes la tuya.',
       },
@@ -67,11 +75,13 @@ export const fases: Fase[] = [
     servicios: [
       {
         nombre: 'Formación en ventas',
+        icono: 'formacion',
         texto:
           'Formamos a tus comerciales, a tus gestores de cuentas y a tu equipo de atención al cliente para que vendan con soltura desde el primer día.',
       },
       {
         nombre: 'Servicios para empresas',
+        icono: 'empresas',
         texto:
           'Haz crecer tu negocio entre las empresas de tu zona con wifi profesional, conectividad avanzada y ciberseguridad. Servicios de valor añadido para diferenciar tu oferta, captar nuevos clientes y vender más a tu cartera actual.',
       },

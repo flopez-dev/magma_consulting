@@ -1,13 +1,15 @@
 ---
 interface Props {
-  /** Trazado SVG (viewBox 24×24). */
+  /** Trazado SVG. */
   d: string;
   class?: string;
+  /** Por defecto 24×24; los de Phosphor (`iconos`) usan `viewBoxPhosphor`. */
+  viewBox?: string;
 }
 
-const { d, class: clase = 'size-[1.25em] flex-none' } = Astro.props;
+const { d, class: clase = 'size-[1.25em] flex-none', viewBox = '0 0 24 24' } = Astro.props;
 ---
 
-<svg class={clase} viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+<svg class={clase} viewBox={viewBox} aria-hidden="true" focusable="false">
   <path fill="currentColor" d={d}></path>
 </svg>

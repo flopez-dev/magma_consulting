@@ -46,18 +46,24 @@ sitio a la cabecera fija.
     cambia en vivo) y cuando sale de pantalla. CTA principal a `#contacto`; la franja de abajo
     enseña los OMV de referencia (las cifras ya están en la entradilla). El comentario del componente documenta su
     procedencia y licencia (Pexels): mantenlo junto al asset.
-  - `Servicios.astro` (datos en `src/lib/servicios.ts`), `TiraFotos.astro`,
-    `Credenciales.astro`, `Nosotras.astro` (datos en `src/lib/equipo.ts`), `Valores.astro`,
-    `Contacto.astro`.
-  - `Footer.astro` — pie con anclas, LinkedIn, año (lo actualiza un script) y enlaces legales
-    con `aria-current` en la página actual. Se monta fuera de `<main>`.
+  - `Servicios.astro` (datos en `src/lib/servicios.ts`; cada servicio con su icono en un cuadro
+    teal suave, que en móvil acompaña solo al título), `TiraFotos.astro`, `Credenciales.astro`
+    (línea de cuatro hitos, horizontal desde 780 px y vertical debajo, y los dos párrafos del
+    cliente), `Nosotras.astro` (datos en `src/lib/equipo.ts`; una socia por fila con el retrato
+    de 17rem a la izquierda, apaisado encima en móvil), `Valores.astro` (icono sobre cada valor
+    y los secundarios como etiquetas), `Contacto.astro`.
+  - `Footer.astro` — pie en tres bloques (marca con razón social y domicilio en `<address>`,
+    secciones, contacto con correo y LinkedIn) y una fila con el año (lo actualiza un script) y
+    los enlaces legales con `aria-current`. Se monta fuera de `<main>`.
   - `Legal.astro` — monta las páginas legales: `Header`, franja oscura con el `h1`, el texto en
     el slot (`.legal-contenido`) y `Footer`.
   - `Boton.astro`, `Icono.astro`, `Revelar.astro` (reveal-al-scroll de `.reveal`; sin JS o con
     movimiento reducido todo queda visible).
 - `src/lib/` — `sitio.ts` (nombre, título, descripciones, alt de la imagen OG), `contacto.ts`
   (correo, LinkedIn y los datos del titular que usan las páginas legales), `secciones.ts`
-  (anclas del menú y del pie, rutas legales), `servicios.ts`, `equipo.ts`, `iconos.ts`,
+  (anclas del menú y del pie, rutas legales), `servicios.ts`, `equipo.ts`, `iconos.ts` (correo
+  y LinkedIn en 24×24, y `iconos` con los trazados de Phosphor, MIT, viewBox 256: para añadir
+  uno, copiar el `d` de `@phosphor-icons/core/assets/regular/<nombre>.svg`; no es dependencia),
   `jsonld.ts` (un `@graph` con el `ProfessionalService`, con `address`, `vatID`, catálogo y
   socias, y el `WebSite`; se genera desde `contacto.ts`, `servicios.ts` y `equipo.ts`, así que no
   puede divergir de la página visible) y `withBase.ts`. `contacto.ts` tiene `mailtoHref` (a

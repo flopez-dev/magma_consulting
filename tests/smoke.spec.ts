@@ -286,3 +286,32 @@ test('el contacto abre el correo con el asunto puesto', async ({ page }) => {
     '#contacto',
   );
 });
+
+test('Trayectoria muestra la línea de cuatro hitos antes del texto del cliente', async ({
+  page,
+}) => {
+  await page.goto('');
+  const hitos = page.locator('#credenciales [data-hitos] > li');
+  await expect(hitos).toHaveCount(4);
+  await expect(hitos.first()).toContainText('Cablemóvil');
+  await expect(hitos.last()).toContainText('50+');
+});
+
+test('los iconos de servicios y valores son decorativos', async ({ page }) => {
+  await page.goto('');
+  const iconos = page.locator('#servicios article svg, #valores svg');
+  await expect(iconos).toHaveCount(11);
+  for (const icono of await iconos.all()) {
+    await expect(icono).toHaveAttribute('aria-hidden', 'true');
+  }
+});
+
+for (const path of ['', 'aviso-legal/']) {
+  test(`el pie de ${path || '/'} lleva razón social, domicilio y correo`, async ({ page }) => {
+    await page.goto(path);
+    const pie = page.locator('body > footer');
+    await expect(pie).toContainText('MDC Strategic Consulting, S.L.');
+    await expect(pie.locator('address')).toContainText('28028 Madrid');
+    await expect(pie.locator('a[href^="mailto:"]')).toHaveText('info@magma-consulting.com');
+  });
+}

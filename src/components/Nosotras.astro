@@ -18,13 +18,15 @@ const foto = (nombre: string, ext: string) => withBase(`/img/equipo/${nombre}.${
     </p>
 
     {/* Sin loading="lazy" en los retratos, por el mismo motivo que la tira de fotografía. */}
-    <div class="mt-12 grid grid-cols-2 gap-12 max-[720px]:grid-cols-1 max-[720px]:gap-10">
+    {/* Una socia por fila: retrato de 17rem a la izquierda y su ficha a la derecha, separadas
+        por un filete. En móvil, el retrato va encima, apaisado y recortado por arriba. */}
+    <div class="mt-12 grid border-t border-mist-deep">
       {socias.map((s) => (
-        <article class="miembro reveal">
-          <picture class="retrato block aspect-square overflow-hidden rounded-lg bg-mist">
+        <article class="miembro reveal grid grid-cols-[17rem_1fr] items-start gap-10 border-b border-mist-deep py-10 max-[720px]:grid-cols-1 max-[720px]:gap-5 max-[720px]:py-8">
+          <picture class="retrato block aspect-square overflow-hidden rounded-lg bg-mist max-[720px]:aspect-[4/3]">
             <source srcset={foto(s.foto.nombre, 'webp')} type="image/webp" />
             <img
-              class="size-full object-cover"
+              class="size-full object-cover object-top"
               src={foto(s.foto.nombre, 'jpg')}
               alt={`${s.nombre}, socia de ${nombreSitio}`}
               decoding="async"
@@ -32,7 +34,7 @@ const foto = (nombre: string, ext: string) => withBase(`/img/equipo/${nombre}.${
               height={s.foto.alto}
             />
           </picture>
-          <div class="mt-5">
+          <div>
             <h3>{s.nombre}</h3>
             <p>{s.bio}</p>
             {/* La bio corta siempre visible; el resto de la trayectoria se despliega a

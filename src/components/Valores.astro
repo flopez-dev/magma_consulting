@@ -1,21 +1,28 @@
 ---
+import { iconos, viewBoxPhosphor } from '../lib/iconos';
+import Icono from './Icono.astro';
+
 const valores = [
   {
     nombre: 'Honestidad',
+    icono: 'honestidad' as const,
     texto: 'Si un proyecto no tiene sentido, te lo decimos antes de que inviertas en él.',
   },
   {
     nombre: 'Eficiencia',
+    icono: 'eficiencia' as const,
     texto:
       'Conocemos el mercado desde dentro, así que vamos directas a lo que funciona y no te hacemos perder tiempo.',
   },
   {
     nombre: 'Pasión',
+    icono: 'pasion' as const,
     texto:
       'Nos gusta este sector y se nota. Seguimos aprendiendo con cada operador al que acompañamos.',
   },
   {
     nombre: 'Compromiso',
+    icono: 'compromiso' as const,
     texto:
       'Nos implicamos en cada proyecto como si fuera nuestro y respondemos de lo que entregamos.',
   },
@@ -33,15 +40,18 @@ const extra = ['Diferenciación', 'Orientación al cliente', 'Responsabilidad so
       {/* --i escalona la entrada de las cuatro tarjetas (60 ms entre una y otra, ver .reveal). */}
       {valores.map((v, i) => (
         <div class="reveal border-r border-b border-mist-deep px-7 py-8" style={`--i: ${i}`}>
+          <Icono d={iconos[v.icono]} viewBox={viewBoxPhosphor} class="mb-4 size-7 text-teal" />
           <h3>{v.nombre}</h3>
           <p class="m-0 text-[0.95rem] text-ink-soft">{v.texto}</p>
         </div>
       ))}
     </div>
 
-    <ul class="valores-extra reveal mt-10 flex list-none flex-wrap gap-x-5 gap-y-[0.6rem] p-0 font-display text-[0.9rem] font-bold text-ink-soft">
+    <ul class="reveal mt-10 flex list-none flex-wrap gap-3 p-0">
       {extra.map((v) => (
-        <li>{v}</li>
+        <li class="rounded-full border border-mist-deep bg-white px-4 py-1 font-display text-[0.85rem] font-bold text-ink-soft">
+          {v}
+        </li>
       ))}
     </ul>
   </div>
