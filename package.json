@@ -16,14 +16,14 @@
     "test:e2e": "npm run build && npx astro preview --background && npx playwright test; code=$?; npx astro preview stop; exit $code"
   },
   "dependencies": {
-    "astro": "^7.3.2"
+    "astro": "^7.4.1"
   },
   "allowScripts": {
     "esbuild": true,
     "workerd@1.20261019.1": true
   },
   "devDependencies": {
-    "@astrojs/check": "^0.9.10",
+    "@astrojs/check": "^0.9.11",
     "@astrojs/sitemap": "^3.7.4",
     "@eslint/js": "^10.0.1",
     "@playwright/test": "^1.63.0",
