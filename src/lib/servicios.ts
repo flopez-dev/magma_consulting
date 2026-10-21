@@ -44,7 +44,7 @@ export const fases: Fase[] = [
         nombre: 'Servicios de FTTH',
         icono: 'fibra',
         texto:
-          'Vende fibra sin desplegar red propia con nuestro servicio mayorista de bitstream FTTH, pensado para operadores locales y revendedores.',
+          'Vende fibra sin desplegar red propia con nuestro servicio mayorista de bitstream FTTH, pensado para operadores locales y nacionales y para revendedores.',
       },
       {
         nombre: 'Infraestructura de redes',

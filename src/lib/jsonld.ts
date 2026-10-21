@@ -24,7 +24,7 @@ export function grafo(url: string, imagen: string, logo: string) {
         legalName: titular.nombreLegal,
         vatID: `ES${titular.nif.replace('-', '')}`,
         description:
-          'Consultoría de telecomunicaciones especializada en operadores móviles virtuales, infraestructura de redes y servicios de FTTH para operadores locales y empresas.',
+          'Consultoría de telecomunicaciones especializada en operadores móviles virtuales, infraestructura de redes y servicios de FTTH para operadores locales y nacionales y para empresas.',
         url,
         image: imagen,
         logo,
@@ -48,7 +48,7 @@ export function grafo(url: string, imagen: string, logo: string) {
           'Operador móvil virtual (OMV)',
           'FTTH mayorista',
           'Bitstream',
-          'Operadores locales de telecomunicaciones',
+          'Operadores locales y nacionales de telecomunicaciones',
           'Infraestructura de redes',
           'Tránsito IP',
         ],

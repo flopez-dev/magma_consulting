@@ -1,7 +1,7 @@
 # Magma Consulting
 
 Web estática del cliente Magma Consulting (MDC Strategic Consulting, S.L.), consultoría de
-telecomunicaciones para operadores locales. Astro 7 + Tailwind v4, TypeScript strict. La home
+telecomunicaciones para operadores locales y nacionales. Astro 7 + Tailwind v4, TypeScript strict. La home
 (`/`) es la landing del negocio; además hay tres páginas legales (`/aviso-legal/`,
 `/privacidad/`, `/cookies/`) y la 404.
 

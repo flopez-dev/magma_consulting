@@ -1,7 +1,7 @@
 # Magma Consulting
 
 Web estática de Magma Consulting (MDC Strategic Consulting, S.L.), consultoría de
-telecomunicaciones para operadores locales. Construida con [Astro](https://astro.build/) y
+telecomunicaciones para operadores locales y nacionales. Construida con [Astro](https://astro.build/) y
 [Tailwind CSS v4](https://tailwindcss.com/), desplegada como Worker de Cloudflare en
 [magma-consulting.com](https://magma-consulting.com).
 
