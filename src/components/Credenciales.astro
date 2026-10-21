@@ -1,11 +1,3 @@
----
-const cifras = [
-  { valor: '20+', texto: 'años trabajando juntas en el sector' },
-  { valor: '800+', texto: 'operadores locales, a nivel nacional' },
-  { valor: '50+', texto: 'empresas consolidadas' },
-];
----
-
 <section id="credenciales" class="seccion seccion-oscura" aria-labelledby="credenciales-title">
   <div class="seccion-interior">
     <p class="eyebrow eyebrow-oscuro">Trayectoria</p>
@@ -13,20 +5,25 @@ const cifras = [
       Más de 20 años construyendo el mercado local de telecomunicaciones
     </h2>
 
-    <ul class="mt-10 mb-0 flex list-none flex-wrap gap-x-14 gap-y-10 p-0">
-      {cifras.map((c) => (
-        <li class="reveal">
-          <span class="block font-display text-[clamp(2.5rem,2rem+2vw,3.75rem)] leading-none font-extrabold text-teal">
-            {c.valor}
-          </span>
-          <span class="mt-2 block max-w-[20ch] text-[0.95rem] text-white/75">{c.texto}</span>
-        </li>
-      ))}
-    </ul>
-
-    <p class="reveal mt-10 max-w-[62ch] border-t border-white/15 pt-8 text-[1.05rem]">
-      Han sido parte de hitos como el primer Operador Móvil Virtual completo de España (Cablemóvil),
-      Ion Mobile y Avatel Móvil.
-    </p>
+    {/* Texto del cliente, sin las cifras grandes de antes: las tres (20+, 800+, 50+) ya están
+        en la franja del hero y aquí se cuentan dentro del relato. Dos columnas desde 780 px. */}
+    <div class="reveal mt-10 grid grid-cols-2 gap-x-12 border-t border-white/15 pt-8 text-[1.05rem] max-[780px]:grid-cols-1">
+      <p>
+        Las dos socias de la empresa llevan trabajando juntas en el mercado de las
+        telecomunicaciones más de 20 años, formando parte de las plantillas de las empresas más
+        importantes del sector. Involucradas desde su inicio en la creación y desarrollo del mercado
+        mayorista y del operador local, han sido parte destacada en hitos tales como la puesta en
+        marcha del primer OMV FULL (Cablemóvil), así como de varios otros que son referencia en el
+        mercado, como Ion Mobile y Avatel Móvil.
+      </p>
+      <p>
+        También han trabajado en el desarrollo de nuevos productos para los operadores locales y se
+        han encargado de su comercialización a nivel nacional a más de 800 operadores. Su última
+        etapa ha consistido en la consolidación de más de 50 empresas. Su amplia experiencia les ha
+        valido el reconocimiento y valoración en el sector y les ha permitido presenciar desde
+        primera fila el enorme crecimiento de los operadores locales, acompañándolos desde el inicio
+        en el desarrollo de sus negocios.
+      </p>
+    </div>
   </div>
 </section>

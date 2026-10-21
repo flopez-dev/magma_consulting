@@ -27,7 +27,6 @@ export function consultora(url: string, imagen: string, logo: string) {
     founder: socias.map((s) => ({
       '@type': 'Person',
       name: s.nombre,
-      jobTitle: s.cargo,
       sameAs: s.linkedin,
     })),
     hasOfferCatalog: {

@@ -141,9 +141,13 @@ despliega desde este repo.
   navegador real, no con `curl`.
 - `workers_dev` y `preview_urls` están en `false`: la web solo se sirve en el dominio propio
   (apex y `www`; el canonical es el apex).
-- La política de privacidad es la que se redactó para la landing de portfolio. No nombra a
-  Cloudflare (alojamiento) ni a Microsoft (correo) como encargados: si el cliente lo pide,
-  añadirlos en «Destinatarios».
+- `/privacidad/` nombra como encargados a Cloudflare (alojamiento: IP de quien visita) y a
+  Microsoft 365 (buzón de `info@`), con su transferencia a EE. UU. Si cambia el alojamiento, el
+  proveedor de correo o se añade cualquier tratamiento nuevo, hay que actualizarla y cambiar su
+  constante `actualizado`.
+- El copy de la home sigue el documento de cambios del cliente de octubre de 2026: «Trayectoria»
+  es solo texto (sin las cifras grandes, que siguen en la franja del hero) y las socias no
+  llevan cargo, ni en la página ni en el JSON-LD. No los repongas.
 - No hay formulario de contacto a propósito: el contacto es un `mailto:`. El comentario de
   `Contacto.astro` recoge qué habría que tocar si se añade uno.
 

@@ -43,19 +43,19 @@ export const fases: Fase[] = [
       {
         nombre: 'Infraestructura de redes',
         texto:
-          'Diseño, monitoreo y respaldo de la red: la infraestructura troncal completa para que tu operador no se quede nunca sin servicio.',
+          'Diseño, monitorización y respaldo de la red: la infraestructura troncal completa para que tu operador no se quede nunca sin servicio.',
         lista: [
           'Infraestructura troncal',
           'Servicios de tránsito IP',
-          'Monitoreo de redes',
+          'Monitorización de redes',
           'Conexiones punto a punto',
           'Líneas de respaldo',
           'Acceso dedicado directo',
-          'Red privada virtual (LAN)',
+          'Red privada virtual (VPN)',
         ],
       },
       {
-        nombre: 'Adquisición de redes',
+        nombre: 'Compra/venta de redes',
         texto:
           'Te acompañamos en todo el proceso, tanto si compras una red como si vendes la tuya.',
       },
@@ -66,21 +66,14 @@ export const fases: Fase[] = [
     nombre: 'Operar',
     servicios: [
       {
-        nombre: 'Formación ventas',
+        nombre: 'Formación en ventas',
         texto:
           'Formamos a tu equipo de ventas, gestores de cuentas y atención al cliente para que vendan con soltura desde el primer día.',
       },
       {
-        nombre: 'Otros servicios',
-        texto: 'El resto de piezas que un operador necesita, todas bajo el mismo techo:',
-        lista: [
-          'Chatbot',
-          'Plataforma de SMS profesional',
-          'Numeración 800/900',
-          'Centralita virtual',
-          'Gestión de trámites',
-          'Plataforma de TV',
-        ],
+        nombre: 'Servicios empresa',
+        texto:
+          'Haz crecer tu negocio entre las empresas de tu zona con WiFi profesional, conectividad avanzada y ciberseguridad. Servicios de valor añadido para diferenciar tu oferta, captar nuevos clientes y vender más a tu cartera actual.',
       },
     ],
   },

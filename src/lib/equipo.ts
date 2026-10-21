@@ -1,6 +1,5 @@
 export interface Socia {
   nombre: string;
-  cargo: string;
   foto: { nombre: string; ancho: number; alto: number };
   bio: string;
   /** Resto de la trayectoria, tomada íntegra de la web anterior; se despliega con «Ver más». */
@@ -14,7 +13,6 @@ export interface Socia {
 export const socias: Socia[] = [
   {
     nombre: 'Margarita Díaz Cano',
-    cargo: 'Directora Estrategia y Desarrollo',
     foto: { nombre: 'margarita', ancho: 708, alto: 688 },
     bio: 'Natural de Villarrobledo (Albacete), licenciada en Gestión Comercial y Marketing. Ha desarrollado toda su carrera en tecnología y telecomunicaciones, siendo pionera en servicios para operadores locales.',
     masBio:
@@ -25,7 +23,6 @@ export const socias: Socia[] = [
   },
   {
     nombre: 'Marta Segarra Grau',
-    cargo: 'Directora Operaciones y Ventas',
     foto: { nombre: 'marta', ancho: 714, alto: 685 },
     bio: 'Natural de Benicarló (Castellón), licenciada en Filología Inglesa. Comenzó en World Telecom y se incorporó al proyecto de servicios para operadores locales junto a Margarita.',
     masBio:
