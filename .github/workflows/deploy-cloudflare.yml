@@ -39,7 +39,7 @@ jobs:
       - id: wrangler
         run: echo "version=$(node -p "require('./package-lock.json').packages['node_modules/wrangler'].version")" >> "$GITHUB_OUTPUT"
 
-      - uses: cloudflare/wrangler-action@v3
+      - uses: cloudflare/wrangler-action@v4
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN_MAGMA_CONSULTING }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
