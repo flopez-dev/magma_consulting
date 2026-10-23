@@ -1,0 +1,40 @@
+---
+import { mailtoConsultaHref } from '../../lib/contacto';
+import { withBase } from '../../lib/withBase';
+
+// El objeto vuelve: el basalto vesicular de la vitrina (Nessa Eull, CC0, Wikimedia Commons), más
+// grande y cortado por el borde izquierdo y el de abajo. El título y la frase son el texto de
+// Contacto del cliente.
+---
+
+<section class="overflow-hidden bg-mist" aria-labelledby="vitrina-title">
+  <div class="v2-marco v2-rejilla min-h-[90svh] items-center max-[767px]:min-h-0">
+    <picture class="col-span-6 -ml-[var(--margen)] self-end max-[1023px]:col-span-5 max-[767px]:order-last max-[767px]:col-span-12 max-[767px]:mt-6">
+      <source
+        srcset={withBase('/img/v2/especimen-basalto-vesicular-grande.webp')}
+        type="image/webp"
+      />
+      <img
+        class="block w-full origin-bottom-left translate-y-[14%] scale-[1.3] mix-blend-multiply"
+        src={withBase('/img/v2/especimen-basalto-vesicular-grande.jpg')}
+        alt="Basalto vesicular, el mismo espécimen de la vitrina, visto de cerca"
+        width="1800"
+        height="1200"
+        decoding="async"
+      />
+    </picture>
+    <div class="reveal relative z-1 col-span-4 col-start-9 py-20 max-[1023px]:col-span-6 max-[1023px]:col-start-7 max-[767px]:col-span-12 max-[767px]:col-start-1 max-[767px]:pt-20 max-[767px]:pb-4">
+      <h2 id="vitrina-title">Hablemos de tu próximo proyecto</h2>
+      <p class="mt-5 mb-0">
+        Cuéntanos qué necesitas. Sumamos experiencia, visión y soluciones para hacer avanzar tu
+        negocio.
+      </p>
+      <p class="v2-frase mt-6 mb-8 font-display font-bold text-carbon">
+        Honestidad, eficiencia, pasión y compromiso.
+      </p>
+      <a class="v2-boton max-[767px]:w-full" href={mailtoConsultaHref}>
+        Escríbenos por correo
+      </a>
+    </div>
+  </div>
+</section>

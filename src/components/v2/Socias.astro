@@ -1,0 +1,95 @@
+---
+import { socias } from '../../lib/equipo';
+import { withBase } from '../../lib/withBase';
+
+// Los dos párrafos de Trayectoria son texto del cliente: van enteros y sin cambios; solo se
+// subrayan con color plano los datos que busca quien lee en diagonal. Debajo, cada socia con su
+// retrato (los de la web anterior, para sustituir por fotografía propia) y su trayectoria como una
+// columna estratigráfica: la empresa más reciente arriba, la primera abajo, del claro al oscuro.
+const foto = (nombre: string, ext: string) => withBase(`/img/equipo/${nombre}.${ext}`);
+const estratos = [
+  'bg-mist-deep text-carbon',
+  'bg-teal-light text-carbon',
+  'bg-teal text-carbon',
+  'bg-teal-deep text-white',
+  'bg-carbon-soft text-white',
+  'bg-carbon text-white',
+];
+const columna = (trayectoria: string) => trayectoria.split(' · ').reverse();
+---
+
+<section id="nosotras" class="v2-marco v2-seccion bg-white" aria-labelledby="nosotras-title">
+  <h2 id="nosotras-title" class="reveal">
+    Dos socias, una misma trayectoria
+  </h2>
+
+  <div
+    class="v2-frase reveal mt-12 columns-2 gap-x-8 text-justify hyphens-auto max-[767px]:columns-1 max-[767px]:text-left"
+    style="--i: 1"
+  >
+    <p class="m-0 mb-[1em]">
+      Las dos socias de la empresa llevan trabajando juntas en el mercado de las telecomunicaciones{' '}
+      <mark class="v2-subrayado bg-teal-light">más de 20 años</mark>, formando parte de las
+      plantillas de las empresas más importantes del sector. Involucradas desde su inicio en la
+      creación y desarrollo del{' '}
+      <mark class="v2-subrayado bg-mist-deep">mercado mayorista y del operador local</mark>, han
+      sido parte destacada en hitos tales como la puesta en marcha del primer OMV FULL (
+      <mark class="v2-subrayado bg-teal-light">Cablemóvil</mark>), así como de varios otros que son
+      referencia en el mercado, como{' '}
+      <mark class="v2-subrayado bg-mist-deep">Ion Mobile y Avatel Móvil</mark>.
+    </p>
+    <p class="m-0">
+      También han trabajado en el desarrollo de nuevos productos para los operadores locales y se
+      han encargado de su comercialización a nivel nacional a{' '}
+      <mark class="v2-subrayado bg-teal-light">más de 800 operadores</mark>. Su última etapa ha
+      consistido en la consolidación de{' '}
+      <mark class="v2-subrayado bg-mist-deep">más de 100 empresas</mark>.{' '}
+      <a
+        class="v2-subrayado bg-teal no-underline hover:bg-teal-light focus-visible:bg-teal-light"
+        href="#contacto"
+      >
+        Su amplia experiencia les ha valido el reconocimiento y la valoración del sector y les ha
+        permitido presenciar desde primera fila el enorme crecimiento de los operadores locales,
+        acompañándolos desde el inicio en el desarrollo de sus negocios.
+      </a>
+    </p>
+  </div>
+
+  <div class="mt-24 grid grid-cols-2 gap-x-8 gap-y-20 max-[1023px]:grid-cols-1">
+    {socias.map((s, i) => (
+      <article
+        class="reveal grid grid-cols-[minmax(0,1fr)_minmax(0,0.8fr)] gap-x-[var(--hueco)] gap-y-6"
+        style={`--i: ${i}`}
+      >
+        <h3 class="col-span-2 font-display font-extrabold text-carbon">{s.nombre}</h3>
+        <picture class="v2-retrato block aspect-[4/5] overflow-hidden">
+          <source srcset={foto(s.foto.nombre, 'webp')} type="image/webp" />
+          <img
+            class="size-full object-cover object-top"
+            src={foto(s.foto.nombre, 'jpg')}
+            alt={`Retrato de ${s.nombre}`}
+            width={s.foto.ancho}
+            height={s.foto.alto}
+            loading="lazy"
+            decoding="async"
+          />
+        </picture>
+        <ol
+          class="v2-columna v2-pequeno m-0 flex list-none flex-col justify-end p-0 font-display font-bold"
+          aria-label={`Trayectoria de ${s.nombre}, de la empresa más reciente a la primera`}
+        >
+          {columna(s.trayectoria).map((empresa, j, todas) => (
+            <li class={estratos[estratos.length - todas.length + j]}>{empresa}</li>
+          ))}
+        </ol>
+        <div class="col-span-2">
+          <p class="mt-0 mb-3">{s.bio}</p>
+          <p class="mt-0 mb-4">{s.masBio}</p>
+          <a class="v2-enlace" href={s.linkedin} target="_blank" rel="noopener">
+            {s.nombre} en LinkedIn <span class="sr-only">(se abre en una pestaña nueva)</span>
+          </a>
+        </div>
+      </article>
+    ))}
+  </div>
+</section>

@@ -3,111 +3,133 @@ import { fases } from '../../lib/servicios';
 import { mailtoConsultaHref } from '../../lib/contacto';
 import { withBase } from '../../lib/withBase';
 
-// Fotografía de una tarjeta SIM, de Tomasz Sienicki, con licencia CC BY 2.5
-// (https://commons.wikimedia.org/wiki/File:A_simcard_mb_ubt.JPG), sin modificar. Es el producto
-// que vende un OMV, así que es el objeto de la carta.
-// Los servicios salen de src/lib/servicios.ts (el mismo origen que la home).
+// La carta de capas, sobre el Mapa geológico de España de M. Faura i Sans (1923, dominio
+// público, Wikimedia Commons). Quien visita marca lo que ya tiene; la carta cuenta lo que falta y
+// el botón abre un correo con esa lista. Sin JS: la carta completa y un mailto normal.
+//
+// Líneas breves propias de la v2 (pendientes de aprobar). «Servicios para empresas» usa la
+// primera frase de su texto, que es del cliente y va sin tocar.
+const breves: Record<string, string> = {
+  'Telefonía móvil': 'Tu propio OMV, de la marca blanca al canal de venta.',
+  'Planes de negocio': 'Saber si tu proyecto sale a cuenta antes de invertir.',
+  'Servicios de FTTH': 'Fibra mayorista en bitstream, sin desplegar red propia.',
+  'Infraestructura de redes': 'Red troncal, tránsito IP, monitorización y respaldo.',
+  'Compraventa de redes': 'Te acompañamos al comprar o al vender una red.',
+  'Formación en ventas': 'Comerciales, gestores de cuentas y atención al cliente.',
+};
+const breve = (nombre: string, texto: string) => breves[nombre] ?? texto.split('. ')[0] + '.';
+
+// Borde superior e inferior en zigzag: 40 dientes de 14 px.
+const dientes = 40;
+const alto = 14;
+const arriba = Array.from(
+  { length: dientes * 2 + 1 },
+  (_, i) => `${(i * 50) / dientes}% ${i % 2 ? 0 : alto}px`,
+);
+const abajo = Array.from(
+  { length: dientes * 2 + 1 },
+  (_, i) => `${100 - (i * 50) / dientes}% calc(100% - ${i % 2 ? 0 : alto}px)`,
+);
+const zigzag = `polygon(${[...arriba, ...abajo].join(', ')})`;
+const total = fases.reduce((n, f) => n + f.servicios.length, 0);
 ---
 
-<section
-  id="servicios"
-  class="v2-carta-seccion bg-mist py-[clamp(3.5rem,3rem+2vw,6rem)]"
-  aria-labelledby="servicios-title"
->
-  <div class="mx-auto grid max-w-ancho grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)] items-start gap-12 px-4 max-[860px]:grid-cols-1">
-    <div class="reveal">
-      <img
-        class="mb-8 aspect-[4/3] w-full object-cover"
-        src={withBase('/img/v2/a-simcard-mb-ubt.jpg')}
-        alt="Tarjeta SIM sobre una superficie clara"
-        width="1200"
-        height="900"
-        loading="lazy"
-        decoding="async"
-      />
-      <h2 id="servicios-title" class="text-carbon">
-        Sumamos capacidades, multiplicamos soluciones
-      </h2>
-      <p class="seccion-entradilla">
-        Acompañamos a tu operador desde la idea hasta la venta diaria. Busca la fase en la que estás
-        y escríbenos para empezar por ahí.
+<section id="carta" class="relative overflow-hidden bg-carbon" aria-labelledby="carta-title">
+  <picture class="absolute inset-0">
+    <source srcset={withBase('/img/v2/mapa-geologico-faura-1923.webp')} type="image/webp" />
+    <img
+      class="size-full object-cover"
+      src={withBase('/img/v2/mapa-geologico-faura-1923.jpg')}
+      alt="Mapa geológico de España de M. Faura i Sans, de 1923"
+      width="1920"
+      height="1442"
+      loading="lazy"
+      decoding="async"
+    />
+  </picture>
+
+  <div class="v2-marco v2-rejilla relative py-[clamp(72px,10vw,160px)] max-[767px]:px-[10px]">
+    <div
+      class="v2-hoja reveal col-span-6 col-start-7 px-16 py-20 text-center max-[1023px]:col-span-10 max-[1023px]:col-start-2 max-[767px]:col-span-12 max-[767px]:col-start-1 max-[767px]:px-7"
+      style={`--zigzag: ${zigzag}`}
+      data-carta
+    >
+      <h2 id="carta-title">Las capas de tu operador</h2>
+      <p class="mt-4 mb-0">Marca lo que ya tienes. El resto lo ponemos nosotras.</p>
+
+      {fases.map((fase) => (
+        <div class="mt-14">
+          <h3 class="font-display font-extrabold">{fase.nombre}</h3>
+          <ul class="m-0 mt-5 grid list-none gap-4 p-0 text-left">
+            {fase.servicios.map((s) => (
+              <li
+                class="v2-capa grid grid-cols-[minmax(0,1fr)_auto] items-start gap-x-4"
+                data-capa={s.nombre}
+              >
+                <div>
+                  <p class="m-0 font-display font-bold text-carbon">{s.nombre}</p>
+                  <p class="v2-pequeno m-0 text-ink-soft">{breve(s.nombre, s.texto)}</p>
+                </div>
+                <button type="button" class="v2-capa-boton v2-pequeno" aria-pressed="false" hidden>
+                  La tengo
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+
+      <p class="v2-frase mt-14 mb-6 text-carbon" data-resumen aria-live="polite">
+        Escríbenos y te decimos por dónde empezar.
       </p>
-    </div>
-
-    <div class="reveal">
-      <div class="v2-selector mb-8 flex-wrap gap-2" role="group" aria-label="Fase del negocio">
-        {fases.map((fase, i) => (
-          <button
-            type="button"
-            class="v2-selector-boton rounded-sm border-2 border-carbon px-4 py-2 font-display text-[16px] font-bold text-carbon aria-pressed:bg-carbon aria-pressed:text-white"
-            aria-pressed={i === 0 ? 'true' : 'false'}
-            data-fase={i}
-          >
-            {fase.nombre}
-          </button>
-        ))}
-      </div>
-
-      <div class="v2-carta bg-white p-7 sm:p-10">
-        {fases.map((fase, i) => (
-          <div class="v2-fase" data-indice={i}>
-            <h3 class="m-0 mb-6 flex items-end gap-4 font-display text-[24px] font-extrabold text-carbon">
-              {fase.nombre}
-              <span class="v2-puntos mb-2 flex-1" aria-hidden="true" />
-            </h3>
-            <ul class="m-0 mb-10 grid list-none gap-6 p-0">
-              {fase.servicios.map((s) => (
-                <li>
-                  <h4 class="m-0 mb-1 font-display text-[18px] font-bold text-carbon">
-                    {s.nombre}
-                  </h4>
-                  <p class="m-0 max-w-[52ch] text-[16px] text-ink">{s.texto}</p>
-                  {s.lista && (
-                    <ul class="mt-2 mb-0 columns-2 list-none gap-x-6 p-0 text-[16px] text-ink max-[480px]:columns-1">
-                      {s.lista.map((item) => (
-                        <li class="py-[0.15rem]">{item}</li>
-                      ))}
-                    </ul>
-                  )}
-                </li>
-              ))}
-            </ul>
-          </div>
-        ))}
-        <a
-          class="v2-escribir font-display font-bold text-teal-deep underline-offset-4 hover:underline focus-visible:underline"
-          href={mailtoConsultaHref}
-        >
-          Escribir sobre esta fase
-        </a>
-      </div>
+      <a class="v2-boton w-full" href={mailtoConsultaHref} data-pedir data-total={total}>
+        Pídenos lo que te falta
+      </a>
     </div>
   </div>
 </section>
 
 <script>
-  // Selector de fase: muestra una fase a la vez. Sin JS quedan todas a la vista (ver v2.css).
-  const botones = document.querySelectorAll<HTMLButtonElement>('[data-fase]');
-  const fases = document.querySelectorAll<HTMLElement>('.v2-fase');
-  const escribir = document.querySelector<HTMLAnchorElement>('.v2-escribir');
-  const base = escribir?.getAttribute('href') ?? '';
+  import { correo } from '../../lib/contacto';
 
-  const elegir = (indice: number) => {
-    botones.forEach((b) =>
-      b.setAttribute('aria-pressed', String(Number(b.dataset.fase) === indice)),
-    );
-    fases.forEach((f) => {
-      f.toggleAttribute('data-oculta', Number(f.dataset.indice) !== indice);
-    });
-    const nombre = botones[indice]?.textContent?.trim() ?? '';
-    if (escribir) {
-      escribir.href = `${base.split('?')[0]}?subject=${encodeURIComponent(`Consulta sobre la fase ${nombre}`)}`;
+  const carta = document.querySelector<HTMLElement>('[data-carta]');
+  const resumen = carta?.querySelector<HTMLElement>('[data-resumen]');
+  const pedir = carta?.querySelector<HTMLAnchorElement>('[data-pedir]');
+  const capas = carta ? Array.from(carta.querySelectorAll<HTMLElement>('[data-capa]')) : [];
+
+  const actualizar = () => {
+    const tengo = capas.filter((c) => c.querySelector('[aria-pressed="true"]'));
+    const faltan = capas.filter((c) => !tengo.includes(c));
+    const nombres = (lista: HTMLElement[]) => lista.map((c) => c.dataset.capa).join(', ');
+
+    if (resumen) {
+      resumen.textContent = faltan.length
+        ? `Te faltan ${faltan.length} de ${capas.length}.`
+        : 'Lo tienes todo. Hablemos de crecer.';
+    }
+    if (pedir) {
+      const cuerpo = [
+        'Hola,',
+        '',
+        tengo.length ? `Ya tengo: ${nombres(tengo)}.` : 'Estoy empezando.',
+        faltan.length ? `Me falta: ${nombres(faltan)}.` : 'Quiero hacer crecer mi operador.',
+        '',
+        '¿Hablamos?',
+      ].join('\n');
+      pedir.href = `mailto:${correo}?subject=${encodeURIComponent('Las capas de mi operador')}&body=${encodeURIComponent(cuerpo)}`;
     }
   };
 
-  if (botones.length) {
-    document.documentElement.classList.add('v2-con-selector');
-    botones.forEach((b) => b.addEventListener('click', () => elegir(Number(b.dataset.fase))));
-    elegir(0);
+  if (carta && capas.length) {
+    capas.forEach((c) => {
+      const boton = c.querySelector<HTMLButtonElement>('button');
+      if (!boton) return;
+      boton.hidden = false;
+      boton.addEventListener('click', () => {
+        boton.setAttribute('aria-pressed', String(boton.getAttribute('aria-pressed') !== 'true'));
+        actualizar();
+      });
+    });
+    actualizar();
   }
 </script>

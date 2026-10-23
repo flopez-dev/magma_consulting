@@ -16,7 +16,8 @@
     "test:e2e": "npm run build && npx astro preview --background && npx playwright test; code=$?; npx astro preview stop; exit $code"
   },
   "dependencies": {
-    "astro": "^7.4.1"
+    "astro": "^7.4.1",
+    "gsap": "3.15.0"
   },
   "allowScripts": {
     "esbuild": true,

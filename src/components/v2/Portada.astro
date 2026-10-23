@@ -1,48 +1,102 @@
 ---
 import { withBase } from '../../lib/withBase';
-import Boton from '../Boton.astro';
 
-// Fotografía de la central telefónica de Hither Green (Londres), de Doyle of London, con
-// licencia CC BY-SA 4.0 (https://commons.wikimedia.org/wiki/File:Telephone_Exchange,_Hither_Green_(Southeast_View_-_01).jpg).
-// Sin modificar salvo el atenuado de la capa. Sustituir por fotografía propia en cuanto exista.
-// La entradilla es el texto del cliente, sin tocar.
+// La vitrina: cuatro especímenes de roca volcánica (magma solidificado) que se suceden con un
+// fundido lento, como piezas de un gabinete de geología. Fotografías de catálogo del GeoDIL,
+// de Nessa Eull y Mike Davis, con licencia CC0 (Wikimedia Commons). Las etiquetas numeradas son
+// las del propio catálogo. Encuadradas a 4:5 sobre blanco; el multiply las funde con el campo.
+const piezas = [
+  { archivo: 'especimen-basalto', rotulo: 'Basalto. Vantage, Washington' },
+  { archivo: 'especimen-basalto-vesicular', rotulo: 'Basalto vesicular. Modoc, California' },
+  { archivo: 'especimen-pumita', rotulo: 'Pumita. Mono, California' },
+  { archivo: 'especimen-basalto-amigdalar', rotulo: 'Basalto amigdalar. Keweenaw, Míchigan' },
+];
+const img = (nombre: string, ext: string) => withBase(`/img/v2/${nombre}.${ext}`);
 ---
 
 <section
-  id="hero"
-  class="relative flex min-h-[92svh] items-center overflow-hidden bg-carbon pt-[calc(var(--spacing-cabecera)+2rem)] pb-16 max-[560px]:min-h-0 max-[560px]:pt-[calc(var(--spacing-cabecera)+2.5rem)]"
-  aria-labelledby="hero-title"
+  id="inicio"
+  class="v2-marco flex min-h-svh flex-col items-center justify-center bg-mist pt-24 pb-12 text-center"
+  aria-labelledby="inicio-title"
 >
-  <img
-    class="v2-portada-foto absolute inset-0 size-full object-cover"
-    src={withBase('/img/v2/telephone-exchange-hither-green-southeast-view-01.jpg')}
-    alt="Central telefónica de Hither Green, en Londres, vista desde el sureste"
-    width="1920"
-    height="1449"
-    fetchpriority="high"
-  />
-
-  <div class="relative z-1 mx-auto w-full max-w-ancho px-4">
-    <div class="reveal max-w-[46rem] bg-white p-7 text-carbon sm:p-12">
-      <p class="m-0 mb-5 text-[16px] font-bold text-ink-soft">
-        Consultoría para operadores de telecomunicaciones
-      </p>
-      <h1 id="hero-title" class="m-0 mb-6 text-carbon">
-        Conectamos España
-      </h1>
-      <p class="m-0 mb-8 max-w-[42ch] text-[18px] text-ink">
-        Más de 20 años impulsando las telecomunicaciones: lanzamos OMV, desplegamos redes FTTH y
-        desarrollamos infraestructuras. Más de 800 operadores forman parte de nuestra trayectoria.
-      </p>
-      <div class="flex flex-wrap items-center gap-6">
-        <Boton href="#contacto">Cuéntanos tu proyecto</Boton>
-        <a
-          class="font-display font-bold text-teal-deep underline-offset-4 hover:underline focus-visible:underline"
-          href="#servicios"
-        >
-          Ver servicios
-        </a>
-      </div>
+  <figure class="relative m-0 w-[clamp(220px,24vw,380px)] max-[767px]:w-[70vw]" data-vitrina>
+    <div class="v2-vitrina">
+      {piezas.map((p, i) => (
+        <picture class:list={['v2-vitrina-pieza', i === 0 && 'is-activa']}>
+          <source srcset={img(p.archivo, 'webp')} type="image/webp" />
+          <img
+            src={img(p.archivo, 'jpg')}
+            alt={`Espécimen de roca volcánica: ${p.rotulo.toLowerCase()}`}
+            width="1000"
+            height="1250"
+            fetchpriority={i === 0 ? 'high' : undefined}
+            loading={i === 0 ? undefined : 'lazy'}
+            decoding="async"
+          />
+        </picture>
+      ))}
     </div>
-  </div>
+    <figcaption
+      class="v2-vitrina-rotulo v2-pequeno absolute inset-x-0 top-[5%] z-1 text-ink-soft"
+      aria-hidden="true"
+    >
+      {piezas.map((p, i) => (
+        <span class:list={[i === 0 && 'is-activa']}>{p.rotulo}</span>
+      ))}
+    </figcaption>
+  </figure>
+
+  <h1
+    id="inicio-title"
+    aria-label="Magma"
+    class="v2-marca mt-10 w-[min(68vw,980px)] max-[767px]:w-full"
+  >
+    {[...'magma'].map((letra) => (
+      <span>{letra}</span>
+    ))}
+  </h1>
+  <p class="v2-frase mx-auto mt-10 mb-0 max-w-[30ch] text-carbon">
+    Consultoría para operadores de telecomunicaciones
+  </p>
+
+  <ul class="m-0 mt-9 flex list-none items-center justify-center gap-12 p-0 max-[767px]:w-full max-[767px]:flex-col max-[767px]:gap-4">
+    <li>Más de 20 años</li>
+    <li class="max-[767px]:order-last max-[767px]:w-full">
+      <a class="v2-boton max-[767px]:w-full" href="#contacto">
+        Cuéntanos tu proyecto
+      </a>
+    </li>
+    <li>Más de 800 operadores</li>
+  </ul>
 </section>
+
+<script>
+  // Fundido lento entre especímenes: 1,6 s de transición y 5,5 s de pausa. Se detiene con la
+  // pestaña oculta y, con movimiento reducido, se queda en el primero.
+  const vitrina = document.querySelector('[data-vitrina]');
+  const piezas = vitrina ? Array.from(vitrina.querySelectorAll('.v2-vitrina-pieza')) : [];
+  const rotulos = vitrina ? Array.from(vitrina.querySelectorAll('.v2-vitrina-rotulo > span')) : [];
+  const reducido = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (piezas.length > 1 && !reducido) {
+    let actual = 0;
+    let temporizador: number | undefined;
+
+    const avanzar = () => {
+      piezas[actual].classList.remove('is-activa');
+      rotulos[actual]?.classList.remove('is-activa');
+      actual = (actual + 1) % piezas.length;
+      piezas[actual].classList.add('is-activa');
+      rotulos[actual]?.classList.add('is-activa');
+    };
+    const arrancar = () => {
+      temporizador = window.setInterval(avanzar, 7100);
+    };
+
+    arrancar();
+    document.addEventListener('visibilitychange', () => {
+      window.clearInterval(temporizador);
+      if (!document.hidden) arrancar();
+    });
+  }
+</script>

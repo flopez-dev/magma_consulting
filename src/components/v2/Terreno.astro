@@ -1,0 +1,58 @@
+---
+import { withBase } from '../../lib/withBase';
+
+// El terreno: el Mapa geológico de España y Portugal de Federico de Botella y de Hornos, con la
+// parte geográfica de Francisco Coello (1879, dominio público, Wikimedia Commons). La escena lo
+// abre desde una ventana hasta llenar la pantalla; en móvil y con movimiento reducido se ve
+// entero, con el rótulo debajo.
+---
+
+<section
+  class="scene relative bg-carbon text-white"
+  data-scene="terreno"
+  aria-labelledby="terreno-title"
+>
+  <div class="scene-stage relative">
+    <picture class="v2-terreno-mapa block overflow-hidden" data-mapa>
+      <source srcset={withBase('/img/v2/mapa-geologico-botella-1879.webp')} type="image/webp" />
+      <img
+        src={withBase('/img/v2/mapa-geologico-botella-1879.jpg')}
+        alt="Mapa geológico de España y Portugal de Federico de Botella, de 1879, con los terrenos en colores"
+        width="1920"
+        height="1684"
+        loading="lazy"
+        decoding="async"
+      />
+    </picture>
+    <div class="v2-terreno-rotulo v2-marco py-8">
+      <h2 id="terreno-title" class="max-w-[22ch]">
+        Más de 800 operadores en toda España
+      </h2>
+      <p class="v2-pequeno mt-3 mb-0 text-white/75">
+        Mapa geológico de España y Portugal, de Federico de Botella, 1879.
+      </p>
+    </div>
+  </div>
+</section>
+
+<script>
+  import { escena } from '../../lib/escena';
+
+  const raiz = document.querySelector<HTMLElement>('[data-scene="terreno"]');
+  if (raiz) {
+    escena(raiz, {
+      hold: 2,
+      movil: 'reposo',
+      construir(tl, q) {
+        const [mapa] = q('[data-mapa]');
+        const [imagen] = q('[data-mapa] img');
+        tl.fromTo(
+          mapa,
+          { clipPath: 'inset(16% 30% 30% 30%)' },
+          { clipPath: 'inset(0% 0% 0% 0%)', duration: 0.7 },
+          0,
+        ).fromTo(imagen, { scale: 1.18 }, { scale: 1, duration: 1 }, 0);
+      },
+    });
+  }
+</script>

@@ -82,13 +82,23 @@ sitio a la cabecera fija.
   llevan hash). `public/_redirects` — URLs de la web anterior en WordPress → sus equivalentes.
   `public/.well-known/security.txt` — su `Expires` caduca el 2027-10-20 y hay que renovarlo.
 - `src/pages/v2/index.astro` — propuesta de rediseño (`/v2/`) para enseñar al cliente en paralelo
-  a la home. Componentes en `src/components/v2/` (`Portada`, `Carta`, `Trayectoria`, `Equipo`,
-  `Principios`, `Contacto`, `Pie`), estilos propios en `src/styles/v2.css` y fotos con licencia en
-  `public/img/v2/` (licencia y autor en el comentario de cada componente). Reutiliza los datos de
-  `src/lib/` y el copy del cliente, sin tocarlo. Va `noindex` sin canonical y fuera del sitemap
-  (`astro.config.mjs`). Pendiente de aprobación del cliente: el titular «Conectamos España», el
-  h2 de Trayectoria («Del primer OMV a más de 100 empresas») y el resto de textos nuevos. Si se
-  promueve a la home, pasa a `global.css` y se borra `src/pages/v2/`.
+  a la home: la consultora vestida de gabinete de geología, por el nombre (Magma) y la paleta de
+  estratos. Componentes en `src/components/v2/`, en orden: `Cabecera` (anclas propias), `Portada`
+  (vitrina de especímenes con fundido lento), `Piezas` (escena de scroll: 150 cuadrados del
+  desorden a seis estratos), `Carta` (la pieza viva: marcar servicios y el `mailto` lista lo que
+  falta), `Terreno` (escena: el mapa geológico de 1879 crece a pantalla completa), `Hitos`
+  (tabla), `Socias` (texto del cliente subrayado y trayectorias como columna estratigráfica),
+  `Vitrina`, `Visita` (dirección en filas) y `Pie`. Las escenas usan `src/lib/escena.ts` sobre
+  **GSAP** (`gsap` en `dependencies`, empaquetado por Astro, sin CDN; licencia «Standard no
+  charge», que permite uso comercial): `section.scene` con `is-live` o `is-rest`, y composición
+  final con movimiento reducido, sin JS y en móvil. Estilos en `src/styles/v2.css`; imágenes en
+  `public/img/v2/` (especímenes CC0 y mapas de dominio público, autor y fuente en el comentario de
+  cada componente y crédito en el pie). Reutiliza `src/lib/` y el copy del cliente sin tocarlo. Va
+  `noindex` sin canonical y fuera del sitemap. Pendiente de aprobación del cliente: el h1 como
+  marca «magma», «Lo que sostiene a tu operador», «Las capas de tu operador» y sus líneas breves,
+  «Más de 800 operadores en toda España», «Del primer OMV a más de 100 empresas» y la tabla de
+  hitos. Las notas de diseño (dirección, idea, crítica) viven en `.taste-skill/`, que no se sube.
+  Si se promueve a la home, pasa a `global.css` y se borra `src/pages/v2/`.
 - `tests/smoke.spec.ts` — en `/` y las tres legales: un `h1`, sin errores de consola ni overflow,
   menú móvil, «Ir al contenido», landmarks, sin marcadores `[ ]` ni «--» ni rayas (en el texto,
   title, metas, alt, aria-label, JSON-LD y `content` de los «Ver más»), canonical en
@@ -166,8 +176,10 @@ despliega desde este repo.
 
 ## Estado conocido (no son bugs)
 
-- **`/v2/` es una propuesta, no la web.** Su pie (`Pie.astro`) es propio para no tocar el
-  compartido. Sus tests están en `tests/v2.spec.ts`.
+- **`/v2/` es una propuesta, no la web.** Cabecera y pie son propios para no tocar los
+  compartidos. Sus tests están en `tests/v2.spec.ts`. No lleva vídeo a propósito: los únicos
+  clips con licencia del tema son de laboratorio; la imagen en movimiento es el fundido de la
+  vitrina. Los retratos siguen siendo los de la web anterior, en duotono, para sustituir.
 
 - `deploy-cloudflare.yml` necesita los secretos `CLOUDFLARE_API_TOKEN_MAGMA_CONSULTING` (ojo: no
   se llama `CLOUDFLARE_API_TOKEN`) y `CLOUDFLARE_ACCOUNT_ID` en GitHub. Si el último paso falla,
