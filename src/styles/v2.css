@@ -1,0 +1,32 @@
+/* Estilos propios de /v2/: solo lo que Tailwind no expresa cómodamente. La página importa este
+   fichero desde src/pages/v2/index.astro. Si la v2 se promueve a la home, pasa a global.css. */
+
+/* Foto de fondo del hero: atenuada para que la ficha blanca mande. */
+.v2-portada-foto {
+  object-position: 60% 40%;
+  filter: brightness(0.42) saturate(0.6);
+}
+
+/* Guía de puntos entre el nombre de la fase y su línea. */
+.v2-puntos {
+  border-bottom: 4px dotted currentColor;
+  opacity: 0.45;
+}
+
+/* Selector de fase: solo aparece con JavaScript; sin él, todas las fases quedan a la vista. */
+.v2-selector {
+  display: none;
+}
+
+html.v2-con-selector .v2-selector {
+  display: flex;
+}
+
+html.v2-con-selector .v2-fase[data-oculta] {
+  display: none;
+}
+
+.v2-selector-boton[aria-pressed='true'] {
+  background: var(--color-carbon);
+  color: var(--color-white);
+}

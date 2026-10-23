@@ -1,0 +1,113 @@
+---
+import { fases } from '../../lib/servicios';
+import { mailtoConsultaHref } from '../../lib/contacto';
+import { withBase } from '../../lib/withBase';
+
+// Fotografía de una tarjeta SIM, de Tomasz Sienicki, con licencia CC BY 2.5
+// (https://commons.wikimedia.org/wiki/File:A_simcard_mb_ubt.JPG), sin modificar. Es el producto
+// que vende un OMV, así que es el objeto de la carta.
+// Los servicios salen de src/lib/servicios.ts (el mismo origen que la home).
+---
+
+<section
+  id="servicios"
+  class="v2-carta-seccion bg-mist py-[clamp(3.5rem,3rem+2vw,6rem)]"
+  aria-labelledby="servicios-title"
+>
+  <div class="mx-auto grid max-w-ancho grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)] items-start gap-12 px-4 max-[860px]:grid-cols-1">
+    <div class="reveal">
+      <img
+        class="mb-8 aspect-[4/3] w-full object-cover"
+        src={withBase('/img/v2/a-simcard-mb-ubt.jpg')}
+        alt="Tarjeta SIM sobre una superficie clara"
+        width="1200"
+        height="900"
+        loading="lazy"
+        decoding="async"
+      />
+      <h2 id="servicios-title" class="text-carbon">
+        Sumamos capacidades, multiplicamos soluciones
+      </h2>
+      <p class="seccion-entradilla">
+        Acompañamos a tu operador desde la idea hasta la venta diaria. Busca la fase en la que estás
+        y escríbenos para empezar por ahí.
+      </p>
+    </div>
+
+    <div class="reveal">
+      <div class="v2-selector mb-8 flex-wrap gap-2" role="group" aria-label="Fase del negocio">
+        {fases.map((fase, i) => (
+          <button
+            type="button"
+            class="v2-selector-boton rounded-sm border-2 border-carbon px-4 py-2 font-display text-[16px] font-bold text-carbon aria-pressed:bg-carbon aria-pressed:text-white"
+            aria-pressed={i === 0 ? 'true' : 'false'}
+            data-fase={i}
+          >
+            {fase.nombre}
+          </button>
+        ))}
+      </div>
+
+      <div class="v2-carta bg-white p-7 sm:p-10">
+        {fases.map((fase, i) => (
+          <div class="v2-fase" data-indice={i}>
+            <h3 class="m-0 mb-6 flex items-end gap-4 font-display text-[24px] font-extrabold text-carbon">
+              {fase.nombre}
+              <span class="v2-puntos mb-2 flex-1" aria-hidden="true" />
+            </h3>
+            <ul class="m-0 mb-10 grid list-none gap-6 p-0">
+              {fase.servicios.map((s) => (
+                <li>
+                  <h4 class="m-0 mb-1 font-display text-[18px] font-bold text-carbon">
+                    {s.nombre}
+                  </h4>
+                  <p class="m-0 max-w-[52ch] text-[16px] text-ink">{s.texto}</p>
+                  {s.lista && (
+                    <ul class="mt-2 mb-0 columns-2 list-none gap-x-6 p-0 text-[16px] text-ink max-[480px]:columns-1">
+                      {s.lista.map((item) => (
+                        <li class="py-[0.15rem]">{item}</li>
+                      ))}
+                    </ul>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+        <a
+          class="v2-escribir font-display font-bold text-teal-deep underline-offset-4 hover:underline focus-visible:underline"
+          href={mailtoConsultaHref}
+        >
+          Escribir sobre esta fase
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  // Selector de fase: muestra una fase a la vez. Sin JS quedan todas a la vista (ver v2.css).
+  const botones = document.querySelectorAll<HTMLButtonElement>('[data-fase]');
+  const fases = document.querySelectorAll<HTMLElement>('.v2-fase');
+  const escribir = document.querySelector<HTMLAnchorElement>('.v2-escribir');
+  const base = escribir?.getAttribute('href') ?? '';
+
+  const elegir = (indice: number) => {
+    botones.forEach((b) =>
+      b.setAttribute('aria-pressed', String(Number(b.dataset.fase) === indice)),
+    );
+    fases.forEach((f) => {
+      f.toggleAttribute('data-oculta', Number(f.dataset.indice) !== indice);
+    });
+    const nombre = botones[indice]?.textContent?.trim() ?? '';
+    if (escribir) {
+      escribir.href = `${base.split('?')[0]}?subject=${encodeURIComponent(`Consulta sobre la fase ${nombre}`)}`;
+    }
+  };
+
+  if (botones.length) {
+    document.documentElement.classList.add('v2-con-selector');
+    botones.forEach((b) => b.addEventListener('click', () => elegir(Number(b.dataset.fase))));
+    elegir(0);
+  }
+</script>

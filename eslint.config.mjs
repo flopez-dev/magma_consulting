@@ -4,7 +4,16 @@ import eslintPluginAstro from 'eslint-plugin-astro';
 
 export default [
   {
-    ignores: ['dist/', '.astro/', 'node_modules/', 'public/'],
+    // El skill de diseño instalado localmente (.agents/, .claude/skills/design-taste-frontend/) no es
+    // código del proyecto y está en .gitignore; ESLint no lee .gitignore, así que se excluye aquí.
+    ignores: [
+      'dist/',
+      '.astro/',
+      'node_modules/',
+      'public/',
+      '.agents/',
+      '.claude/skills/design-taste-frontend/',
+    ],
   },
   js.configs.recommended,
   ...eslintPluginAstro.configs.recommended,

@@ -27,3 +27,9 @@ blob-report/
 
 # Claude Code — personal settings stay local, .claude/settings.json es compartido
 .claude/settings.local.json
+
+# Skill de diseño instalado localmente (no es código del proyecto) y sus salidas
+.agents/
+skills-lock.json
+.taste-skill/
+.claude/skills/design-taste-frontend

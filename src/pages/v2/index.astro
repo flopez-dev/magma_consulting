@@ -1,0 +1,34 @@
+---
+import Base from '../../layouts/Base.astro';
+import Header from '../../components/Header.astro';
+import Pie from '../../components/v2/Pie.astro';
+import Revelar from '../../components/Revelar.astro';
+import Portada from '../../components/v2/Portada.astro';
+import Carta from '../../components/v2/Carta.astro';
+import Trayectoria from '../../components/v2/Trayectoria.astro';
+import Equipo from '../../components/v2/Equipo.astro';
+import Principios from '../../components/v2/Principios.astro';
+import Contacto from '../../components/v2/Contacto.astro';
+import { descripcion } from '../../lib/sitio';
+import '../../styles/v2.css';
+
+// Propuesta de rediseño para enseñar al cliente, en paralelo a la home. No se indexa ni
+// aparece en el sitemap (ver astro.config.mjs); la home sigue siendo la única página pública.
+const titulo = 'Conectamos España | Magma Consulting (propuesta v2)';
+---
+
+<Base title={titulo} description={descripcion} noindex>
+  <Header />
+
+  <main id="main" class="v2">
+    <Portada />
+    <Carta />
+    <Trayectoria />
+    <Equipo />
+    <Principios />
+    <Contacto />
+  </main>
+
+  <Pie />
+  <Revelar />
+</Base>

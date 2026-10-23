@@ -71,7 +71,7 @@ sitio a la cabecera fija.
 - `src/styles/global.css` — `@font-face`, tokens de Tailwind v4 (`@theme`), capa `base` y capa
   `components` (secciones, eyebrow, reveal, barras del menú, duotono de la tira de fotos,
   retratos en gris, `<details>` de «Ver más», texto legal). Un único fichero; no crear otros
-  `.css`.
+  `.css`. Excepción: `src/styles/v2.css`, solo para la propuesta `/v2/` (ver más abajo).
 - `src/fonts/` — `raleway.woff2` y `dm-sans.woff2` (variables, subconjunto latino) con sus
   licencias OFL. Viven en `src/` y no en `public/` para que Vite reescriba su URL con el base
   path.
@@ -81,6 +81,14 @@ sitio a la cabecera fija.
 - `public/_headers` — CSP, HSTS y caché (`/_astro/*` inmutable; `/img/*` una semana, no
   llevan hash). `public/_redirects` — URLs de la web anterior en WordPress → sus equivalentes.
   `public/.well-known/security.txt` — su `Expires` caduca el 2027-10-20 y hay que renovarlo.
+- `src/pages/v2/index.astro` — propuesta de rediseño (`/v2/`) para enseñar al cliente en paralelo
+  a la home. Componentes en `src/components/v2/` (`Portada`, `Carta`, `Trayectoria`, `Equipo`,
+  `Principios`, `Contacto`, `Pie`), estilos propios en `src/styles/v2.css` y fotos con licencia en
+  `public/img/v2/` (licencia y autor en el comentario de cada componente). Reutiliza los datos de
+  `src/lib/` y el copy del cliente, sin tocarlo. Va `noindex` sin canonical y fuera del sitemap
+  (`astro.config.mjs`). Pendiente de aprobación del cliente: el titular «Conectamos España», el
+  h2 de Trayectoria («Del primer OMV a más de 100 empresas») y el resto de textos nuevos. Si se
+  promueve a la home, pasa a `global.css` y se borra `src/pages/v2/`.
 - `tests/smoke.spec.ts` — en `/` y las tres legales: un `h1`, sin errores de consola ni overflow,
   menú móvil, «Ir al contenido», landmarks, sin marcadores `[ ]` ni «--» ni rayas (en el texto,
   title, metas, alt, aria-label, JSON-LD y `content` de los «Ver más»), canonical en
@@ -157,6 +165,9 @@ portfolio; su `wrangler.jsonc.disabled` no despliega nada. El Worker `magma-cons
 despliega desde este repo.
 
 ## Estado conocido (no son bugs)
+
+- **`/v2/` es una propuesta, no la web.** Su pie (`Pie.astro`) es propio para no tocar el
+  compartido. Sus tests están en `tests/v2.spec.ts`.
 
 - `deploy-cloudflare.yml` necesita los secretos `CLOUDFLARE_API_TOKEN_MAGMA_CONSULTING` (ojo: no
   se llama `CLOUDFLARE_API_TOKEN`) y `CLOUDFLARE_ACCOUNT_ID` en GitHub. Si el último paso falla,

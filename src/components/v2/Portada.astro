@@ -1,0 +1,48 @@
+---
+import { withBase } from '../../lib/withBase';
+import Boton from '../Boton.astro';
+
+// Fotografía de la central telefónica de Hither Green (Londres), de Doyle of London, con
+// licencia CC BY-SA 4.0 (https://commons.wikimedia.org/wiki/File:Telephone_Exchange,_Hither_Green_(Southeast_View_-_01).jpg).
+// Sin modificar salvo el atenuado de la capa. Sustituir por fotografía propia en cuanto exista.
+// La entradilla es el texto del cliente, sin tocar.
+---
+
+<section
+  id="hero"
+  class="relative flex min-h-[92svh] items-center overflow-hidden bg-carbon pt-[calc(var(--spacing-cabecera)+2rem)] pb-16 max-[560px]:min-h-0 max-[560px]:pt-[calc(var(--spacing-cabecera)+2.5rem)]"
+  aria-labelledby="hero-title"
+>
+  <img
+    class="v2-portada-foto absolute inset-0 size-full object-cover"
+    src={withBase('/img/v2/telephone-exchange-hither-green-southeast-view-01.jpg')}
+    alt="Central telefónica de Hither Green, en Londres, vista desde el sureste"
+    width="1920"
+    height="1449"
+    fetchpriority="high"
+  />
+
+  <div class="relative z-1 mx-auto w-full max-w-ancho px-4">
+    <div class="reveal max-w-[46rem] bg-white p-7 text-carbon sm:p-12">
+      <p class="m-0 mb-5 text-[16px] font-bold text-ink-soft">
+        Consultoría para operadores de telecomunicaciones
+      </p>
+      <h1 id="hero-title" class="m-0 mb-6 text-carbon">
+        Conectamos España
+      </h1>
+      <p class="m-0 mb-8 max-w-[42ch] text-[18px] text-ink">
+        Más de 20 años impulsando las telecomunicaciones: lanzamos OMV, desplegamos redes FTTH y
+        desarrollamos infraestructuras. Más de 800 operadores forman parte de nuestra trayectoria.
+      </p>
+      <div class="flex flex-wrap items-center gap-6">
+        <Boton href="#contacto">Cuéntanos tu proyecto</Boton>
+        <a
+          class="font-display font-bold text-teal-deep underline-offset-4 hover:underline focus-visible:underline"
+          href="#servicios"
+        >
+          Ver servicios
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
