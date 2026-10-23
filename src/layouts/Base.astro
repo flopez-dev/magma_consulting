@@ -17,9 +17,9 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
 const ogImage = new URL(withBase('/img/og.jpg'), Astro.site);
 
 // Cierra la indexación de todo el sitio cuando se publique una copia que no sea el
-// dominio real (una preview): si no, compite como contenido duplicado. Hoy ningún
-// workflow lo pone; se conserva por si vuelve a hacer falta. En Cloudflare y en local
-// queda sin definir. Se combina con el `noindex` de la propia página (la 404 ya lo lleva).
+// dominio real: si no, compite como contenido duplicado. Lo pone deploy-pages.yml (la
+// copia de test de develop en GitHub Pages). En Cloudflare, en CI y en local queda sin
+// definir. Se combina con el `noindex` de la propia página (la 404 ya lo lleva).
 const sitioNoIndexado = process.env.NOINDEX_SITE === 'true';
 ---
 

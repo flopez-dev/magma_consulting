@@ -1,0 +1,56 @@
+# Publica develop en GitHub Pages (https://flopez-dev.github.io/magma_consulting/) como
+# entorno de test. No es producción (esa es main, en Cloudflare) y no se tiene que indexar:
+# NOINDEX_SITE pone `noindex, nofollow` en cada página y `Disallow: /` en robots.txt (ver
+# Base.astro y robots.txt.ts). El robots.txt bajo /magma_consulting/ no lo lee ningún
+# buscador (solo cuenta el de la raíz del dominio), así que lo que protege es la meta.
+name: Deploy develop to GitHub Pages
+
+on:
+  push:
+    branches: [develop]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      # Canonical y Open Graph apuntan a la propia copia de Pages: un canonical al dominio
+      # real junto a un noindex serían señales contradictorias.
+      - run: npm run build
+        env:
+          SITE_URL: https://flopez-dev.github.io
+          BASE_PATH: /magma_consulting/
+          NOINDEX_SITE: 'true'
+
+      # El despliegue por artefacto no pasa por Jekyll, pero si algún día lo hiciera se
+      # comería _astro/.
+      - run: touch dist/.nojekyll
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+      - name: Desplegar en GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

@@ -1,9 +1,9 @@
 name: CI
 
-# El único workflow de despliegue es el de Cloudflare, que solo se dispara en
-# main. Esto corre en el resto de ramas (develop incluida, que no se publica en
-# ningún sitio) y en cada pull request, para detectar un build roto antes de
-# llegar a main.
+# Producción es Cloudflare, que solo se dispara en main; develop además se
+# publica sin indexar en GitHub Pages (deploy-pages.yml). Esto corre en el resto
+# de ramas (develop incluida) y en cada pull request, para detectar un build roto
+# antes de llegar a main.
 on:
   pull_request:
   push:

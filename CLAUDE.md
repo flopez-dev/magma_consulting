@@ -106,8 +106,8 @@ sitio a la cabecera fija.
   `404.astro` (y entonces no declara canonical). El sitemap (`@astrojs/sitemap`) deja fuera la
   404 por su cuenta.
 - **`NOINDEX_SITE=true` bloquea la indexación de todo el sitio** (`noindex, nofollow` en cada
-  página y `Disallow: /` en `robots.txt`). Hoy no lo pone ningún workflow; se conserva por si se
-  publica una copia que no sea el dominio real.
+  página y `Disallow: /` en `robots.txt`). Lo pone `deploy-pages.yml`, la copia de test de
+  `develop` en GitHub Pages; Cloudflare y CI construyen sin él.
 - Tailwind v4 **sin** `tailwind.config.js`: los tokens viven en `@theme`. Paleta «estratos»:
   `teal` (único color de marca, del logo; nunca en cuerpo de texto), `teal-deep` (enlaces y
   texto teal sobre blanco), `teal-light` (teal sobre oscuro), `carbon`, `carbon-soft`, `mist`,
@@ -139,9 +139,13 @@ sitio a la cabecera fija.
 | Rama                   | Destino                                                       |
 | :--------------------- | :------------------------------------------------------------ |
 | `main`                 | Cloudflare Workers, en `magma-consulting.com`, bajo `/`        |
-| `develop` y otras / PR | Solo CI (formato, lint, tipos, build, tests); no se publican  |
+| `develop`              | GitHub Pages (`flopez-dev.github.io/magma_consulting/`), con noindex: entorno de test |
+| Otras / PR             | Solo CI (formato, lint, tipos, build, tests); no se publican  |
 
-El repositorio es **privado** y no hay GitHub Pages: la única copia pública es la de producción.
+El repositorio es **público** (por ahora). `develop` se publica en GitHub Pages con
+`NOINDEX_SITE=true` (`deploy-pages.yml`); en Pages no aplican `_headers` (CSP) ni `_redirects`,
+y su `robots.txt` bajo `/magma_consulting/` no lo lee ningún buscador, así que lo que evita la
+indexación es el `<meta name="robots">`. La única copia indexable es la de producción.
 `astro.config.mjs` lee `SITE_URL`/`BASE_PATH` de variables de entorno; cada workflow pasa las
 suyas. `.github/dependabot.yml` abre cada semana PR de dependencias y de acciones **contra
 `develop`** (no contra `main`, que se despliega directo a producción). `.nvmrc` fija Node 22, la

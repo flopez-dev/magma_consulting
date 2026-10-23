@@ -294,7 +294,7 @@ test('Trayectoria muestra la línea de cuatro hitos antes del texto del cliente'
   const hitos = page.locator('#credenciales [data-hitos] > li');
   await expect(hitos).toHaveCount(4);
   await expect(hitos.first()).toContainText('Cablemóvil');
-  await expect(hitos.last()).toContainText('50+');
+  await expect(hitos.last()).toContainText('100+');
 });
 
 test('los iconos de servicios y valores son decorativos', async ({ page }) => {
