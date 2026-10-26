@@ -16,7 +16,8 @@ export default defineConfig({
   trailingSlash: 'always',
   build: { format: 'directory' },
 
-  integrations: [sitemap()],
+  // Las propuestas para el cliente (/v2/, /v3/) son noindex y no entran en el sitemap.
+  integrations: [sitemap({ filter: (pagina) => !/\/v[23]\//.test(pagina) })],
 
   vite: { plugins: [tailwindcss()] },
 });

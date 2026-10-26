@@ -1,0 +1,70 @@
+---
+import { fases } from '../../lib/servicios';
+import { withBase } from '../../lib/withBase';
+import Icono from '../Icono.astro';
+import { idFase } from './orden';
+
+// Índice visual de las tres fases, al principio de Servicios. Sustituye a la tira de fotos de la
+// home, que era solo decoración y cuya única interacción era el hover: aquí cada foto lleva a su
+// fase, con número, nombre y servicios, y funciona igual con el dedo y con el teclado. Las fotos
+// son tres de las de la tira (stock de la web anterior, 500 px): sustituir por fotografía propia
+// en cuanto esté disponible. Son decorativas (alt vacío): el nombre del enlace es el texto. Al
+// pasar por encima (solo con puntero real, Tailwind v4 pone group-hover detrás de hover: hover)
+// el velo teal se aclara y la foto recupera el color.
+const fotos: Record<string, string> = {
+  '01': 'telefono-movil',
+  '02': 'torre-telecomunicaciones',
+  '03': 'acuerdo-empresarial',
+};
+const img = (nombre: string, ext: string) => withBase(`/img/servicios/${nombre}.${ext}`);
+const flecha = 'M11 4h2v12.17l5.59-5.58L20 12l-8 8-8-8 1.41-1.41L11 16.17z';
+---
+
+{/* Desde 900 px, tres tarjetas con la foto de fondo y el pie sobre un degradado de carbón; por
+    debajo, una lista compacta con la miniatura a la izquierda. */}
+<ul class="mt-10 mb-0 grid list-none grid-cols-3 gap-4 p-0 max-[900px]:grid-cols-1 max-[900px]:gap-3">
+  {fases.map((fase, i) => (
+    <li class="reveal" style={`--i: ${i}`}>
+      <a
+        class="group relative grid aspect-[4/3] overflow-hidden rounded-lg bg-carbon text-white no-underline max-[900px]:aspect-auto max-[900px]:grid-cols-[5.5rem_1fr] max-[900px]:items-center"
+        href={`#${idFase(fase.nombre)}`}
+      >
+        <span
+          class="absolute inset-0 block overflow-hidden max-[900px]:relative max-[900px]:aspect-square"
+          aria-hidden="true"
+        >
+          <picture class="block size-full">
+            <source srcset={img(fotos[fase.numero], 'webp')} type="image/webp" />
+            <img
+              class="size-full object-cover contrast-105 grayscale group-hover:grayscale-0 motion-safe:transition-[filter,scale] motion-safe:duration-400 motion-safe:ease-suave motion-safe:group-hover:scale-[1.04]"
+              src={img(fotos[fase.numero], 'jpg')}
+              alt=""
+              decoding="async"
+              width="500"
+              height="500"
+            />
+          </picture>
+          <span class="absolute inset-0 bg-teal opacity-50 mix-blend-color group-hover:opacity-20 motion-safe:transition-opacity motion-safe:duration-400 motion-safe:ease-suave"></span>
+          <span class="absolute inset-0 bg-linear-to-t from-carbon from-15% via-carbon/60 via-40% to-carbon/0 to-65% max-[900px]:hidden"></span>
+        </span>
+
+        <span class="relative z-1 self-end p-6 max-[900px]:self-center max-[900px]:p-4">
+          <span class="flex items-baseline gap-3 font-display">
+            <span class="text-[1.4rem] font-extrabold text-teal-light max-[900px]:text-[1.2rem]">
+              {fase.numero}
+            </span>
+            <span class="text-[1.15rem] font-extrabold tracking-[0.04em] uppercase max-[900px]:text-[1.05rem]">
+              {fase.nombre}
+            </span>
+            <span class="ml-auto self-center text-teal-light motion-safe:transition-transform motion-safe:duration-200 motion-safe:ease-suave motion-safe:group-hover:translate-y-0.5">
+              <Icono d={flecha} class="size-5" />
+            </span>
+          </span>
+          <span class="mt-1 block min-h-[2.75em] text-[0.9rem] leading-snug text-white/80 max-[900px]:min-h-0">
+            {fase.servicios.map((s) => s.nombre).join(' · ')}
+          </span>
+        </span>
+      </a>
+    </li>
+  ))}
+</ul>

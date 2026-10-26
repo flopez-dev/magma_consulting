@@ -1,0 +1,42 @@
+---
+import { withBase } from '../../lib/withBase';
+import Icono from '../Icono.astro';
+
+// Fondo del hero de las propuestas: el mismo vídeo de la home (Pexels, ver la procedencia y la
+// licencia en src/components/Hero.astro), pero sin <source> en el HTML. Las fuentes las pone
+// videoHero.ts solo cuando conviene descargarlo; si no, se queda el poster, que es su primer
+// fotograma. El slot es para lo que la v3 pinta encima (el canvas de partículas).
+const pausa = 'M7 5h3.5v14H7zM13.5 5H17v14h-3.5z';
+const reproducir = 'M8 5.5v13l10.5-6.5z';
+---
+
+<div class="pointer-events-none absolute inset-0 z-0 overflow-hidden" aria-hidden="true">
+  <video
+    class="size-full object-cover opacity-40"
+    muted
+    loop
+    playsinline
+    preload="none"
+    poster={withBase('/img/hero-bg-poster.jpg')}
+    data-hero-video
+    data-webm={withBase('/img/hero-bg.webm')}
+    data-mp4={withBase('/img/hero-bg.mp4')}
+  ></video>
+  <slot />
+</div>
+
+{/* Oculto hasta que el vídeo se descarga de verdad: sin vídeo no hay nada que pausar. */}
+<button
+  class="group absolute right-4 bottom-8 z-2 flex size-11 cursor-pointer items-center justify-center rounded-sm border border-white/40 bg-carbon/60 p-0 text-white transition-colors duration-200 ease-suave hover:border-white hover:bg-carbon"
+  type="button"
+  aria-label="Pausar el vídeo de fondo"
+  hidden
+  data-hero-pausa
+>
+  <span class="group-data-[pausado=true]:hidden">
+    <Icono d={pausa} class="size-5" />
+  </span>
+  <span class="hidden group-data-[pausado=true]:block">
+    <Icono d={reproducir} class="size-5" />
+  </span>
+</button>

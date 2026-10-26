@@ -71,7 +71,7 @@ sitio a la cabecera fija.
 - `src/styles/global.css` — `@font-face`, tokens de Tailwind v4 (`@theme`), capa `base` y capa
   `components` (secciones, eyebrow, reveal, barras del menú, duotono de la tira de fotos,
   retratos en gris, `<details>` de «Ver más», texto legal). Un único fichero; no crear otros
-  `.css`.
+  `.css`. Excepción: `src/styles/propuestas.css`, solo para `/v2/` y `/v3/` (ver más abajo).
 - `src/fonts/` — `raleway.woff2` y `dm-sans.woff2` (variables, subconjunto latino) con sus
   licencias OFL. Viven en `src/` y no en `public/` para que Vite reescriba su URL con el base
   path.
@@ -81,6 +81,30 @@ sitio a la cabecera fija.
 - `public/_headers` — CSP, HSTS y caché (`/_astro/*` inmutable; `/img/*` una semana, no
   llevan hash). `public/_redirects` — URLs de la web anterior en WordPress → sus equivalentes.
   `public/.well-known/security.txt` — su `Expires` caduca el 2027-10-20 y hay que renovarlo.
+- `src/pages/v2/` y `src/pages/v3/` — propuestas para enseñar al cliente en paralelo a la home,
+  `noindex` sin canonical y fuera del sitemap (filtro en `astro.config.mjs`). **No son la web.**
+  - `/v2/` sale de auditar la home con la skill `ui-ux-pro-max` (patrón «Trust & Authority +
+    Conversion»), filtrada por las reglas de aquí abajo: mismo copy y paleta; la Trayectoria
+    (en niebla) va antes que Servicios y acaba en CTA, el menú sigue ese orden, cada fase de
+    servicios lleva su mailto con asunto, la tira de fotos se sustituye por un índice visual de
+    las tres fases al principio de Servicios (`IndiceFases.astro`: cada foto lleva a su fase,
+    `#fase-lanzar`…; desde 900 px tarjetas, por debajo lista compacta), Valores va antes que
+    Nosotras para alternar fondos, el hero es más compacto en móvil (la franja de OMV
+    entra en la primera pantalla), el vídeo solo se descarga en pantallas anchas sin ahorro de
+    datos y lleva botón de pausa (WCAG 2.2.2), el foco tiene 3:1 sobre claro y los enlaces del
+    pie y el «Ver más» miden 24 px. Componentes en `src/components/v2/` (copias de los de la
+    home donde cambian; `orden.ts`, `HeroContenido`, `VideoFondo` y `videoHero.ts` son de las
+    dos propuestas); el resto se reutiliza de `src/components/`.
+  - `/v3/` es la v2 con `src/components/v3/HeroParticulas.astro`: un canvas lee el poster del
+    vídeo y pone una partícula donde tiene luz; al hacer scroll, los puntos pasan de revueltos
+    a formar la imagen (escenario `sticky` sobre un tramo `.hero-recorrido`) y el vídeo toma el
+    relevo. Sin dependencias. Sin JS o con movimiento reducido es el hero de la v2.
+  - Textos nuevos pendientes de aprobación del cliente: «Hablemos de esta fase» y el asunto
+    «Consulta sobre la fase «…»». Si una propuesta se promueve, sus componentes sustituyen a los
+    de la home, `propuestas.css` pasa a `global.css` y se borran `src/pages/v2|v3/`.
+  - Tests en `tests/propuestas.spec.ts`. La skill está instalada solo en local
+    (`.claude/skills/ui-ux-pro-max/`, en `.gitignore`); se reinstala con
+    `npx skills add https://github.com/nextlevelbuilder/ui-ux-pro-max-skill --skill ui-ux-pro-max`.
 - `tests/smoke.spec.ts` — en `/` y las tres legales: un `h1`, sin errores de consola ni overflow,
   menú móvil, «Ir al contenido», landmarks, sin marcadores `[ ]` ni «--» ni rayas (en el texto,
   title, metas, alt, aria-label, JSON-LD y `content` de los «Ver más»), canonical en

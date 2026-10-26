@@ -27,3 +27,8 @@ blob-report/
 
 # Claude Code — personal settings stay local, .claude/settings.json es compartido
 .claude/settings.local.json
+
+# Skill ui-ux-pro-max instalada en local con `npx skills add` (no es código del proyecto)
+skills-lock.json
+.claude/skills/ui-ux-pro-max/
+design-system/

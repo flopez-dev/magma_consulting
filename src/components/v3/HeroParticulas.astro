@@ -1,0 +1,324 @@
+---
+import HeroContenido from '../v2/HeroContenido.astro';
+import VideoFondo from '../v2/VideoFondo.astro';
+
+// Hero de la propuesta v3: el de la v2, con una escena de scroll delante del vídeo. Al cargar,
+// el fondo es una nube de puntos revueltos; al bajar, giran y se colocan hasta formar el poster
+// del vídeo (la red de nodos), y al final el vídeo toma el relevo. Los puntos salen del propio
+// poster: el script lo lee en un canvas y pone una partícula donde la imagen tiene luz, con su
+// color. Sin JS o con movimiento reducido no hay escena y el hero es el de la v2 (ver
+// propuestas.css). El movimiento solo avanza con el scroll de quien lee, nunca solo.
+---
+
+<section id="hero" class="hero-particulas relative bg-carbon" aria-labelledby="hero-title">
+  <div class="hero-escenario relative flex min-h-[92vh] items-center overflow-hidden pt-[calc(var(--spacing-cabecera)+2rem)] pb-16 after:absolute after:inset-x-0 after:bottom-0 after:h-px after:bg-teal max-[560px]:min-h-0 max-[560px]:pt-[calc(var(--spacing-cabecera)+1.5rem)] max-[560px]:pb-12">
+    <VideoFondo>
+      <canvas class="absolute inset-0 size-full" hidden data-particulas></canvas>
+    </VideoFondo>
+    <HeroContenido />
+
+    <a
+      class="absolute bottom-8 left-1/2 z-1 h-[42px] w-[26px] -translate-x-1/2 rounded-[20px] border-2 border-white/50 max-[560px]:hidden"
+      href="#credenciales"
+      aria-label="Ir a trayectoria"
+    >
+      <span
+        class="indicador-scroll absolute top-2 left-1/2 -ml-[2px] h-2 w-1 rounded-[2px] bg-teal-light"
+        aria-hidden="true"
+      ></span>
+    </a>
+  </div>
+
+  {/* El tramo que se recorre con el escenario fijo. Sin escena mide 0 (ver propuestas.css). */}
+  <div class="hero-recorrido" aria-hidden="true"></div>
+</section>
+
+<script>
+  import { videoHero } from '../v2/videoHero';
+
+  // Tramos de la escena, en fracción del recorrido: los puntos se juntan hasta FIN_UNION, el
+  // canvas cede al vídeo entre RELEVO_DESDE y RELEVO_HASTA y lo que queda es un respiro con la
+  // imagen ya formada antes de soltar el escenario.
+  const FIN_UNION = 0.75;
+  const RELEVO_DESDE = 0.8;
+  const RELEVO_HASTA = 0.95;
+  // Retardo máximo de cada punto: no salen todos a la vez.
+  const RETARDO = 0.35;
+  // Luminancia (0 a 255) desde la que el poster es red (líneas y nodos). Entre FONDO y UMBRAL
+  // está el halo del fondo, que lleva unos pocos puntos tenues; por debajo de FONDO, nada.
+  const UMBRAL = 36;
+  const FONDO = 20;
+  // Los colores se agrupan por brillo en unos pocos tonos: así se cambia de fillStyle una vez
+  // por tono y no una por punto.
+  const TONOS = 12;
+  const OPACIDAD_VIDEO = 0.4;
+
+  const seccion = document.querySelector<HTMLElement>('.hero-particulas');
+  const escenario = seccion?.querySelector<HTMLElement>('.hero-escenario');
+  const lienzo = seccion?.querySelector<HTMLCanvasElement>('[data-particulas]');
+  const video = seccion?.querySelector<HTMLVideoElement>('[data-hero-video]');
+  const ctx = lienzo?.getContext('2d');
+  const movimiento = window.matchMedia('(prefers-reduced-motion: no-preference)');
+  // Con escena, el vídeo espera a que los puntos terminen de formar la imagen.
+  const control = videoHero(seccion ?? document, { permitido: !movimiento.matches });
+
+  const limitar = (v: number) => Math.min(1, Math.max(0, v));
+  const suave = (desde: number, hasta: number, v: number) => {
+    const t = limitar((v - desde) / (hasta - desde));
+    return t * t * (3 - 2 * t);
+  };
+  const salida = (t: number) => 1 - (1 - t) ** 3;
+  const luminancia = (r: number, g: number, b: number) => 0.2126 * r + 0.7152 * g + 0.0722 * b;
+
+  if (seccion && escenario && lienzo && video && ctx) {
+    const poster = new Image();
+    poster.src = video.poster;
+
+    let activa = false;
+    let ancho = 0;
+    let alto = 0;
+    let dpr = 1;
+    let total = 0;
+    // Por partícula, ordenadas por tono: origen (en fracción del escenario), destino (px),
+    // tamaño final, retardo, giro y opacidad final. `inicioTono[t]` es la primera de cada tono.
+    let origenX = new Float32Array(0);
+    let origenY = new Float32Array(0);
+    let destinoX = new Float32Array(0);
+    let destinoY = new Float32Array(0);
+    let lado = new Float32Array(0);
+    let retardo = new Float32Array(0);
+    let giro = new Float32Array(0);
+    let opacidad = new Float32Array(0);
+    let inicioTono = new Uint32Array(TONOS + 1);
+    let colorTono: string[] = [];
+
+    let objetivo = 0;
+    let actual = 0;
+    let pintado = -1;
+    let fotograma = 0;
+
+    // Muestrea el poster con el mismo encuadre que el vídeo (object-cover centrado), así la
+    // imagen que forman los puntos coincide con la que aparece después. Cada celda se queda con
+    // su píxel más brillante: con la media, las líneas de 1 px de la red se perderían.
+    const construir = () => {
+      ancho = escenario.clientWidth;
+      alto = escenario.clientHeight;
+      dpr = Math.min(window.devicePixelRatio || 1, 2);
+      lienzo.width = Math.round(ancho * dpr);
+      lienzo.height = Math.round(alto * dpr);
+
+      const movil = ancho < 720;
+      const paso = movil ? 4 : 5;
+      const maximo = movil ? 2200 : 6000;
+      const muestra = document.createElement('canvas');
+      muestra.width = ancho;
+      muestra.height = alto;
+      const mctx = muestra.getContext('2d', { willReadFrequently: true });
+      if (!mctx) return;
+      const escala = Math.max(ancho / poster.naturalWidth, alto / poster.naturalHeight);
+      const w = poster.naturalWidth * escala;
+      const h = poster.naturalHeight * escala;
+      mctx.drawImage(poster, (ancho - w) / 2, (alto - h) / 2, w, h);
+      const datos = mctx.getImageData(0, 0, ancho, alto).data;
+
+      // Candidatas: el píxel más brillante de cada celda, aceptado con más probabilidad cuanto
+      // más brilla. Se guarda su posición y su color.
+      const candidatas: { x: number; y: number; r: number; g: number; b: number; luz: number }[] =
+        [];
+      for (let cy = 0; cy < alto; cy += paso) {
+        for (let cx = 0; cx < ancho; cx += paso) {
+          let mejor = -1;
+          let luz = -1;
+          for (let y = cy; y < Math.min(cy + paso, alto); y++) {
+            for (let x = cx; x < Math.min(cx + paso, ancho); x++) {
+              const i = (y * ancho + x) * 4;
+              const l = luminancia(datos[i], datos[i + 1], datos[i + 2]);
+              if (l > luz) {
+                luz = l;
+                mejor = i;
+              }
+            }
+          }
+          if (luz < FONDO) continue;
+          const probabilidad =
+            luz < UMBRAL ? 0.06 : 0.35 + 0.65 * ((luz - UMBRAL) / (255 - UMBRAL)) ** 0.5;
+          if (Math.random() >= probabilidad) continue;
+          candidatas.push({
+            x: (mejor / 4) % ancho,
+            y: Math.floor(mejor / 4 / ancho),
+            r: datos[mejor],
+            g: datos[mejor + 1],
+            b: datos[mejor + 2],
+            luz,
+          });
+        }
+      }
+      for (let i = candidatas.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [candidatas[i], candidatas[j]] = [candidatas[j], candidatas[i]];
+      }
+      const elegidas = candidatas.slice(0, maximo);
+      total = elegidas.length;
+
+      // Tono de cada una según su brillo, y el color de cada tono como la media de los suyos.
+      const tonoDe = (luz: number) =>
+        Math.min(TONOS - 1, Math.floor(((luz - FONDO) / (256 - FONDO)) * TONOS));
+      elegidas.sort((a, b) => tonoDe(a.luz) - tonoDe(b.luz));
+      const suma = Array.from({ length: TONOS }, () => [0, 0, 0, 0]);
+      inicioTono = new Uint32Array(TONOS + 1);
+      for (const c of elegidas) {
+        const t = tonoDe(c.luz);
+        suma[t][0] += c.r;
+        suma[t][1] += c.g;
+        suma[t][2] += c.b;
+        suma[t][3]++;
+        inicioTono[t + 1]++;
+      }
+      for (let t = 0; t < TONOS; t++) inicioTono[t + 1] += inicioTono[t];
+      colorTono = suma.map(([r, g, b, n]) =>
+        n ? `rgb(${Math.round(r / n)},${Math.round(g / n)},${Math.round(b / n)})` : '#000',
+      );
+
+      origenX = new Float32Array(total);
+      origenY = new Float32Array(total);
+      destinoX = new Float32Array(total);
+      destinoY = new Float32Array(total);
+      lado = new Float32Array(total);
+      retardo = new Float32Array(total);
+      giro = new Float32Array(total);
+      opacidad = new Float32Array(total);
+
+      elegidas.forEach((c, k) => {
+        const brillo = limitar((c.luz - UMBRAL) / (255 - UMBRAL));
+        origenX[k] = Math.random() * 1.2 - 0.1;
+        origenY[k] = Math.random() * 1.2 - 0.1;
+        destinoX[k] = c.x + 0.5;
+        destinoY[k] = c.y + 0.5;
+        lado[k] = c.luz < UMBRAL ? 1.5 : 1.6 + paso * 0.45 * brillo;
+        retardo[k] = Math.random() * RETARDO;
+        giro[k] = (Math.random() * 2 - 1) * 1.4;
+        opacidad[k] = c.luz < UMBRAL ? 0.35 : 0.55 + 0.35 * brillo;
+      });
+
+      // Si el escenario es más alto que la pantalla (móviles bajos), se fija por abajo.
+      escenario.style.setProperty('--tope', `${Math.min(0, window.innerHeight - alto)}px`);
+      pintado = -1;
+    };
+
+    const pintar = (p: number) => {
+      const relevo = suave(RELEVO_DESDE, RELEVO_HASTA, p);
+      lienzo.style.opacity = String(1 - relevo);
+      video.style.opacity = String(OPACIDAD_VIDEO * relevo);
+      control.permitir(relevo > 0);
+      if (relevo >= 1 && pintado >= RELEVO_HASTA) return;
+
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.clearRect(0, 0, ancho, alto);
+      ctx.globalCompositeOperation = 'lighter';
+      const q = limitar(p / FIN_UNION);
+      const cx = ancho / 2;
+      const cy = alto / 2;
+
+      for (let tono = 0; tono < TONOS; tono++) {
+        ctx.fillStyle = colorTono[tono];
+        for (let k = inicioTono[tono]; k < inicioTono[tono + 1]; k++) {
+          const t = salida(limitar((q - retardo[k]) / (1 - RETARDO)));
+          const ox = origenX[k] * ancho;
+          const oy = origenY[k] * alto;
+          let x = ox + (destinoX[k] - ox) * t;
+          let y = oy + (destinoY[k] - oy) * t;
+          // Un giro alrededor del centro que se apaga al llegar: los puntos entran en remolino.
+          const angulo = (1 - t) * giro[k];
+          if (angulo !== 0) {
+            const dx = x - cx;
+            const dy = y - cy;
+            const c = Math.cos(angulo);
+            const s = Math.sin(angulo);
+            x = cx + dx * c - dy * s;
+            y = cy + dx * s + dy * c;
+          }
+          const l = 2 + (lado[k] - 2) * t;
+          ctx.globalAlpha = 0.45 + (opacidad[k] - 0.45) * t;
+          ctx.fillRect(x - l / 2, y - l / 2, l, l);
+        }
+      }
+      ctx.globalAlpha = 1;
+      pintado = p;
+    };
+
+    const progreso = () => {
+      const recorrido = seccion.offsetHeight - window.innerHeight;
+      if (recorrido <= 0) return 1;
+      return limitar(-seccion.getBoundingClientRect().top / recorrido);
+    };
+
+    // El progreso pintado persigue al del scroll con algo de inercia, como un scrub.
+    const bucle = () => {
+      fotograma = 0;
+      if (!activa) return;
+      actual += (objetivo - actual) * 0.18;
+      if (Math.abs(objetivo - actual) < 0.0005) actual = objetivo;
+      if (actual !== pintado) pintar(actual);
+      if (actual !== objetivo) fotograma = requestAnimationFrame(bucle);
+    };
+
+    const alHacerScroll = () => {
+      objetivo = progreso();
+      if (!fotograma) fotograma = requestAnimationFrame(bucle);
+    };
+
+    let espera = 0;
+    let anchoPrevio = 0;
+    const alRedimensionar = () => {
+      clearTimeout(espera);
+      espera = window.setTimeout(() => {
+        if (!activa) return;
+        // La barra del navegador móvil cambia el alto al hacer scroll: solo se reconstruye si
+        // cambia el ancho o el alto cambia de verdad.
+        if (escenario.clientWidth === anchoPrevio && Math.abs(escenario.clientHeight - alto) < 120)
+          return;
+        anchoPrevio = escenario.clientWidth;
+        construir();
+        actual = objetivo = progreso();
+        pintar(actual);
+      }, 150);
+    };
+
+    const activar = async () => {
+      try {
+        await poster.decode();
+      } catch {
+        // Sin poster no hay de dónde sacar los puntos: se queda el hero de la v2.
+        seccion.classList.add('sin-escena');
+        control.permitir(true);
+        return;
+      }
+      if (activa || !movimiento.matches) return;
+      activa = true;
+      anchoPrevio = escenario.clientWidth;
+      construir();
+      lienzo.hidden = false;
+      seccion.dataset.escena = 'viva';
+      actual = objetivo = progreso();
+      pintar(actual);
+      window.addEventListener('scroll', alHacerScroll, { passive: true });
+      window.addEventListener('resize', alRedimensionar);
+    };
+
+    const desactivar = () => {
+      activa = false;
+      cancelAnimationFrame(fotograma);
+      fotograma = 0;
+      window.removeEventListener('scroll', alHacerScroll);
+      window.removeEventListener('resize', alRedimensionar);
+      lienzo.hidden = true;
+      video.style.opacity = '';
+      escenario.style.removeProperty('--tope');
+      delete seccion.dataset.escena;
+      control.permitir(true);
+    };
+
+    movimiento.addEventListener('change', () => (movimiento.matches ? activar() : desactivar()));
+    if (movimiento.matches) activar();
+  }
+</script>

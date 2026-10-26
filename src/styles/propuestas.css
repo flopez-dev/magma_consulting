@@ -1,0 +1,53 @@
+/* Estilos de las propuestas /v2/ y /v3/, única excepción a «un único .css»: solo lo importan
+   esas dos páginas y todo va bajo .propuesta, así que la home no lo ve. Si una propuesta se
+   promueve a la home, esto pasa a global.css y el fichero se borra. */
+
+@layer components {
+  /* Foco con 3:1 como mínimo (WCAG 1.4.11). El teal del foco global da 2,4:1 sobre blanco y
+     niebla: en las zonas claras pasa a teal-deep, y sobre carbón a teal-light. */
+  .propuesta :focus-visible {
+    outline-color: var(--color-teal-deep);
+  }
+
+  .propuesta :is(#site-header, #hero, .seccion-oscura, footer) :focus-visible {
+    outline-color: var(--color-teal-light);
+  }
+
+  /* «Ver más» de cada socia con al menos 24 px de alto (WCAG 2.5.8); en la home se queda en 23. */
+  .propuesta .ver-mas > summary {
+    padding-block: 0.25rem;
+  }
+}
+
+/* ---- v3: escena de partículas del hero ----
+   Sin JS o con movimiento reducido, el hero es el de la v2. Con movimiento, la sección se
+   alarga con un tramo vacío (.hero-recorrido) y el escenario se queda fijo con sticky mientras
+   se recorre; el vídeo arranca invisible porque primero se ven los puntos. html.js lo pone
+   Base.astro antes del primer pintado, así que no hay salto de maquetación. --tope lo calcula el
+   script cuando el escenario es más alto que la pantalla (móviles bajos): así se fija por abajo
+   y no se corta el texto. Fuera de capa a propósito: tiene que ganar a las utilidades del
+   escenario (relative, min-h-[92vh]) y a la opacidad del vídeo. .sin-escena la pone el script
+   si no puede leer el poster. */
+@media (prefers-reduced-motion: no-preference) {
+  html.js .hero-particulas:not(.sin-escena) {
+    & .hero-escenario {
+      position: sticky;
+      top: var(--tope, 0px);
+      min-height: 100svh;
+    }
+
+    & .hero-recorrido {
+      height: 140svh;
+    }
+
+    & [data-hero-video] {
+      opacity: 0;
+    }
+  }
+}
+
+@media (max-width: 720px) and (prefers-reduced-motion: no-preference) {
+  html.js .hero-particulas:not(.sin-escena) .hero-recorrido {
+    height: 110svh;
+  }
+}

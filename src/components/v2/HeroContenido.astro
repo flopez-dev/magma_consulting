@@ -1,0 +1,41 @@
+---
+import Boton from '../Boton.astro';
+
+// Texto del hero de las propuestas, compartido por v2 y v3 (el de la v3 cambia el fondo, no el
+// texto). El copy es el de la home. Cambio propuesto para móvil: h1 y entradilla algo más
+// compactos y los dos botones a todo el ancho, para que la franja de OMV, que es la prueba,
+// asome en la primera pantalla de un móvil de 390 × 844 en vez de quedar debajo.
+const hitos = ['Cablemóvil, primer OMV completo de España', 'Ion Mobile', 'Avatel Móvil'];
+---
+
+<div class="relative z-1 mx-auto w-full max-w-ancho px-4">
+  <p class="eyebrow eyebrow-oscuro">Consultoría para operadores de telecomunicaciones</p>
+  <h1 id="hero-title" class="max-[560px]:text-[2.15rem]">
+    Ayudamos a operadores locales y nacionales a conectar España
+  </h1>
+  <p class="max-w-[42ch] text-[1.2rem] text-white/85 max-[560px]:text-[1.05rem]">
+    Más de 20 años impulsando las telecomunicaciones: lanzamos OMV, desplegamos redes FTTH y
+    desarrollamos infraestructuras. Más de 800 operadores forman parte de nuestra trayectoria.
+  </p>
+
+  <div class="mt-7 mb-10 flex flex-wrap gap-4 max-[560px]:mt-6 max-[560px]:mb-8 max-[560px]:grid max-[560px]:gap-3 max-[560px]:[&>a]:justify-center">
+    <Boton href="#contacto">Cuéntanos tu proyecto</Boton>
+    <Boton href="#servicios" variante="contorno">
+      Ver servicios
+    </Boton>
+  </div>
+
+  <div class="max-w-[60ch] border-t border-white/15 pt-6 max-[560px]:pt-5">
+    <p id="hero-hitos" class="mb-2 text-[0.85rem] text-white/70">
+      Hemos formado parte del lanzamiento de
+    </p>
+    <ul
+      class="m-0 flex list-none flex-wrap gap-x-8 gap-y-2 p-0 font-display text-[0.9rem] font-bold text-teal-light"
+      aria-labelledby="hero-hitos"
+    >
+      {hitos.map((texto) => (
+        <li>{texto}</li>
+      ))}
+    </ul>
+  </div>
+</div>

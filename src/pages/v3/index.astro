@@ -1,0 +1,47 @@
+---
+import Base from '../../layouts/Base.astro';
+import Header from '../../components/v2/Header.astro';
+import HeroParticulas from '../../components/v3/HeroParticulas.astro';
+import Credenciales from '../../components/v2/Credenciales.astro';
+import Servicios from '../../components/v2/Servicios.astro';
+import Nosotras from '../../components/Nosotras.astro';
+import Valores from '../../components/Valores.astro';
+import Contacto from '../../components/Contacto.astro';
+import Footer from '../../components/v2/Footer.astro';
+import Revelar from '../../components/Revelar.astro';
+import { withBase } from '../../lib/withBase';
+import { descripcion } from '../../lib/sitio';
+import '../../styles/propuestas.css';
+
+// Propuesta v3: la v2 con otro hero. Los puntos del fondo empiezan revueltos y, al hacer
+// scroll, se juntan hasta formar la imagen del vídeo, que luego toma el relevo (ver
+// HeroParticulas.astro). No se indexa ni entra en el sitemap (ver astro.config.mjs).
+const titulo = 'Magma Consulting | Consultoría para operadores (propuesta v3)';
+---
+
+<Base title={titulo} description={descripcion} noindex>
+  <Fragment slot="head">
+    <link
+      rel="preload"
+      as="image"
+      href={withBase('/img/hero-bg-poster.jpg')}
+      fetchpriority="high"
+    />
+  </Fragment>
+
+  <div class="propuesta">
+    <Header />
+
+    <main id="main">
+      <HeroParticulas />
+      <Credenciales />
+      <Servicios />
+      <Valores />
+      <Nosotras />
+      <Contacto />
+    </main>
+
+    <Footer />
+  </div>
+  <Revelar />
+</Base>
