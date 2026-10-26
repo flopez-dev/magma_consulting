@@ -1,0 +1,70 @@
+---
+import { withBase } from '../lib/withBase';
+import Boton from './Boton.astro';
+
+// Texto del hero y símbolo de la marca. En móvil, h1 y entradilla algo más compactos y los dos
+// botones a todo el ancho, para que la franja de OMV, que es la prueba, asome en la primera
+// pantalla de un móvil de 390 × 844.
+//
+// El símbolo (el molinillo de la marca) es el protagonista visual del hero y es decorativo: la
+// marca ya tiene nombre en el logo de la cabecera. Desde 1024 px el hero va en dos columnas,
+// con el texto a la izquierda y el símbolo grande a la derecha, centrado con el texto. Detrás
+// lleva un halo de carbón que lo separa de la red del vídeo (.hero-marca en global.css) y un
+// brillo teal suave: es lo más luminoso del hero. Es SVG (public/img/simbolo.svg), nítido a
+// cualquier tamaño; llega a 23rem para que el titular no pase de tres líneas. Por debajo de 1024 px va pequeño a la derecha del eyebrow y fuera del flujo: si sumara
+// alto, el escenario de la escena no cabría en la pantalla de un móvil. Con escena (Hero.astro)
+// el envoltorio arranca invisible y las partículas forman el símbolo; el halo y el brillo llegan
+// con el relevo. Sin escena se ve fijo.
+const hitos = ['Cablemóvil, primer OMV completo de España', 'Ion Mobile', 'Avatel Móvil'];
+---
+
+<div class="relative z-1 mx-auto w-full max-w-ancho px-4 min-[1024px]:grid min-[1024px]:grid-cols-[minmax(0,1fr)_auto] min-[1024px]:items-center min-[1024px]:gap-x-8">
+  <div>
+    <p class="eyebrow eyebrow-oscuro max-[1023px]:pr-14">
+      Consultoría para operadores de telecomunicaciones
+    </p>
+    <h1 id="hero-title" class="max-[560px]:text-[2.15rem]">
+      Ayudamos a operadores locales y nacionales a conectar España
+    </h1>
+    <p class="max-w-[42ch] text-[1.2rem] text-white/85 max-[560px]:text-[1.05rem]">
+      Más de 20 años impulsando las telecomunicaciones: lanzamos OMV, desplegamos redes FTTH y
+      desarrollamos infraestructuras. Más de 800 operadores forman parte de nuestra trayectoria.
+    </p>
+
+    <div class="mt-7 mb-10 flex flex-wrap gap-4 max-[560px]:mt-6 max-[560px]:mb-8 max-[560px]:grid max-[560px]:gap-3 max-[560px]:[&>a]:justify-center">
+      <Boton href="#contacto">Cuéntanos tu proyecto</Boton>
+      <Boton href="#servicios" variante="contorno">
+        Ver servicios
+      </Boton>
+    </div>
+
+    <div class="max-w-[60ch] border-t border-white/15 pt-6 max-[560px]:pt-5">
+      <p id="hero-hitos" class="mb-2 text-[0.85rem] text-white/70">
+        Hemos formado parte del lanzamiento de
+      </p>
+      <ul
+        class="m-0 flex list-none flex-wrap gap-x-8 gap-y-2 p-0 font-display text-[0.9rem] font-bold text-teal-light"
+        aria-labelledby="hero-hitos"
+      >
+        {hitos.map((texto) => (
+          <li>{texto}</li>
+        ))}
+      </ul>
+    </div>
+  </div>
+
+  <div
+    class="hero-marca absolute top-0 right-4 size-11 min-[1024px]:relative min-[1024px]:top-auto min-[1024px]:right-auto min-[1024px]:size-[clamp(16rem,26vw,23rem)]"
+    aria-hidden="true"
+    data-hero-marca
+  >
+    <img
+      class="relative size-full drop-shadow-[0_0_10px_rgba(36,178,159,0.45)] min-[1024px]:drop-shadow-[0_0_40px_rgba(36,178,159,0.35)]"
+      src={withBase('/img/simbolo.svg')}
+      alt=""
+      width="512"
+      height="512"
+      data-hero-simbolo
+    />
+  </div>
+</div>

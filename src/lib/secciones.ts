@@ -1,8 +1,10 @@
-/** Enlaces de ancla del menú y del pie, en el orden de la página. */
+/** Enlaces de ancla del menú y del pie, en el orden de la página: la prueba (Trayectoria) va
+ *  antes que la solución (Servicios). Valores no está: la trayectoria es mejor prueba para quien
+ *  llega, y cuatro enlaces caben en línea hasta 780 px. */
 export const secciones = [
+  { id: 'credenciales', texto: 'Trayectoria' },
   { id: 'servicios', texto: 'Servicios' },
   { id: 'nosotras', texto: 'Nosotras' },
-  { id: 'valores', texto: 'Valores' },
 ] as const;
 
 export const contacto = { id: 'contacto', texto: 'Contacto' } as const;

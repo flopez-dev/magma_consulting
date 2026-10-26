@@ -3,7 +3,6 @@ import Base from '../layouts/Base.astro';
 import Header from '../components/Header.astro';
 import Hero from '../components/Hero.astro';
 import Servicios from '../components/Servicios.astro';
-import TiraFotos from '../components/TiraFotos.astro';
 import Credenciales from '../components/Credenciales.astro';
 import Nosotras from '../components/Nosotras.astro';
 import Valores from '../components/Valores.astro';
@@ -12,7 +11,7 @@ import Footer from '../components/Footer.astro';
 import Revelar from '../components/Revelar.astro';
 import { withBase } from '../lib/withBase';
 import { titulo, descripcion, descripcionSocial } from '../lib/sitio';
-import { consultora } from '../lib/jsonld';
+import { grafo } from '../lib/jsonld';
 
 const url = new URL(withBase('/'), Astro.site).href;
 const imagen = new URL(withBase('/img/og.jpg'), Astro.site).href;
@@ -21,10 +20,18 @@ const logo = new URL(withBase('/img/logo-mark-512.png'), Astro.site).href;
 
 <Base title={titulo} description={descripcion} socialDescription={descripcionSocial}>
   <Fragment slot="head">
+    {/* El poster del vídeo es lo primero que se pinta del hero (y un candidato a LCP): se pide
+        en paralelo al CSS en vez de esperar a que el navegador descubra el <video>. */}
+    <link
+      rel="preload"
+      as="image"
+      href={withBase('/img/hero-bg-poster.jpg')}
+      fetchpriority="high"
+    />
     <script
       is:inline
       type="application/ld+json"
-      set:html={JSON.stringify(consultora(url, imagen, logo))}
+      set:html={JSON.stringify(grafo(url, imagen, logo))}
     />
   </Fragment>
 
@@ -32,11 +39,10 @@ const logo = new URL(withBase('/img/logo-mark-512.png'), Astro.site).href;
 
   <main id="main">
     <Hero />
-    <Servicios />
-    <TiraFotos />
     <Credenciales />
-    <Nosotras />
+    <Servicios />
     <Valores />
+    <Nosotras />
     <Contacto />
   </main>
 

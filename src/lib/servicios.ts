@@ -1,5 +1,8 @@
+import type { NombreIcono } from './iconos';
+
 export interface Servicio {
   nombre: string;
+  icono: NombreIcono;
   texto: string;
   lista?: string[];
 }
@@ -21,13 +24,15 @@ export const fases: Fase[] = [
     servicios: [
       {
         nombre: 'Telefonía móvil',
+        icono: 'movil',
         texto:
-          'Te ayudamos a lanzar tu propio Operador Móvil Virtual (OMV): de la marca blanca al canal de distribución, listo para vender.',
+          'Te ayudamos a lanzar tu propio operador móvil virtual (OMV), desde la marca blanca hasta el canal de distribución, listo para vender.',
       },
       {
         nombre: 'Planes de negocio',
+        icono: 'planes',
         texto:
-          'Tu hoja de ruta antes de invertir: planes estratégicos, técnicos y comerciales para operadores locales y empresas de telecomunicaciones.',
+          'Planes estratégicos, técnicos y comerciales para que sepas si tu proyecto sale a cuenta antes de invertir en él.',
       },
     ],
   },
@@ -37,25 +42,28 @@ export const fases: Fase[] = [
     servicios: [
       {
         nombre: 'Servicios de FTTH',
+        icono: 'fibra',
         texto:
-          'Vende fibra sin desplegar red propia: servicio mayorista de bitstream FTTH, pensado para operadores locales y revendedores.',
+          'Vende fibra sin desplegar red propia con nuestro servicio mayorista de bitstream FTTH, pensado para operadores locales y nacionales y para revendedores.',
       },
       {
         nombre: 'Infraestructura de redes',
+        icono: 'red',
         texto:
-          'Diseño, monitoreo y respaldo de la red: la infraestructura troncal completa para que tu operador no se quede nunca sin servicio.',
+          'Diseñamos tu red troncal, la monitorizamos y le damos respaldo para que tus clientes sigan conectados aunque algo falle.',
         lista: [
           'Infraestructura troncal',
-          'Servicios de tránsito IP',
-          'Monitoreo de redes',
+          'Tránsito IP',
+          'Monitorización de redes',
           'Conexiones punto a punto',
           'Líneas de respaldo',
           'Acceso dedicado directo',
-          'Red privada virtual (LAN)',
+          'Red privada virtual (VPN)',
         ],
       },
       {
-        nombre: 'Adquisición de redes',
+        nombre: 'Compraventa de redes',
+        icono: 'compraventa',
         texto:
           'Te acompañamos en todo el proceso, tanto si compras una red como si vendes la tuya.',
       },
@@ -66,22 +74,20 @@ export const fases: Fase[] = [
     nombre: 'Operar',
     servicios: [
       {
-        nombre: 'Formación ventas',
+        nombre: 'Formación en ventas',
+        icono: 'formacion',
         texto:
-          'Formamos a tu equipo de ventas, gestores de cuentas y atención al cliente para que vendan con soltura desde el primer día.',
+          'Formamos a tus comerciales, a tus gestores de cuentas y a tu equipo de atención al cliente para que vendan con soltura desde el primer día.',
       },
       {
-        nombre: 'Otros servicios',
-        texto: 'El resto de piezas que un operador necesita, todas bajo el mismo techo:',
-        lista: [
-          'Chatbot',
-          'Plataforma de SMS profesional',
-          'Numeración 800/900',
-          'Centralita virtual',
-          'Gestión de trámites',
-          'Plataforma de TV',
-        ],
+        nombre: 'Servicios para empresas',
+        icono: 'empresas',
+        texto:
+          'Haz crecer tu negocio entre las empresas de tu zona con wifi profesional, conectividad avanzada y ciberseguridad. Servicios de valor añadido para diferenciar tu oferta, captar nuevos clientes y vender más a tu cartera actual.',
       },
     ],
   },
 ];
+
+/** Ancla de cada fase en Servicios (#fase-lanzar…), a la que lleva el índice de fases. */
+export const idFase = (nombre: string) => `fase-${nombre.toLowerCase()}`;

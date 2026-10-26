@@ -9,7 +9,7 @@ const enHome = Astro.url.pathname === withBase('/');
 const ancla = (id: string) => (enHome ? `#${id}` : withBase(`/#${id}`));
 
 const enlace =
-  'border-b-2 border-transparent py-1 font-display text-[0.9rem] font-bold tracking-[0.02em] text-white no-underline transition-colors duration-200 ease-suave hover:border-teal-light focus-visible:border-teal-light max-[780px]:border-b max-[780px]:border-white/10 max-[780px]:px-4 max-[780px]:py-[0.9rem]';
+  'border-b-2 border-transparent py-1 font-display text-[0.9rem] font-bold tracking-[0.02em] text-white no-underline transition-colors duration-200 ease-suave hover:border-teal-light focus-visible:border-teal-light aria-[current=true]:border-teal-light max-[780px]:border-b max-[780px]:border-white/10 max-[780px]:px-4 max-[780px]:py-[0.9rem]';
 ---
 
 <header
@@ -18,12 +18,23 @@ const enlace =
 >
   <div class="mx-auto flex w-full max-w-ancho items-center gap-6 px-4">
     <a
-      class="mr-auto flex items-center"
+      class="mr-auto flex items-center gap-2.5"
       href={enHome ? '#hero' : withBase('/')}
       aria-label={`${nombreSitio}, inicio`}
     >
-      {/* El SVG es teal sobre transparente: se lee igual sobre el hero que sobre la cabecera
-          ya rellena de carbón, así que no hace falta invertirlo a blanco. */}
+      {/* Logotipo completo: símbolo y palabra. Los dos SVG son teal sobre transparente: se leen
+          igual sobre el hero que sobre la cabecera ya rellena de carbón, así que no hace falta
+          invertirlos a blanco. El símbolo es decorativo: el nombre del enlace lo da el aria-label.
+          Se alinea con las minúsculas de «magma», no con su caja, que incluye la cola de la g:
+          el centro de las minúsculas cae al 35 % del alto de la palabra, 4 px por encima del
+          centro de la caja. Mide 28 px, así sobresale lo mismo por arriba y por abajo. */}
+      <img
+        class="relative -top-1 size-7"
+        src={withBase('/img/simbolo.svg')}
+        alt=""
+        width="28"
+        height="28"
+      />
       <img
         class="h-[28px] w-[140px]"
         src={withBase('/img/logo.svg')}
@@ -132,6 +143,39 @@ const enlace =
 
     movil.addEventListener('change', sincronizar);
     sincronizar();
+    // La transición de apertura/cierre (global.css) se activa ya cerrado, en el siguiente
+    // fotograma: si no, al cargar en móvil se vería el menú recogerse.
+    requestAnimationFrame(() => nav.setAttribute('data-animar', ''));
+  }
+
+  // ---- Sección activa en el menú --------------------------------------------------
+  // Marca con aria-current el enlace de la sección que ocupa el centro de la pantalla.
+  // Solo en la home, donde los enlaces son anclas.
+  if (nav) {
+    const enlaces = new Map<Element, HTMLAnchorElement>();
+    nav.querySelectorAll<HTMLAnchorElement>('a[href^="#"]').forEach((a) => {
+      const seccion = document.querySelector(a.getAttribute('href') ?? '');
+      if (seccion) enlaces.set(seccion, a);
+    });
+
+    if (enlaces.size && 'IntersectionObserver' in window) {
+      const observador = new IntersectionObserver(
+        (entradas) => {
+          entradas.forEach((entrada) => {
+            const enlace = enlaces.get(entrada.target);
+            if (!enlace) return;
+            if (entrada.isIntersecting) {
+              enlaces.forEach((a) => a.removeAttribute('aria-current'));
+              enlace.setAttribute('aria-current', 'true');
+            } else if (enlace.getAttribute('aria-current')) {
+              enlace.removeAttribute('aria-current');
+            }
+          });
+        },
+        { rootMargin: '-45% 0px -50% 0px' },
+      );
+      enlaces.forEach((_, seccion) => observador.observe(seccion));
+    }
   }
 
   // ---- Fondo de la cabecera al hacer scroll -------------------------------------

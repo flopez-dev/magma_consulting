@@ -1,7 +1,7 @@
 # Magma Consulting
 
 Web estática de Magma Consulting (MDC Strategic Consulting, S.L.), consultoría de
-telecomunicaciones para operadores locales. Construida con [Astro](https://astro.build/) y
+telecomunicaciones para operadores locales y nacionales. Construida con [Astro](https://astro.build/) y
 [Tailwind CSS v4](https://tailwindcss.com/), desplegada como Worker de Cloudflare en
 [magma-consulting.com](https://magma-consulting.com).
 
@@ -28,12 +28,13 @@ Convenciones del repo (base path, Tailwind v4, maquetación) están en
 | Rama                   | Destino                                                                         |
 | :--------------------- | :------------------------------------------------------------------------------ |
 | `main`                 | Cloudflare Workers, en [magma-consulting.com](https://magma-consulting.com) — producción |
-| `develop` y otras / PR | Solo CI: formato, lint, tipos, build y tests e2e (no se publican)               |
+| `develop`              | GitHub Pages, en [flopez-dev.github.io/magma_consulting](https://flopez-dev.github.io/magma_consulting/) — test, con noindex |
+| Otras / PR             | Solo CI: formato, lint, tipos, build y tests e2e (no se publican)               |
 
 `astro.config.mjs` lee `SITE_URL` y `BASE_PATH` de variables de entorno. Por defecto el sitio
 se construye bajo `/magma_consulting/` (en local y en el CI, para comprobar los enlaces
-internos) y bajo `/` en Cloudflare, en el dominio propio. El repositorio es privado y no hay
-ninguna preview publicada.
+internos) y bajo `/` en Cloudflare, en el dominio propio. La copia de `develop` en GitHub
+Pages se construye con `NOINDEX_SITE=true` para que no se indexe.
 
 ## Puesta en marcha (configuración manual, fuera del repo)
 
@@ -69,6 +70,14 @@ y el apex apunta al WordPress. Antes del primer deploy:
    los sobrescribe y el deploy falla si existen.
 4. En **Security → Bots**, dejar desactivado Bot Fight Mode / JavaScript Detections: si no,
    Cloudflare instala la cookie `cf_clearance` y `/cookies/` dejaría de ser cierta.
+
+5. En **Rules → Redirect Rules**, crear una regla «Redirect from WWW to root» (plantilla de
+   Cloudflare): `https://www.magma-consulting.com/*` → `https://magma-consulting.com/${1}`, 301,
+   conservando la query string. Hoy el WordPress hace ese 301; sin la regla, `www` serviría una
+   copia con código 200. `_redirects` no puede hacerlo porque cambia de dominio.
+6. En **SSL/TLS → Edge Certificates**, activar «Always Use HTTPS».
+7. El día del cambio, en Google Search Console: verificar el dominio por DNS, enviar
+   `https://magma-consulting.com/sitemap-index.xml` y retirar el antiguo `wp-sitemap.xml`.
 
 `public/_redirects` lleva las URLs del WordPress (`/servicios/`, `/nosotras/`,
 `/politica-de-privacidad-2/`…) a sus equivalentes, así que no se pierden enlaces ni

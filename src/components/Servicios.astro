@@ -1,42 +1,78 @@
 ---
-import { fases } from '../lib/servicios';
+import { fases, idFase } from '../lib/servicios';
+import { iconoCorreo, iconos, viewBoxPhosphor } from '../lib/iconos';
+import { mailtoHref } from '../lib/contacto';
+import Icono from './Icono.astro';
+import IndiceFases from './IndiceFases.astro';
+
+// La entradilla pide «busca la fase en la que estás y escríbenos»: cada fase lleva su enlace de
+// correo con el asunto ya puesto, para que el mensaje llegue identificado. Encima, el índice
+// visual de las tres fases lleva a cada una.
+const mailtoFase = (nombre: string) =>
+  `${mailtoHref}?subject=${encodeURIComponent(`Consulta sobre la fase «${nombre}»`)}`;
 ---
 
 <section id="servicios" class="seccion" aria-labelledby="servicios-title">
   <div class="seccion-interior">
     <p class="eyebrow">Servicios</p>
-    <h2 id="servicios-title">Siete capacidades, un mismo equipo</h2>
+    <h2 id="servicios-title">Sumamos capacidades, multiplicamos soluciones</h2>
     <p class="seccion-entradilla">
-      De la idea a la operación diaria, en tres fases: lanzar tu proyecto, conectar tu red y operar
-      con un equipo formado. Esto es lo que hacemos en cada una.
+      Acompañamos a tu operador desde la idea hasta la venta diaria. Busca la fase en la que estás y
+      escríbenos para empezar por ahí.
     </p>
 
-    {/* Sigue leyéndose como documento de capacidades, no como tarjetas: filetes entre fases y
-        uno corto teal a la izquierda de cada servicio, el mismo lenguaje de líneas que la
-        línea de falla del hero. */}
+    <IndiceFases />
+
+    {/* Sigue leyéndose como documento de capacidades, no como tarjetas: filetes entre fases y,
+        en cada servicio, un icono en un cuadro teal suave que da un ancla visual al recorrer la
+        lista. Los iconos son decorativos (el nombre del servicio ya lo dice todo). */}
     <div class="mt-12 border-t border-mist-deep">
       {fases.map((fase) => (
-        <div class="reveal grid grid-cols-[14rem_1fr] gap-8 border-b border-mist-deep py-10 max-[720px]:grid-cols-1 max-[720px]:gap-4 max-[720px]:py-8">
-          <div class="flex items-baseline gap-[0.85rem]">
-            <span class="font-display text-[1.6rem] font-extrabold text-teal">{fase.numero}</span>
-            <h3 class="m-0 text-[1.4rem] tracking-[0.04em] uppercase max-[480px]:text-[1.2rem]">
-              {fase.nombre}
-            </h3>
+        <div
+          id={idFase(fase.nombre)}
+          class="reveal grid grid-cols-[14rem_1fr] gap-8 border-b border-mist-deep py-10 max-[720px]:grid-cols-1 max-[720px]:gap-4 max-[720px]:py-8"
+        >
+          <div>
+            <div class="flex items-baseline gap-[0.85rem]">
+              <span class="font-display text-[1.6rem] font-extrabold text-teal">{fase.numero}</span>
+              <h3 class="m-0 text-[1.4rem] tracking-[0.04em] uppercase max-[480px]:text-[1.2rem]">
+                {fase.nombre}
+              </h3>
+            </div>
+            <a
+              class="mt-3 inline-flex items-center gap-2 py-1 font-display text-[0.9rem] font-bold text-teal-deep no-underline transition-colors duration-200 ease-suave hover:text-carbon hover:underline focus-visible:text-carbon max-[720px]:mt-1"
+              href={mailtoFase(fase.nombre)}
+            >
+              <Icono d={iconoCorreo} class="size-[1.1em] flex-none" />
+              Hablemos de esta fase
+              <span class="sr-only">({fase.nombre})</span>
+            </a>
           </div>
           <div class="grid gap-7">
             {fase.servicios.map((s) => (
-              <article class="border-l-2 border-teal pl-[1.1rem]">
-                <h4 class="mb-[0.4rem] font-display text-[1.2rem] font-bold text-carbon">
+              <article class="grid grid-cols-[2.75rem_1fr] items-start gap-x-4 max-[720px]:grid-cols-[2.25rem_1fr] max-[720px]:items-center max-[720px]:gap-x-3">
+                {/* En escritorio el icono queda en su columna junto a todo el bloque; en móvil
+                    solo acompaña al título y el texto usa el ancho completo. */}
+                <span class="row-span-2 flex size-11 items-center justify-center rounded-lg bg-teal/10 text-teal-deep max-[720px]:row-span-1 max-[720px]:size-9">
+                  <Icono
+                    d={iconos[s.icono]}
+                    viewBox={viewBoxPhosphor}
+                    class="size-6 max-[720px]:size-5"
+                  />
+                </span>
+                <h4 class="mt-[0.45rem] mb-0 self-start font-display text-[1.2rem] font-bold text-carbon max-[720px]:mt-0 max-[720px]:self-center">
                   {s.nombre}
                 </h4>
-                <p class="m-0 max-w-[60ch] text-ink-soft">{s.texto}</p>
-                {s.lista && (
-                  <ul class="mt-3 list-none columns-2 gap-x-8 p-0 text-ink-soft max-[480px]:columns-1">
-                    {s.lista.map((item) => (
-                      <li class="break-inside-avoid py-[0.2rem]">{item}</li>
-                    ))}
-                  </ul>
-                )}
+                <div class="col-start-2 mt-[0.4rem] max-[720px]:col-span-2 max-[720px]:col-start-1 max-[720px]:mt-2">
+                  <p class="m-0 max-w-[60ch] text-ink-soft">{s.texto}</p>
+                  {s.lista && (
+                    <ul class="mt-3 max-w-[36rem] list-none columns-2 gap-x-8 p-0 text-ink-soft max-[480px]:columns-1">
+                      {s.lista.map((item) => (
+                        <li class="break-inside-avoid py-[0.2rem]">{item}</li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
               </article>
             ))}
           </div>

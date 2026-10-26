@@ -3,16 +3,27 @@
 # URLs de la web anterior en WordPress (sacadas de su wp-sitemap.xml), que siguen indexadas
 # y enlazadas. Las secciones que eran páginas propias pasan a ser anclas de la home; las
 # legales cambian de nombre. Las páginas de relleno de la plantilla (elementor-8, portfolio,
-# team) van a la home o a #nosotras.
+# team) van a la home o a #nosotras. Cada URL va con y sin barra final, porque WordPress
+# resolvía las dos. `www` → apex no puede ir aquí (es otro dominio): es una Redirect Rule del
+# panel de Cloudflare, ver README.md.
 /nosotras/                  /#nosotras     301
+/nosotras                   /#nosotras     301
 /valores/                   /#valores      301
+/valores                    /#valores      301
 /servicios/                 /#servicios    301
+/servicios                  /#servicios    301
 /contacto/                  /#contacto     301
+/contacto                   /#contacto     301
 /team/*                     /#nosotras     301
 /politica-de-cookies/       /cookies/      301
+/politica-de-cookies        /cookies/      301
 /politica-de-privacidad-2/  /privacidad/   301
+/politica-de-privacidad-2   /privacidad/   301
 /politi/                    /privacidad/   301
+/politi                     /privacidad/   301
 /elementor-8/               /              301
+/elementor-8                /              301
 /portfolio/*                /              301
 /sitemap.xml                /sitemap-index.xml  301
 /wp-sitemap.xml             /sitemap-index.xml  301
+/wp-sitemap-*               /sitemap-index.xml  301

@@ -1,6 +1,7 @@
 ---
 import { socias } from '../lib/equipo';
 import { iconoLinkedin } from '../lib/iconos';
+import { nombreSitio } from '../lib/sitio';
 import { withBase } from '../lib/withBase';
 import Icono from './Icono.astro';
 
@@ -12,40 +13,41 @@ const foto = (nombre: string, ext: string) => withBase(`/img/equipo/${nombre}.${
     <p class="eyebrow">Nosotras</p>
     <h2 id="nosotras-title">Dos socias, una misma trayectoria</h2>
     <p class="seccion-entradilla">
-      Llevamos trabajando juntas en el mercado de las telecomunicaciones más de 20 años, siendo
-      parte de empresas líderes del sector.
+      Te atendemos nosotras mismas, de principio a fin. Quien te asesora conoce el mercado del
+      operador local desde dentro.
     </p>
 
-    {/* Sin loading="lazy" en los retratos, por el mismo motivo que la tira de fotografía. */}
-    <div class="mt-12 grid grid-cols-2 gap-12 max-[720px]:grid-cols-1 max-[720px]:gap-10">
+    {/* Sin loading="lazy" en los retratos: con lazy, una captura de página completa los saca en blanco. */}
+    {/* Una socia por fila: retrato de 17rem a la izquierda y su ficha a la derecha, separadas
+        por un filete. En móvil, el retrato va encima, apaisado y recortado por arriba. */}
+    <div class="mt-12 grid border-t border-mist-deep">
       {socias.map((s) => (
-        <article class="miembro reveal">
-          <picture class="retrato block aspect-square overflow-hidden rounded-lg bg-mist">
+        <article class="miembro reveal grid grid-cols-[17rem_1fr] items-start gap-10 border-b border-mist-deep py-10 max-[720px]:grid-cols-1 max-[720px]:gap-5 max-[720px]:py-8">
+          <picture class="retrato block aspect-square overflow-hidden rounded-lg bg-mist max-[720px]:aspect-[4/3]">
             <source srcset={foto(s.foto.nombre, 'webp')} type="image/webp" />
             <img
-              class="size-full object-cover"
+              class="size-full object-cover object-top"
               src={foto(s.foto.nombre, 'jpg')}
-              alt={`Retrato de ${s.nombre}`}
+              alt={`${s.nombre}, socia de ${nombreSitio}`}
               decoding="async"
               width={s.foto.ancho}
               height={s.foto.alto}
             />
           </picture>
-          <div class="mt-5">
+          <div>
             <h3>{s.nombre}</h3>
-            <p class="mb-3 font-display font-bold text-teal-deep">{s.cargo}</p>
             <p>{s.bio}</p>
             {/* La bio corta siempre visible; el resto de la trayectoria se despliega a
                   demanda en vez de alargar cada tarjeta por defecto. */}
             <details class="ver-mas -mt-1 mb-3">
-              <summary class="inline-block cursor-pointer font-display text-[0.85rem] font-bold text-teal-deep hover:text-carbon focus-visible:text-carbon">
+              <summary class="inline-block cursor-pointer font-display text-[0.85rem] font-bold text-teal-deep transition-colors duration-200 ease-suave hover:text-carbon focus-visible:text-carbon">
                 Ver más
               </summary>
               <p class="mt-[0.6rem] mb-0 text-[0.95rem] text-ink-soft">{s.masBio}</p>
             </details>
             <p class="text-[0.9rem] text-ink-soft">{s.trayectoria}</p>
             <a
-              class="mt-2 inline-flex items-center gap-2 font-display text-[0.9rem] font-bold text-teal-deep no-underline hover:text-carbon focus-visible:text-carbon"
+              class="mt-2 inline-flex items-center gap-2 font-display text-[0.9rem] font-bold text-teal-deep no-underline transition-colors duration-200 ease-suave hover:text-carbon focus-visible:text-carbon"
               href={s.linkedin}
               target="_blank"
               rel="noopener"

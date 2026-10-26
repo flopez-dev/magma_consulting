@@ -46,7 +46,7 @@ sección de `src/components/` y `src/styles/global.css`.
 ## Capas de Tailwind
 
 - Utilidades en el marcado. En `global.css`, capa `components`, solo lo que no cabe:
-  pseudo-elementos (`.nav-toggle-barras`, `.tira-foto`, `.ver-mas`, `.valores-extra`), reglas en
+  pseudo-elementos (`.nav-toggle-barras`, `.ver-mas`, `.valores-extra`), reglas en
   cascada (`.seccion-oscura`, `.legal-contenido`) y estado que escribe el JS (`.reveal`).
 - Las utilidades ganan a `components`: no poner una utilidad de `display`/`margin` en un elemento
   cuya clase de componente ya los fija.
@@ -58,7 +58,12 @@ sección de `src/components/` y `src/styles/global.css`.
 - Foco visible global (`:focus-visible`, 3 px teal); no quitarlo.
 - Enlaces que abren pestaña nueva: `target="_blank" rel="noopener"` y un `<span class="sr-only">
   (se abre en una pestaña nueva)</span>` (lo comprueba un test).
-- Iconos decorativos con `aria-hidden` (el componente `Icono` lo hace solo).
+- Iconos decorativos con `aria-hidden` (el componente `Icono` lo hace solo). Siempre de
+  `src/lib/iconos.ts`: Phosphor peso regular (`viewBox={viewBoxPhosphor}`), en `text-teal` o
+  `text-teal-deep`; nunca otra familia de iconos ni una librería externa.
 - Nada se mueve con `prefers-reduced-motion: reduce` (ni el vídeo del hero, ni el reveal, ni el
-  indicador de scroll, ni el zoom de las fotos); sin JS, todo el contenido sigue visible.
+  menú móvil, ni el «Ver más», ni el indicador de scroll, ni los botones o el zoom de las fotos;
+  usa `motion-safe:` en las utilidades de movimiento); sin JS, todo el contenido sigue visible.
+  Los hover que cambian algo más que el color van en `@media (hover: hover)`.
+- Ningún «--» ni raya (—, –) en texto visible, metas, alt ni `content:` de CSS.
 - Los textos con un enlace en medio necesitan `{' '}` explícito donde Prettier parte la línea.
