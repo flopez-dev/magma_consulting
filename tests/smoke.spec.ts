@@ -2,7 +2,8 @@ import { test, expect } from '@playwright/test';
 
 // Batería mínima de lo que se comprobó a mano al migrar la landing: un único h1, sin errores
 // de consola ni overflow horizontal, el menú móvil, el enlace «Ir al contenido», los
-// landmarks, los invariantes de SEO y la 404.
+// landmarks, los invariantes de SEO y la 404. Al final, lo propio del rediseño de octubre de
+// 2026: orden del menú, índice de fases, vídeo con pausa y la escena de partículas del hero.
 // '' (no '/') para la home: con un baseURL que acaba en `/magma_consulting/`, un path que
 // empiece por '/' resuelve contra el origen y se sale del base path.
 const PAGES = ['', 'aviso-legal/', 'privacidad/', 'cookies/'];
@@ -281,10 +282,10 @@ test('el contacto abre el correo con el asunto puesto', async ({ page }) => {
     'href',
     'mailto:info@magma-consulting.com?subject=Consulta%20desde%20la%20web',
   );
-  await expect(page.getByRole('link', { name: 'Cuéntanos tu proyecto' })).toHaveAttribute(
-    'href',
-    '#contacto',
-  );
+  // Está en el hero y al final de Trayectoria.
+  const ctas = page.getByRole('link', { name: 'Cuéntanos tu proyecto' });
+  await expect(ctas).toHaveCount(2);
+  for (const cta of await ctas.all()) await expect(cta).toHaveAttribute('href', '#contacto');
 });
 
 test('Trayectoria muestra la línea de cuatro hitos antes del texto del cliente', async ({
@@ -313,5 +314,121 @@ for (const path of ['', 'aviso-legal/']) {
     await expect(pie).toContainText('MDC Strategic Consulting, S.L.');
     await expect(pie.locator('address')).toContainText('28028 Madrid');
     await expect(pie.locator('a[href^="mailto:"]')).toHaveText('info@magma-consulting.com');
+  });
+}
+
+test('el menú sigue el orden de la página: la prueba antes que los servicios', async ({
+  page,
+  isMobile,
+}) => {
+  await page.goto('');
+  if (isMobile) await page.locator('[data-nav-toggle]').click();
+  const enlaces = await page
+    .locator('#nav a')
+    .evaluateAll((as) => as.map((a) => a.getAttribute('href')));
+  expect(enlaces).toEqual(['#credenciales', '#servicios', '#nosotras', '#contacto']);
+});
+
+test('el índice de fases lleva a cada fase, que abre el correo con su asunto', async ({ page }) => {
+  await page.goto('');
+  const indice = page.locator('#servicios ul a[href^="#fase-"]');
+  const destinos = await indice.evaluateAll((as) => as.map((a) => a.getAttribute('href')));
+  expect(destinos).toEqual(['#fase-lanzar', '#fase-conectar', '#fase-operar']);
+
+  await indice.nth(1).click();
+  await expect(page).toHaveURL(/#fase-conectar$/);
+  await expect(page.locator('#fase-conectar')).toBeInViewport();
+
+  const asuntos = await page
+    .locator('#servicios a[href^="mailto:"]')
+    .evaluateAll((as) =>
+      as.map((a) => new URL(a.getAttribute('href') ?? '').searchParams.get('subject')),
+    );
+  expect(asuntos).toEqual([
+    'Consulta sobre la fase «Lanzar»',
+    'Consulta sobre la fase «Conectar»',
+    'Consulta sobre la fase «Operar»',
+  ]);
+});
+
+test('el vídeo del hero se puede pausar y en móvil no se descarga', async ({ page, isMobile }) => {
+  await page.goto('');
+  const boton = page.locator('[data-hero-pausa]');
+  if (isMobile) {
+    await expect(boton).toBeHidden();
+    await expect(page.locator('[data-hero-video] source')).toHaveCount(0);
+    return;
+  }
+  // Con escena, el vídeo (y su botón) esperan al final del recorrido del hero.
+  await page.evaluate(() => {
+    const hero = document.getElementById('hero')!;
+    window.scrollTo(0, hero.offsetHeight - window.innerHeight);
+  });
+  await expect(boton).toBeVisible();
+  await expect(boton).toHaveAccessibleName('Pausar el vídeo de fondo');
+  await boton.click();
+  await expect(boton).toHaveAccessibleName('Reanudar el vídeo de fondo');
+  expect(await page.locator('[data-hero-video]').evaluate((v: HTMLVideoElement) => v.paused)).toBe(
+    true,
+  );
+});
+
+test('el símbolo de la marca está en el hero y es decorativo', async ({ page }) => {
+  await page.goto('');
+  await expect(page.locator('#hero [data-hero-simbolo]')).toHaveAttribute('alt', '');
+  await expect(page.locator('#hero [data-hero-simbolo]')).toHaveAttribute('src', /simbolo\.svg$/);
+  await expect(page.locator('#hero [data-hero-marca]')).toHaveAttribute('aria-hidden', 'true');
+});
+
+test('la escena del hero forma la red y el símbolo, y el vídeo toma el relevo', async ({
+  page,
+}) => {
+  await page.goto('');
+  await expect(page.locator('#hero')).toHaveAttribute('data-escena', 'viva');
+  await expect(page.locator('[data-particulas]')).toBeVisible();
+
+  // El hero es más alto que la pantalla: es el tramo que se recorre con el escenario fijo.
+  const { altoHero, altoPantalla } = await page.evaluate(() => ({
+    altoHero: document.getElementById('hero')?.offsetHeight ?? 0,
+    altoPantalla: window.innerHeight,
+  }));
+  expect(altoHero).toBeGreaterThan(altoPantalla * 1.8);
+
+  // Al principio solo hay puntos; al final, el vídeo a su opacidad de siempre y el símbolo.
+  const opacidad = (selector: string) => () =>
+    page.locator(selector).evaluate((e) => Number(getComputedStyle(e).opacity).toFixed(2));
+  expect(await opacidad('[data-hero-video]')()).toBe('0.00');
+  expect(await opacidad('[data-hero-marca]')()).toBe('0.00');
+  await page.evaluate((y) => window.scrollTo(0, y), altoHero - altoPantalla);
+  await expect.poll(opacidad('[data-hero-video]')).toBe('0.40');
+  await expect.poll(opacidad('[data-hero-marca]')).toBe('1.00');
+  await expect(page.locator('[data-particulas]')).toHaveCSS('opacity', '0');
+});
+
+test.describe('con movimiento reducido', () => {
+  test.use({ reducedMotion: 'reduce' });
+
+  test('el hero no monta la escena y enseña el poster y el símbolo fijos', async ({ page }) => {
+    await page.goto('');
+    await expect(page.locator('#hero')).not.toHaveAttribute('data-escena', 'viva');
+    await expect(page.locator('[data-particulas]')).toBeHidden();
+    await expect(page.locator('.hero-recorrido')).toHaveCSS('height', '0px');
+    await expect(page.locator('[data-hero-video]')).toHaveCSS('opacity', '0.4');
+    await expect(page.locator('[data-hero-marca]')).toHaveCSS('opacity', '1');
+  });
+});
+
+// El logotipo completo (símbolo y palabra) en la cabecera y el pie de todas las páginas.
+for (const path of ['', 'aviso-legal/']) {
+  test(`la cabecera y el pie de ${path || '/'} llevan el logotipo completo`, async ({ page }) => {
+    await page.goto(path);
+    for (const zona of ['#site-header', 'body > footer']) {
+      const enlace = page.locator(`${zona} a[aria-label$=", inicio"]`);
+      await expect(enlace.locator('img[src$="simbolo.svg"]')).toHaveAttribute('alt', '');
+      await expect(enlace.locator('img[src$="logo.svg"]')).toHaveAttribute(
+        'alt',
+        'Magma Consulting',
+      );
+    }
   });
 }

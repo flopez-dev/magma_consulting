@@ -1,11 +1,16 @@
 ---
-import { withBase } from '../../lib/withBase';
-import Icono from '../Icono.astro';
+import { withBase } from '../lib/withBase';
+import Icono from './Icono.astro';
 
-// Fondo del hero de las propuestas: el mismo vídeo de la home (Pexels, ver la procedencia y la
-// licencia en src/components/Hero.astro), pero sin <source> en el HTML. Las fuentes las pone
-// videoHero.ts solo cuando conviene descargarlo; si no, se queda el poster, que es su primer
-// fotograma. El slot es para lo que la v3 pinta encima (el canvas de partículas).
+// Fondo del hero: vídeo en bucle de «red de datos», la misma idea que el hero de la web anterior.
+// No es el archivo original (un asset de stock con licencia no transferible a otro dominio), sino
+// un clip equivalente de Pexels (licencia Pexels: libre para uso comercial, sin atribución
+// requerida), recortado a 10 s y recomprimido de 20,7 MB a unos 600 KB. Mantener esta nota junto
+// al asset (public/img/hero-bg.webm|mp4 y su poster).
+//
+// No lleva <source> en el HTML: las fuentes las pone src/lib/videoHero.ts solo cuando conviene
+// descargarlo; si no, se queda el poster, que es su primer fotograma. Opacidad baja sobre el
+// carbón para que no compita con el texto. El slot es para el canvas de partículas de Hero.astro.
 const pausa = 'M7 5h3.5v14H7zM13.5 5H17v14h-3.5z';
 const reproducir = 'M8 5.5v13l10.5-6.5z';
 ---

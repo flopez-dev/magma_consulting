@@ -1,12 +1,11 @@
 /**
- * Vídeo de fondo del hero de las propuestas (marcado en VideoFondo.astro). Cambios respecto a
- * la home:
+ * Vídeo de fondo del hero (marcado en VideoFondo.astro):
  * - Solo se descarga con pantalla ancha, sin ahorro de datos y sin movimiento reducido. En
  *   móvil se queda el poster: 600 KB de vídeo en bucle detrás del texto no compensan.
  * - Lleva un botón para pararlo (WCAG 2.2.2: nada se mueve más de 5 s sin forma de pararlo).
  *
- * Como en la home, se pausa fuera de pantalla y si la preferencia de movimiento cambia en vivo.
- * `permitir` deja que la v3 decida cuándo puede reproducirse (al terminar las partículas).
+ * Se pausa fuera de pantalla y si la preferencia de movimiento cambia en vivo. `permitir` deja
+ * que la escena de Hero.astro decida cuándo puede reproducirse (al terminar las partículas).
  */
 export function videoHero(raiz: ParentNode = document, { permitido: inicial = true } = {}) {
   const video = raiz.querySelector<HTMLVideoElement>('[data-hero-video]');

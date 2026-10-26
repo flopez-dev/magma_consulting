@@ -1,7 +1,15 @@
 ---
-import { fases } from '../lib/servicios';
-import { iconos, viewBoxPhosphor } from '../lib/iconos';
+import { fases, idFase } from '../lib/servicios';
+import { iconoCorreo, iconos, viewBoxPhosphor } from '../lib/iconos';
+import { mailtoHref } from '../lib/contacto';
 import Icono from './Icono.astro';
+import IndiceFases from './IndiceFases.astro';
+
+// La entradilla pide «busca la fase en la que estás y escríbenos»: cada fase lleva su enlace de
+// correo con el asunto ya puesto, para que el mensaje llegue identificado. Encima, el índice
+// visual de las tres fases lleva a cada una.
+const mailtoFase = (nombre: string) =>
+  `${mailtoHref}?subject=${encodeURIComponent(`Consulta sobre la fase «${nombre}»`)}`;
 ---
 
 <section id="servicios" class="seccion" aria-labelledby="servicios-title">
@@ -13,17 +21,32 @@ import Icono from './Icono.astro';
       escríbenos para empezar por ahí.
     </p>
 
+    <IndiceFases />
+
     {/* Sigue leyéndose como documento de capacidades, no como tarjetas: filetes entre fases y,
         en cada servicio, un icono en un cuadro teal suave que da un ancla visual al recorrer la
         lista. Los iconos son decorativos (el nombre del servicio ya lo dice todo). */}
     <div class="mt-12 border-t border-mist-deep">
       {fases.map((fase) => (
-        <div class="reveal grid grid-cols-[14rem_1fr] gap-8 border-b border-mist-deep py-10 max-[720px]:grid-cols-1 max-[720px]:gap-4 max-[720px]:py-8">
-          <div class="flex items-baseline gap-[0.85rem]">
-            <span class="font-display text-[1.6rem] font-extrabold text-teal">{fase.numero}</span>
-            <h3 class="m-0 text-[1.4rem] tracking-[0.04em] uppercase max-[480px]:text-[1.2rem]">
-              {fase.nombre}
-            </h3>
+        <div
+          id={idFase(fase.nombre)}
+          class="reveal grid grid-cols-[14rem_1fr] gap-8 border-b border-mist-deep py-10 max-[720px]:grid-cols-1 max-[720px]:gap-4 max-[720px]:py-8"
+        >
+          <div>
+            <div class="flex items-baseline gap-[0.85rem]">
+              <span class="font-display text-[1.6rem] font-extrabold text-teal">{fase.numero}</span>
+              <h3 class="m-0 text-[1.4rem] tracking-[0.04em] uppercase max-[480px]:text-[1.2rem]">
+                {fase.nombre}
+              </h3>
+            </div>
+            <a
+              class="mt-3 inline-flex items-center gap-2 py-1 font-display text-[0.9rem] font-bold text-teal-deep no-underline transition-colors duration-200 ease-suave hover:text-carbon hover:underline focus-visible:text-carbon max-[720px]:mt-1"
+              href={mailtoFase(fase.nombre)}
+            >
+              <Icono d={iconoCorreo} class="size-[1.1em] flex-none" />
+              Hablemos de esta fase
+              <span class="sr-only">({fase.nombre})</span>
+            </a>
           </div>
           <div class="grid gap-7">
             {fase.servicios.map((s) => (

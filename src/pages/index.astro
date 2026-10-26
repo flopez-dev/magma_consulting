@@ -3,7 +3,6 @@ import Base from '../layouts/Base.astro';
 import Header from '../components/Header.astro';
 import Hero from '../components/Hero.astro';
 import Servicios from '../components/Servicios.astro';
-import TiraFotos from '../components/TiraFotos.astro';
 import Credenciales from '../components/Credenciales.astro';
 import Nosotras from '../components/Nosotras.astro';
 import Valores from '../components/Valores.astro';
@@ -40,11 +39,10 @@ const logo = new URL(withBase('/img/logo-mark-512.png'), Astro.site).href;
 
   <main id="main">
     <Hero />
-    <Servicios />
-    <TiraFotos />
     <Credenciales />
-    <Nosotras />
+    <Servicios />
     <Valores />
+    <Nosotras />
     <Contacto />
   </main>
 

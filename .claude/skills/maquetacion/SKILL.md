@@ -46,7 +46,7 @@ sección de `src/components/` y `src/styles/global.css`.
 ## Capas de Tailwind
 
 - Utilidades en el marcado. En `global.css`, capa `components`, solo lo que no cabe:
-  pseudo-elementos (`.nav-toggle-barras`, `.tira-foto`, `.ver-mas`, `.valores-extra`), reglas en
+  pseudo-elementos (`.nav-toggle-barras`, `.ver-mas`, `.valores-extra`), reglas en
   cascada (`.seccion-oscura`, `.legal-contenido`) y estado que escribe el JS (`.reveal`).
 - Las utilidades ganan a `components`: no poner una utilidad de `display`/`margin` en un elemento
   cuya clase de componente ya los fija.

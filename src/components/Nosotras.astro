@@ -17,7 +17,7 @@ const foto = (nombre: string, ext: string) => withBase(`/img/equipo/${nombre}.${
       operador local desde dentro.
     </p>
 
-    {/* Sin loading="lazy" en los retratos, por el mismo motivo que la tira de fotografía. */}
+    {/* Sin loading="lazy" en los retratos: con lazy, una captura de página completa los saca en blanco. */}
     {/* Una socia por fila: retrato de 17rem a la izquierda y su ficha a la derecha, separadas
         por un filete. En móvil, el retrato va encima, apaisado y recortado por arriba. */}
     <div class="mt-12 grid border-t border-mist-deep">

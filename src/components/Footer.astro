@@ -12,8 +12,9 @@ const enlaces = [...secciones, contacto];
 
 const rotulo =
   'mt-0 mb-4 font-display text-[0.8rem] font-bold tracking-[0.12em] text-white uppercase';
+// Los enlaces miden al menos 24 px de alto (WCAG 2.5.8).
 const enlace =
-  'text-[0.9rem] text-inherit no-underline transition-colors duration-200 ease-suave hover:text-teal-light focus-visible:text-teal-light';
+  'inline-block py-1 text-[0.9rem] text-inherit no-underline transition-colors duration-200 ease-suave hover:text-teal-light focus-visible:text-teal-light';
 ---
 
 <footer class="border-t border-teal bg-carbon pt-14 pb-10 text-white/70">
@@ -23,10 +24,18 @@ const enlace =
     <div class="grid grid-cols-[1.4fr_1fr_1fr] gap-10 max-[720px]:grid-cols-1 max-[720px]:gap-8">
       <div>
         <a
-          class="inline-flex"
+          class="inline-flex items-center gap-2"
           href={enHome ? '#hero' : withBase('/')}
           aria-label={`${nombreSitio}, inicio`}
         >
+          {/* El mismo logotipo que la cabecera, en blanco y alineado igual (ver Header.astro). */}
+          <img
+            class="relative -top-[3px] size-[22px] opacity-90 brightness-0 invert"
+            src={withBase('/img/simbolo.svg')}
+            alt=""
+            width="22"
+            height="22"
+          />
           <img
             class="opacity-90 brightness-0 invert"
             src={withBase('/img/logo.svg')}
@@ -45,7 +54,7 @@ const enlace =
 
       <nav aria-label="Enlaces del pie">
         <p class={rotulo}>Secciones</p>
-        <ul class="m-0 grid list-none gap-2 p-0">
+        <ul class="m-0 grid list-none gap-1 p-0">
           {enlaces.map((e) => (
             <li>
               <a class={enlace} href={ancla(e.id)}>
@@ -58,7 +67,7 @@ const enlace =
 
       <div>
         <p class={rotulo}>Contacto</p>
-        <ul class="m-0 grid list-none gap-3 p-0">
+        <ul class="m-0 grid list-none gap-1 p-0">
           <li class="flex items-center gap-2">
             <Icono d={iconoCorreo} class="size-[1.1em] flex-none text-teal-light" />
             <a class={enlace} href={mailtoHref}>
@@ -86,7 +95,7 @@ const enlace =
           const href = withBase(l.ruta);
           return (
             <a
-              class="text-[0.8rem] text-inherit no-underline opacity-75 transition-[color,opacity] duration-200 ease-suave hover:text-teal-light hover:opacity-100 focus-visible:text-teal-light focus-visible:opacity-100"
+              class="inline-block py-1 text-[0.8rem] text-inherit no-underline opacity-75 transition-[color,opacity] duration-200 ease-suave hover:text-teal-light hover:opacity-100 focus-visible:text-teal-light focus-visible:opacity-100"
               href={href}
               aria-current={Astro.url.pathname === href ? 'page' : undefined}
             >

@@ -1,12 +1,11 @@
 ---
-import { fases } from '../../lib/servicios';
-import { withBase } from '../../lib/withBase';
-import Icono from '../Icono.astro';
-import { idFase } from './orden';
+import { fases, idFase } from '../lib/servicios';
+import { withBase } from '../lib/withBase';
+import Icono from './Icono.astro';
 
 // Índice visual de las tres fases, al principio de Servicios. Sustituye a la tira de fotos de la
-// home, que era solo decoración y cuya única interacción era el hover: aquí cada foto lleva a su
-// fase, con número, nombre y servicios, y funciona igual con el dedo y con el teclado. Las fotos
+// versión anterior, que era solo decoración y cuya única interacción era el hover: aquí cada foto
+// lleva a su fase, con número, nombre y servicios, y funciona igual con el dedo y con el teclado. Las fotos
 // son tres de las de la tira (stock de la web anterior, 500 px): sustituir por fotografía propia
 // en cuanto esté disponible. Son decorativas (alt vacío): el nombre del enlace es el texto. Al
 // pasar por encima (solo con puntero real, Tailwind v4 pone group-hover detrás de hover: hover)

@@ -88,3 +88,6 @@ export const fases: Fase[] = [
     ],
   },
 ];
+
+/** Ancla de cada fase en Servicios (#fase-lanzar…), a la que lleva el índice de fases. */
+export const idFase = (nombre: string) => `fase-${nombre.toLowerCase()}`;

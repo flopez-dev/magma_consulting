@@ -129,10 +129,15 @@
     color: var(--color-teal-deep);
   }
 
-  /* Foco visible, el mismo en toda la página */
+  /* Foco visible con 3:1 como mínimo (WCAG 1.4.11): teal-deep sobre las zonas claras (el teal
+     de marca da 2,4:1 sobre blanco y niebla) y teal-light sobre carbón. */
   :focus-visible {
-    outline: 3px solid var(--color-teal);
+    outline: 3px solid var(--color-teal-deep);
     outline-offset: 2px;
+  }
+
+  :is(#site-header, #hero, .seccion-oscura, footer) :focus-visible {
+    outline-color: var(--color-teal-light);
   }
 }
 
@@ -311,43 +316,16 @@
     }
   }
 
-  /* ---- Tira de fotografía: duotono (escala de grises + capa teal con mix-blend-mode)
-     para que el stock heterogéneo se lea como parte de la misma paleta. ---- */
-  .tira-foto {
-    &::after {
+  /* ---- Halo del símbolo del hero (desde 1024 px, donde es grande): un círculo de carbón que se
+     funde hacia fuera y apaga la red del vídeo alrededor del símbolo, para que se lea como foco
+     y no como un nodo más. ---- */
+  @media (min-width: 1024px) {
+    .hero-marca::before {
       content: '';
       position: absolute;
-      inset: 0;
-      background: var(--color-teal);
-      mix-blend-mode: color;
-      opacity: 0.85;
-      pointer-events: none;
-    }
-
-    & img {
-      filter: grayscale(1) contrast(1.05);
-    }
-  }
-
-  /* Solo con puntero real: en táctil el hover se quedaría pegado tras tocar. El cambio de
-     color no es movimiento; el zoom y las transiciones sí, y van aparte. */
-  @media (hover: hover) {
-    .tira-foto:hover img {
-      filter: grayscale(0.4) contrast(1.05);
-    }
-  }
-
-  @media (hover: hover) and (prefers-reduced-motion: no-preference) {
-    .tira-foto:hover img {
-      transform: scale(1.04);
-    }
-  }
-
-  @media (prefers-reduced-motion: no-preference) {
-    .tira-foto img {
-      transition:
-        filter 0.3s var(--ease-suave),
-        transform 0.4s var(--ease-suave);
+      inset: -45%;
+      border-radius: 50%;
+      background: radial-gradient(closest-side, var(--color-carbon) 45%, transparent);
     }
   }
 
@@ -379,6 +357,8 @@
      texto: así no hay ningún carácter de raya en la página. ---- */
   .ver-mas > summary {
     list-style: none;
+    /* Al menos 24 px de alto (WCAG 2.5.8). */
+    padding-block: 0.25rem;
 
     &::-webkit-details-marker {
       display: none;
@@ -459,5 +439,40 @@
       padding: 0.1em 0.35em;
       border-radius: 3px;
     }
+  }
+}
+
+/* ============ ESCENA DEL HERO ============
+   Sin JS o con movimiento reducido, el hero mide lo normal y enseña el poster (o el vídeo) y el
+   símbolo fijos. Con movimiento, la sección se alarga con un tramo vacío (.hero-recorrido) y el
+   escenario se queda fijo con sticky mientras se recorre; el vídeo y el símbolo arrancan
+   invisibles porque primero se ven los puntos (ver Hero.astro). html.js lo pone Base.astro antes
+   del primer pintado, así que no hay salto de maquetación. --tope lo calcula el script cuando el
+   escenario es más alto que la pantalla (móviles bajos): así se fija por abajo y no se corta el
+   texto. Fuera de capa a propósito: tiene que ganar a las utilidades del escenario (relative,
+   min-h-[92vh]) y a la opacidad del vídeo. .sin-escena la pone el script si no puede leer las
+   imágenes. */
+@media (prefers-reduced-motion: no-preference) {
+  html.js .hero-particulas:not(.sin-escena) {
+    & .hero-escenario {
+      position: sticky;
+      top: var(--tope, 0px);
+      min-height: 100svh;
+    }
+
+    & .hero-recorrido {
+      height: 140svh;
+    }
+
+    & [data-hero-video],
+    & [data-hero-marca] {
+      opacity: 0;
+    }
+  }
+}
+
+@media (max-width: 720px) and (prefers-reduced-motion: no-preference) {
+  html.js .hero-particulas:not(.sin-escena) .hero-recorrido {
+    height: 110svh;
   }
 }

@@ -18,12 +18,23 @@ const enlace =
 >
   <div class="mx-auto flex w-full max-w-ancho items-center gap-6 px-4">
     <a
-      class="mr-auto flex items-center"
+      class="mr-auto flex items-center gap-2.5"
       href={enHome ? '#hero' : withBase('/')}
       aria-label={`${nombreSitio}, inicio`}
     >
-      {/* El SVG es teal sobre transparente: se lee igual sobre el hero que sobre la cabecera
-          ya rellena de carbón, así que no hace falta invertirlo a blanco. */}
+      {/* Logotipo completo: símbolo y palabra. Los dos SVG son teal sobre transparente: se leen
+          igual sobre el hero que sobre la cabecera ya rellena de carbón, así que no hace falta
+          invertirlos a blanco. El símbolo es decorativo: el nombre del enlace lo da el aria-label.
+          Se alinea con las minúsculas de «magma», no con su caja, que incluye la cola de la g:
+          el centro de las minúsculas cae al 35 % del alto de la palabra, 4 px por encima del
+          centro de la caja. Mide 28 px, así sobresale lo mismo por arriba y por abajo. */}
+      <img
+        class="relative -top-1 size-7"
+        src={withBase('/img/simbolo.svg')}
+        alt=""
+        width="28"
+        height="28"
+      />
       <img
         class="h-[28px] w-[140px]"
         src={withBase('/img/logo.svg')}

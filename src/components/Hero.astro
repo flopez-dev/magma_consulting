@@ -1,111 +1,425 @@
 ---
-import { withBase } from '../lib/withBase';
-import Boton from './Boton.astro';
+import HeroContenido from './HeroContenido.astro';
+import VideoFondo from './VideoFondo.astro';
 
-// Las cifras (20 años, 800 operadores) ya están en la frase de encima: la franja enseña en su
-// lugar los OMV de referencia en cuyo lanzamiento participaron las socias.
-const hitos = ['Cablemóvil, primer OMV completo de España', 'Ion Mobile', 'Avatel Móvil'];
+// Hero con escena de scroll. Al cargar, el fondo es una nube de puntos revueltos; al bajar,
+// giran y se colocan hasta formar el poster del vídeo (la red de nodos) y, al final, el símbolo
+// de la marca, que entra girando como el molinillo que es. Después el vídeo y el símbolo de
+// verdad toman el relevo. Los puntos salen de las propias imágenes: el script las lee en un
+// canvas y pone una partícula donde el poster tiene luz y donde el símbolo tiene forma.
+//
+// Sin JS o con movimiento reducido no hay escena: el hero mide lo normal, con el poster (o el
+// vídeo) y el símbolo fijos (ver .hero-particulas en global.css). El movimiento solo avanza con
+// el scroll de quien lee, nunca solo, y no hay animación de entrada: el h1 sigue siendo el LCP.
 ---
 
-<section
-  id="hero"
-  class="relative flex min-h-[92vh] items-center overflow-hidden bg-carbon pt-[calc(var(--spacing-cabecera)+2rem)] pb-16 after:absolute after:inset-x-0 after:bottom-0 after:h-px after:bg-teal max-[560px]:min-h-0 max-[560px]:pt-[calc(var(--spacing-cabecera)+2.5rem)]"
-  aria-labelledby="hero-title"
->
-  {/* Elemento de firma: vídeo de fondo, misma idea que el hero de la web anterior (un bucle
-      de «red de datos» en el mismo estilo). No es el archivo original — ese es un asset de
-      stock con licencia no transferible a otro dominio — sino un clip equivalente de Pexels
-      (licencia Pexels: libre para uso comercial, sin atribución requerida), recortado a 10 s y
-      recomprimido de 20,7 MB a ~600 KB. Con movimiento reducido, el script de abajo quita el
-      autoplay y lo deja en el primer fotograma (el poster): nunca se reproduce para quien lo
-      pide. Opacidad baja sobre el fondo carbón para que no compita con el texto. */}
-  <div class="pointer-events-none absolute inset-0 z-0 overflow-hidden" aria-hidden="true">
-    <video
-      class="size-full object-cover opacity-40"
-      autoplay
-      muted
-      loop
-      playsinline
-      poster={withBase('/img/hero-bg-poster.jpg')}
-      data-hero-video
+<section id="hero" class="hero-particulas relative bg-carbon" aria-labelledby="hero-title">
+  <div class="hero-escenario relative flex min-h-[92vh] items-center overflow-hidden pt-[calc(var(--spacing-cabecera)+2rem)] pb-16 after:absolute after:inset-x-0 after:bottom-0 after:h-px after:bg-teal max-[560px]:min-h-0 max-[560px]:pt-[calc(var(--spacing-cabecera)+1.5rem)] max-[560px]:pb-12">
+    <VideoFondo>
+      <canvas class="absolute inset-0 size-full" hidden data-particulas></canvas>
+    </VideoFondo>
+    <HeroContenido />
+
+    <a
+      class="absolute bottom-8 left-1/2 z-1 h-[42px] w-[26px] -translate-x-1/2 rounded-[20px] border-2 border-white/50 max-[560px]:hidden [@media(max-height:820px)]:hidden"
+      href="#credenciales"
+      aria-label="Ir a trayectoria"
     >
-      <source src={withBase('/img/hero-bg.webm')} type="video/webm" />
-      <source src={withBase('/img/hero-bg.mp4')} type="video/mp4" />
-    </video>
+      <span
+        class="indicador-scroll absolute top-2 left-1/2 -ml-[2px] h-2 w-1 rounded-[2px] bg-teal-light"
+        aria-hidden="true"
+      ></span>
+    </a>
   </div>
 
-  <div class="relative z-1 mx-auto w-full max-w-ancho px-4">
-    <p class="eyebrow eyebrow-oscuro">Consultoría para operadores de telecomunicaciones</p>
-    <h1 id="hero-title">Ayudamos a operadores locales y nacionales a conectar España</h1>
-    <p class="max-w-[42ch] text-[1.2rem] text-white/85">
-      Más de 20 años impulsando las telecomunicaciones: lanzamos OMV, desplegamos redes FTTH y
-      desarrollamos infraestructuras. Más de 800 operadores forman parte de nuestra trayectoria.
-    </p>
-
-    <div class="mt-7 mb-10 flex flex-wrap gap-4">
-      {/* La conversión es el correo: el botón principal lleva a contacto. */}
-      <Boton href="#contacto">Cuéntanos tu proyecto</Boton>
-      <Boton href="#servicios" variante="contorno">
-        Ver servicios
-      </Boton>
-    </div>
-
-    <div class="max-w-[60ch] border-t border-white/15 pt-6">
-      <p id="hero-hitos" class="mb-2 text-[0.85rem] text-white/70">
-        Hemos formado parte del lanzamiento de
-      </p>
-      <ul
-        class="m-0 flex list-none flex-wrap gap-x-8 gap-y-2 p-0 font-display text-[0.9rem] font-bold text-teal-light"
-        aria-labelledby="hero-hitos"
-      >
-        {hitos.map((texto) => (
-          <li>{texto}</li>
-        ))}
-      </ul>
-    </div>
-  </div>
-
-  <a
-    class="absolute bottom-8 left-1/2 z-1 h-[42px] w-[26px] -translate-x-1/2 rounded-[20px] border-2 border-white/50 max-[560px]:hidden"
-    href="#servicios"
-    aria-label="Ir a servicios"
-  >
-    <span
-      class="indicador-scroll absolute top-2 left-1/2 -ml-[2px] h-2 w-1 rounded-[2px] bg-teal-light"
-      aria-hidden="true"
-    ></span>
-  </a>
+  {/* El tramo que se recorre con el escenario fijo. Sin escena mide 0 (ver global.css). */}
+  <div class="hero-recorrido" aria-hidden="true"></div>
 </section>
 
 <script>
-  // El atributo autoplay del <video> no puede condicionarse por CSS: quien pide movimiento
-  // reducido lo pierde aquí y el vídeo se queda fijo en el poster (su primer fotograma). La
-  // preferencia se vigila en vivo, y fuera de pantalla el vídeo se pausa: no hay movimiento
-  // que nadie esté viendo ni consumo de batería para nada.
-  const video = document.querySelector<HTMLVideoElement>('[data-hero-video]');
-  const reducido = window.matchMedia('(prefers-reduced-motion: reduce)');
+  import { videoHero } from '../lib/videoHero';
 
-  if (video) {
-    let enPantalla = true;
+  // Tramos de la escena, en fracción del recorrido: los puntos se juntan hasta FIN_UNION, el
+  // canvas cede al vídeo y al símbolo entre RELEVO_DESDE y RELEVO_HASTA y lo que queda es un
+  // respiro con la imagen ya formada antes de soltar el escenario.
+  const FIN_UNION = 0.75;
+  const RELEVO_DESDE = 0.8;
+  const RELEVO_HASTA = 0.95;
+  // Retardo máximo de los puntos de la red: no salen todos a la vez. Los del símbolo salen
+  // después (de RETARDO a RETARDO_SIMBOLO) y llegan todos a la vez al final: es lo último que se
+  // forma.
+  const RETARDO = 0.35;
+  const RETARDO_SIMBOLO = 0.5;
+  // Luminancia (0 a 255) desde la que el poster es red (líneas y nodos). Entre FONDO y UMBRAL
+  // está el halo del fondo, que lleva unos pocos puntos tenues; por debajo de FONDO, nada.
+  const UMBRAL = 36;
+  const FONDO = 20;
+  // Los colores de la red se agrupan por brillo en unos pocos tonos: así se cambia de fillStyle
+  // una vez por tono y no una por punto. El símbolo es un tono más, el teal de la marca.
+  const TONOS = 12;
+  const TEAL = '#24b29f';
+  const OPACIDAD_VIDEO = 0.4;
 
-    const actualizar = () => {
-      if (reducido.matches || !enPantalla) {
-        video.pause();
-      } else {
-        video.play().catch(() => {});
-      }
+  const seccion = document.querySelector<HTMLElement>('.hero-particulas');
+  const escenario = seccion?.querySelector<HTMLElement>('.hero-escenario');
+  const lienzo = seccion?.querySelector<HTMLCanvasElement>('[data-particulas]');
+  const video = seccion?.querySelector<HTMLVideoElement>('[data-hero-video]');
+  const simbolo = seccion?.querySelector<HTMLImageElement>('[data-hero-simbolo]');
+  // El envoltorio del símbolo, con su halo y su brillo: es lo que aparece en el relevo.
+  const marca = seccion?.querySelector<HTMLElement>('[data-hero-marca]');
+  const eyebrow = seccion?.querySelector<HTMLElement>('.eyebrow');
+  const ctx = lienzo?.getContext('2d');
+  const movimiento = window.matchMedia('(prefers-reduced-motion: no-preference)');
+  // Con escena, el vídeo espera a que los puntos terminen de formar la imagen.
+  const control = videoHero(seccion ?? document, { permitido: !movimiento.matches });
+
+  const limitar = (v: number) => Math.min(1, Math.max(0, v));
+  const suave = (desde: number, hasta: number, v: number) => {
+    const t = limitar((v - desde) / (hasta - desde));
+    return t * t * (3 - 2 * t);
+  };
+  const salida = (t: number) => 1 - (1 - t) ** 3;
+  const luminancia = (r: number, g: number, b: number) => 0.2126 * r + 0.7152 * g + 0.0722 * b;
+
+  interface Punto {
+    x: number;
+    y: number;
+    tono: number;
+    lado: number;
+    opacidad: number;
+    retardo: number;
+    tramo: number;
+    giro: number;
+    centroX: number;
+    centroY: number;
+  }
+
+  if (seccion && escenario && lienzo && video && simbolo && marca && eyebrow && ctx) {
+    const poster = new Image();
+    poster.src = video.poster;
+
+    let activa = false;
+    let ancho = 0;
+    let alto = 0;
+    let dpr = 1;
+    // Por partícula, ordenadas por tono: origen (en fracción del escenario), destino (px),
+    // tamaño y opacidad finales, retardo y duración (en fracción de la unión) y giro con su
+    // centro. `inicioTono[t]` es la primera de cada tono.
+    let origenX = new Float32Array(0);
+    let origenY = new Float32Array(0);
+    let destinoX = new Float32Array(0);
+    let destinoY = new Float32Array(0);
+    let lado = new Float32Array(0);
+    let opacidad = new Float32Array(0);
+    let retardo = new Float32Array(0);
+    let tramo = new Float32Array(0);
+    let giro = new Float32Array(0);
+    let centroX = new Float32Array(0);
+    let centroY = new Float32Array(0);
+    let inicioTono = new Uint32Array(TONOS + 2);
+    let colorTono: string[] = [];
+
+    let objetivo = 0;
+    let actual = 0;
+    let pintado = -1;
+    let fotograma = 0;
+
+    const lienzoDe = (w: number, h: number) => {
+      const muestra = document.createElement('canvas');
+      muestra.width = w;
+      muestra.height = h;
+      return muestra.getContext('2d', { willReadFrequently: true });
     };
 
-    if (reducido.matches) video.removeAttribute('autoplay');
-    reducido.addEventListener('change', actualizar);
+    // La red: el poster con el mismo encuadre que el vídeo (object-cover centrado), así la imagen
+    // que forman los puntos coincide con la que aparece después. Cada celda se queda con su píxel
+    // más brillante: con la media, las líneas de 1 px de la red se perderían.
+    const puntosRed = (paso: number, maximo: number): Punto[] => {
+      const mctx = lienzoDe(ancho, alto);
+      if (!mctx) return [];
+      const escala = Math.max(ancho / poster.naturalWidth, alto / poster.naturalHeight);
+      const w = poster.naturalWidth * escala;
+      const h = poster.naturalHeight * escala;
+      mctx.drawImage(poster, (ancho - w) / 2, (alto - h) / 2, w, h);
+      const datos = mctx.getImageData(0, 0, ancho, alto).data;
 
-    if ('IntersectionObserver' in window) {
-      new IntersectionObserver(([entrada]) => {
-        enPantalla = entrada.isIntersecting;
-        actualizar();
-      }).observe(video);
-    }
+      const candidatas: { x: number; y: number; luz: number; i: number }[] = [];
+      for (let cy = 0; cy < alto; cy += paso) {
+        for (let cx = 0; cx < ancho; cx += paso) {
+          let mejor = -1;
+          let luz = -1;
+          for (let y = cy; y < Math.min(cy + paso, alto); y++) {
+            for (let x = cx; x < Math.min(cx + paso, ancho); x++) {
+              const i = (y * ancho + x) * 4;
+              const l = luminancia(datos[i], datos[i + 1], datos[i + 2]);
+              if (l > luz) {
+                luz = l;
+                mejor = i;
+              }
+            }
+          }
+          if (luz < FONDO) continue;
+          // Más probabilidad cuanto más brilla.
+          const probabilidad =
+            luz < UMBRAL ? 0.06 : 0.35 + 0.65 * ((luz - UMBRAL) / (255 - UMBRAL)) ** 0.5;
+          if (Math.random() >= probabilidad) continue;
+          candidatas.push({
+            x: (mejor / 4) % ancho,
+            y: Math.floor(mejor / 4 / ancho),
+            luz,
+            i: mejor,
+          });
+        }
+      }
+      for (let i = candidatas.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [candidatas[i], candidatas[j]] = [candidatas[j], candidatas[i]];
+      }
+      const elegidas = candidatas.slice(0, maximo);
 
-    actualizar();
+      // Tono de cada una según su brillo, y el color de cada tono como la media de los suyos.
+      const tonoDe = (luz: number) =>
+        Math.min(TONOS - 1, Math.floor(((luz - FONDO) / (256 - FONDO)) * TONOS));
+      const suma = Array.from({ length: TONOS }, () => [0, 0, 0, 0]);
+      for (const c of elegidas) {
+        const s = suma[tonoDe(c.luz)];
+        s[0] += datos[c.i];
+        s[1] += datos[c.i + 1];
+        s[2] += datos[c.i + 2];
+        s[3]++;
+      }
+      colorTono = suma.map(([r, g, b, n]) =>
+        n ? `rgb(${Math.round(r / n)},${Math.round(g / n)},${Math.round(b / n)})` : '#000',
+      );
+      colorTono.push(TEAL);
+
+      return elegidas.map((c) => {
+        const brillo = limitar((c.luz - UMBRAL) / (255 - UMBRAL));
+        const retardoRed = Math.random() * RETARDO;
+        return {
+          x: c.x + 0.5,
+          y: c.y + 0.5,
+          tono: tonoDe(c.luz),
+          lado: c.luz < UMBRAL ? 1.5 : 1.6 + paso * 0.45 * brillo,
+          opacidad: c.luz < UMBRAL ? 0.35 : 0.55 + 0.35 * brillo,
+          retardo: retardoRed,
+          tramo: 1 - RETARDO,
+          // Un giro aleatorio alrededor del centro del escenario: la red entra en remolino.
+          giro: (Math.random() * 2 - 1) * 1.4,
+          centroX: ancho / 2,
+          centroY: alto / 2,
+        };
+      });
+    };
+
+    // El símbolo: el <img> del hero dibujado a su tamaño y en su sitio (relativo al escenario),
+    // con una partícula por celda donde tiene forma. Giran media vuelta larga alrededor del
+    // centro del símbolo, todas en el mismo sentido, como un molinillo.
+    const puntosSimbolo = (): Punto[] => {
+      const caja = simbolo.getBoundingClientRect();
+      const marco = escenario.getBoundingClientRect();
+      const w = Math.round(caja.width);
+      const h = Math.round(caja.height);
+      const mctx = w && h ? lienzoDe(w, h) : null;
+      if (!mctx) return [];
+      mctx.drawImage(simbolo, 0, 0, w, h);
+      const datos = mctx.getImageData(0, 0, w, h).data;
+      const x0 = caja.left - marco.left;
+      const y0 = caja.top - marco.top;
+      const paso = w > 380 ? 5 : w > 300 ? 4 : w > 120 ? 3 : 2;
+      const puntos: Punto[] = [];
+      for (let y = Math.floor(paso / 2); y < h; y += paso) {
+        for (let x = Math.floor(paso / 2); x < w; x += paso) {
+          if (datos[(y * w + x) * 4 + 3] < 128) continue;
+          const retardoSimbolo = RETARDO + Math.random() * (RETARDO_SIMBOLO - RETARDO);
+          puntos.push({
+            x: x0 + x,
+            y: y0 + y,
+            tono: TONOS,
+            lado: paso * 0.9 + 0.4,
+            opacidad: 0.95,
+            retardo: retardoSimbolo,
+            tramo: 1 - retardoSimbolo,
+            giro: Math.PI * (0.8 + Math.random() * 0.4),
+            centroX: x0 + w / 2,
+            centroY: y0 + h / 2,
+          });
+        }
+      }
+      return puntos;
+    };
+
+    const construir = () => {
+      ancho = escenario.clientWidth;
+      alto = escenario.clientHeight;
+      dpr = Math.min(window.devicePixelRatio || 1, 2);
+      lienzo.width = Math.round(ancho * dpr);
+      lienzo.height = Math.round(alto * dpr);
+
+      const movil = ancho < 720;
+      const puntos = [...puntosRed(movil ? 4 : 5, movil ? 2000 : 5000), ...puntosSimbolo()];
+      puntos.sort((a, b) => a.tono - b.tono);
+      const total = puntos.length;
+
+      origenX = new Float32Array(total);
+      origenY = new Float32Array(total);
+      destinoX = new Float32Array(total);
+      destinoY = new Float32Array(total);
+      lado = new Float32Array(total);
+      opacidad = new Float32Array(total);
+      retardo = new Float32Array(total);
+      tramo = new Float32Array(total);
+      giro = new Float32Array(total);
+      centroX = new Float32Array(total);
+      centroY = new Float32Array(total);
+      inicioTono = new Uint32Array(TONOS + 2);
+
+      puntos.forEach((p, k) => {
+        origenX[k] = Math.random() * 1.2 - 0.1;
+        origenY[k] = Math.random() * 1.2 - 0.1;
+        destinoX[k] = p.x;
+        destinoY[k] = p.y;
+        lado[k] = p.lado;
+        opacidad[k] = p.opacidad;
+        retardo[k] = p.retardo;
+        tramo[k] = p.tramo;
+        giro[k] = p.giro;
+        centroX[k] = p.centroX;
+        centroY[k] = p.centroY;
+        inicioTono[p.tono + 1]++;
+      });
+      for (let t = 0; t <= TONOS; t++) inicioTono[t + 1] += inicioTono[t];
+
+      // Si el escenario es más alto que la pantalla (móviles y portátiles bajos), sube lo justo
+      // para enseñar todo lo posible, pero nunca tanto como para meter el eyebrow (y el h1)
+      // bajo la cabecera fija. Lo que no quepa abajo se ve al soltar el escenario.
+      const cabecera = document.getElementById('site-header')?.offsetHeight ?? 0;
+      const arribaEyebrow =
+        eyebrow.getBoundingClientRect().top - escenario.getBoundingClientRect().top;
+      const tope = Math.min(
+        0,
+        Math.max(window.innerHeight - alto, -(arribaEyebrow - cabecera - 8)),
+      );
+      escenario.style.setProperty('--tope', `${tope}px`);
+      pintado = -1;
+    };
+
+    const pintar = (p: number) => {
+      const relevo = suave(RELEVO_DESDE, RELEVO_HASTA, p);
+      lienzo.style.opacity = String(1 - relevo);
+      video.style.opacity = String(OPACIDAD_VIDEO * relevo);
+      marca.style.opacity = String(relevo);
+      control.permitir(relevo > 0);
+      if (relevo >= 1 && pintado >= RELEVO_HASTA) return;
+
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.clearRect(0, 0, ancho, alto);
+      ctx.globalCompositeOperation = 'lighter';
+      const q = limitar(p / FIN_UNION);
+
+      for (let tono = 0; tono <= TONOS; tono++) {
+        ctx.fillStyle = colorTono[tono];
+        for (let k = inicioTono[tono]; k < inicioTono[tono + 1]; k++) {
+          const t = salida(limitar((q - retardo[k]) / tramo[k]));
+          const ox = origenX[k] * ancho;
+          const oy = origenY[k] * alto;
+          let x = ox + (destinoX[k] - ox) * t;
+          let y = oy + (destinoY[k] - oy) * t;
+          // El giro se apaga al llegar.
+          const angulo = (1 - t) * giro[k];
+          if (angulo !== 0) {
+            const dx = x - centroX[k];
+            const dy = y - centroY[k];
+            const c = Math.cos(angulo);
+            const s = Math.sin(angulo);
+            x = centroX[k] + dx * c - dy * s;
+            y = centroY[k] + dx * s + dy * c;
+          }
+          const l = 2 + (lado[k] - 2) * t;
+          ctx.globalAlpha = 0.45 + (opacidad[k] - 0.45) * t;
+          ctx.fillRect(x - l / 2, y - l / 2, l, l);
+        }
+      }
+      ctx.globalAlpha = 1;
+      pintado = p;
+    };
+
+    const progreso = () => {
+      const recorrido = seccion.offsetHeight - window.innerHeight;
+      if (recorrido <= 0) return 1;
+      return limitar(-seccion.getBoundingClientRect().top / recorrido);
+    };
+
+    // El progreso pintado persigue al del scroll con algo de inercia, como un scrub.
+    const bucle = () => {
+      fotograma = 0;
+      if (!activa) return;
+      actual += (objetivo - actual) * 0.18;
+      if (Math.abs(objetivo - actual) < 0.0005) actual = objetivo;
+      if (actual !== pintado) pintar(actual);
+      if (actual !== objetivo) fotograma = requestAnimationFrame(bucle);
+    };
+
+    const alHacerScroll = () => {
+      objetivo = progreso();
+      if (!fotograma) fotograma = requestAnimationFrame(bucle);
+    };
+
+    let espera = 0;
+    let anchoPrevio = 0;
+    const alRedimensionar = () => {
+      clearTimeout(espera);
+      espera = window.setTimeout(() => {
+        if (!activa) return;
+        // La barra del navegador móvil cambia el alto al hacer scroll: solo se reconstruye si
+        // cambia el ancho o el alto cambia de verdad.
+        if (escenario.clientWidth === anchoPrevio && Math.abs(escenario.clientHeight - alto) < 120)
+          return;
+        anchoPrevio = escenario.clientWidth;
+        construir();
+        actual = objetivo = progreso();
+        pintar(actual);
+      }, 150);
+    };
+
+    const activar = async () => {
+      try {
+        // Las fuentes también: al cargar Raleway cambia el alto del texto y el símbolo se movería
+        // después de haberlo muestreado.
+        await Promise.all([poster.decode(), simbolo.decode(), document.fonts.ready]);
+      } catch {
+        // Sin imágenes no hay de dónde sacar los puntos: se queda el hero sin escena.
+        seccion.classList.add('sin-escena');
+        control.permitir(true);
+        return;
+      }
+      if (activa || !movimiento.matches) return;
+      activa = true;
+      anchoPrevio = escenario.clientWidth;
+      construir();
+      lienzo.hidden = false;
+      seccion.dataset.escena = 'viva';
+      actual = objetivo = progreso();
+      pintar(actual);
+      window.addEventListener('scroll', alHacerScroll, { passive: true });
+      window.addEventListener('resize', alRedimensionar);
+    };
+
+    const desactivar = () => {
+      activa = false;
+      cancelAnimationFrame(fotograma);
+      fotograma = 0;
+      window.removeEventListener('scroll', alHacerScroll);
+      window.removeEventListener('resize', alRedimensionar);
+      lienzo.hidden = true;
+      video.style.opacity = '';
+      marca.style.opacity = '';
+      escenario.style.removeProperty('--tope');
+      delete seccion.dataset.escena;
+      control.permitir(true);
+    };
+
+    movimiento.addEventListener('change', () => (movimiento.matches ? activar() : desactivar()));
+    if (movimiento.matches) activar();
   }
 </script>

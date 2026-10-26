@@ -6,11 +6,12 @@ telecomunicaciones para operadores locales y nacionales. Astro 7 + Tailwind v4, 
 `/privacidad/`, `/cookies/`) y la 404.
 
 Viene de `portfolio/projects/magma_consulting/` (HTML, CSS y JS a mano), migrada con la misma
-estructura que `clinica_conecta` y `chantal_verdugo_house` y con paridad visual: misma altura de
-la home a 1440/820/390 px. Diferencias a propósito con el original: el botón «Contacto» del
-menú lleva relleno lateral, los eyebrows de las secciones oscuras salen en `teal-light` (en el
-original una regla en cascada los dejaba blancos) y la cabecera de las páginas legales deja
-sitio a la cabecera fija.
+estructura que `clinica_conecta` y `chantal_verdugo_house`. En octubre de 2026 la home se
+rediseñó: el cliente eligió la propuesta v3, que salió de auditar la home con la skill
+`ui-ux-pro-max` (patrón «Trust & Authority + Conversion») y añade la escena de partículas del
+hero. Ya no hay paridad visual con el original. La skill está instalada solo en local
+(`.claude/skills/ui-ux-pro-max/`, en `.gitignore`); se reinstala con
+`npx skills add https://github.com/nextlevelbuilder/ui-ux-pro-max-skill --skill ui-ux-pro-max`.
 
 ## Comandos
 
@@ -34,25 +35,47 @@ sitio a la cabecera fija.
   apunta al `<main id="main">`: toda página nueva tiene que poner ese `id` en su `<main>`.
 - `src/components/`, una sección por componente con los **mismos ids de ancla** que el HTML
   original (`#hero`, `#servicios`, `#credenciales`, `#nosotras`, `#valores`, `#contacto`):
-  - `Header.astro` — cabecera fija, transparente sobre el hero; al pasar de 40 px de scroll el
+  - `Header.astro` — cabecera fija con el logotipo completo (símbolo de 28 px, alineado con las
+    minúsculas de la palabra y no con su caja),
+    transparente sobre el hero; al pasar de 40 px de scroll el
     script le pone `data-scrolled` y se rellena de `carbon`. Menú móvil por debajo de 780 px
     (Escape cierra y devuelve el foco, el Tab da la vuelta dentro) y scroll suave a las anclas
     descontando la cabecera. En la home los enlaces son `#ancla`; en el resto,
-    `withBase('/#ancla')`. El menú es Servicios, Trayectoria (`#credenciales`), Nosotras y
-    Contacto (`src/lib/secciones.ts`); Valores no está a propósito. En la home, un
+    `withBase('/#ancla')`. El menú sigue el orden de la página: Trayectoria (`#credenciales`),
+    Servicios, Nosotras y Contacto (`src/lib/secciones.ts`); Valores no está a propósito. En la home, un
     IntersectionObserver marca con `aria-current` el enlace de la sección que ocupa el centro.
-  - `Hero.astro` — vídeo de fondo (`public/img/hero-bg.webm|mp4` + poster, precargado en
-    `index.astro`). El script lo pausa con movimiento reducido (también si la preferencia
-    cambia en vivo) y cuando sale de pantalla. CTA principal a `#contacto`; la franja de abajo
-    enseña los OMV de referencia (las cifras ya están en la entradilla). El comentario del componente documenta su
-    procedencia y licencia (Pexels): mantenlo junto al asset.
-  - `Servicios.astro` (datos en `src/lib/servicios.ts`; cada servicio con su icono en un cuadro
-    teal suave, que en móvil acompaña solo al título), `TiraFotos.astro`, `Credenciales.astro`
-    (línea de cuatro hitos, horizontal desde 780 px y vertical debajo, y los dos párrafos del
-    cliente), `Nosotras.astro` (datos en `src/lib/equipo.ts`; una socia por fila con el retrato
-    de 17rem a la izquierda, apaisado encima en móvil), `Valores.astro` (icono sobre cada valor
-    y los secundarios como etiquetas), `Contacto.astro`.
-  - `Footer.astro` — pie en tres bloques (marca con razón social y domicilio en `<address>`,
+  - `Hero.astro` — escena de scroll: un canvas lee el poster del vídeo y el símbolo de la marca
+    y pone una partícula donde el poster tiene luz y donde el símbolo tiene forma. Al bajar, los
+    puntos pasan de revueltos a formar la red, en remolino, y al final el símbolo, que gira media
+    vuelta como el molinillo que es; después el vídeo y el `<img>` del símbolo toman el relevo.
+    El escenario es `sticky` sobre un tramo vacío (`.hero-recorrido`, 140svh; 110svh en móvil),
+    con CSS fuera de capa al final de `global.css`. Si es más alto que la pantalla, `--tope` lo
+    sube lo justo sin meter nunca el eyebrow bajo la cabecera; el indicador de scroll se oculta
+    en pantallas de menos de 820 px de alto, donde pisaría la franja de OMV. Sin JS, con movimiento reducido o si no puede
+    leer las imágenes (`.sin-escena`) no hay escena: hero normal con poster y símbolo fijos.
+    Sin dependencias.
+  - `HeroContenido.astro` — texto del hero (CTA a `#contacto`, franja de OMV de referencia) y el
+    símbolo (`favicon.png`, decorativo), que es el foco visual. Desde 1024 px el hero va en dos
+    columnas: texto a la izquierda y el símbolo grande a la derecha (`[data-hero-marca]`, hasta
+    23rem para que el titular no pase de tres líneas), con un halo de carbón detrás (`.hero-marca` en
+    `global.css`) que lo separa de la red del vídeo y un brillo teal. Por debajo de 1024 px va
+    pequeño junto al eyebrow y fuera del flujo, para que el escenario quepa en un móvil. Con
+    escena, el halo y el brillo llegan con el relevo, no tapan las partículas.
+  - `VideoFondo.astro` + `src/lib/videoHero.ts` — el vídeo (`public/img/hero-bg.webm|mp4` +
+    poster, precargado en `index.astro`) sin `<source>` en el HTML: solo se descarga con
+    pantalla ancha, sin ahorro de datos y sin movimiento reducido; si no, queda el poster. Botón
+    de pausa (WCAG 2.2.2), pausa fuera de pantalla y con la escena esperando. El comentario de
+    `VideoFondo.astro` documenta su procedencia y licencia (Pexels): mantenlo junto al asset.
+  - En la página, tras el hero: `Credenciales.astro` (Trayectoria, en niebla: línea de cuatro
+    hitos, horizontal desde 780 px y vertical debajo, los dos párrafos del cliente y el CTA),
+    `Servicios.astro` (datos en `src/lib/servicios.ts`; empieza con `IndiceFases.astro`, tres
+    fotos que llevan a `#fase-lanzar|conectar|operar`, tarjetas desde 900 px y lista compacta
+    debajo; cada fase lleva un mailto con el asunto «Consulta sobre la fase «…»» y cada servicio
+    su icono en un cuadro teal suave), `Valores.astro`, `Nosotras.astro` (datos en `src/lib/equipo.ts`; una socia por fila con el retrato
+    de 17rem a la izquierda, apaisado encima en móvil) y `Contacto.astro`. `Valores` lleva un
+    icono sobre cada valor y los secundarios como etiquetas; va antes que `Nosotras` para
+    alternar fondos (oscuro, niebla, blanco, niebla, blanco, oscuro).
+  - `Footer.astro` — pie en tres bloques (logotipo completo en blanco, razón social y domicilio en `<address>`,
     secciones, contacto con correo y LinkedIn) y una fila con el año (lo actualiza un script) y
     los enlaces legales con `aria-current`. Se monta fuera de `<main>`.
   - `Legal.astro` — monta las páginas legales: `Header`, franja oscura con el `h1`, el texto en
@@ -69,49 +92,30 @@ sitio a la cabecera fija.
   puede divergir de la página visible) y `withBase.ts`. `contacto.ts` tiene `mailtoHref` (a
   secas, para las legales) y `mailtoConsultaHref` (con asunto, para la sección de contacto).
 - `src/styles/global.css` — `@font-face`, tokens de Tailwind v4 (`@theme`), capa `base` y capa
-  `components` (secciones, eyebrow, reveal, barras del menú, duotono de la tira de fotos,
-  retratos en gris, `<details>` de «Ver más», texto legal). Un único fichero; no crear otros
-  `.css`. Excepción: `src/styles/propuestas.css`, solo para `/v2/` y `/v3/` (ver más abajo).
+  `components` (secciones, eyebrow, reveal, barras del menú, retratos en gris, `<details>` de
+  «Ver más», texto legal) y, fuera de capa, la escena del hero. El foco es `teal-deep` sobre
+  claro y `teal-light` sobre carbón (3:1 en los dos). Un único fichero; no crear otros `.css`.
 - `src/fonts/` — `raleway.woff2` y `dm-sans.woff2` (variables, subconjunto latino) con sus
   licencias OFL. Viven en `src/` y no en `public/` para que Vite reescriba su URL con el base
   path.
-- `public/img/` — logo (`logo.svg`, `logo-mark-512.png` para el JSON-LD), favicons, `og.jpg`,
-  vídeo del hero, `servicios/` y `equipo/` (JPG + WebP). Las fotos de servicios y de las socias
+- `public/img/` — logo (`logo.svg`, la palabra), `simbolo.svg` (el símbolo en vector para el
+  hero, la cabecera, el pie y el favicon; vectorizado de `favicon.png`, coincide con él en un
+  99,9 %: sustituir por el original si el cliente lo facilita), `logo-mark-512.png` para el
+  JSON-LD, favicons (`.ico` y `.png` de respaldo del SVG), `og.jpg`, vídeo del hero,
+  `servicios/` (las tres fotos del índice de fases) y `equipo/` (JPG + WebP). Las fotos de servicios y de las socias
   son las que ya publicaba la empresa y están marcadas para sustituir por fotografía propia.
 - `public/_headers` — CSP, HSTS y caché (`/_astro/*` inmutable; `/img/*` una semana, no
   llevan hash). `public/_redirects` — URLs de la web anterior en WordPress → sus equivalentes.
   `public/.well-known/security.txt` — su `Expires` caduca el 2027-10-20 y hay que renovarlo.
-- `src/pages/v2/` y `src/pages/v3/` — propuestas para enseñar al cliente en paralelo a la home,
-  `noindex` sin canonical y fuera del sitemap (filtro en `astro.config.mjs`). **No son la web.**
-  - `/v2/` sale de auditar la home con la skill `ui-ux-pro-max` (patrón «Trust & Authority +
-    Conversion»), filtrada por las reglas de aquí abajo: mismo copy y paleta; la Trayectoria
-    (en niebla) va antes que Servicios y acaba en CTA, el menú sigue ese orden, cada fase de
-    servicios lleva su mailto con asunto, la tira de fotos se sustituye por un índice visual de
-    las tres fases al principio de Servicios (`IndiceFases.astro`: cada foto lleva a su fase,
-    `#fase-lanzar`…; desde 900 px tarjetas, por debajo lista compacta), Valores va antes que
-    Nosotras para alternar fondos, el hero es más compacto en móvil (la franja de OMV
-    entra en la primera pantalla), el vídeo solo se descarga en pantallas anchas sin ahorro de
-    datos y lleva botón de pausa (WCAG 2.2.2), el foco tiene 3:1 sobre claro y los enlaces del
-    pie y el «Ver más» miden 24 px. Componentes en `src/components/v2/` (copias de los de la
-    home donde cambian; `orden.ts`, `HeroContenido`, `VideoFondo` y `videoHero.ts` son de las
-    dos propuestas); el resto se reutiliza de `src/components/`.
-  - `/v3/` es la v2 con `src/components/v3/HeroParticulas.astro`: un canvas lee el poster del
-    vídeo y pone una partícula donde tiene luz; al hacer scroll, los puntos pasan de revueltos
-    a formar la imagen (escenario `sticky` sobre un tramo `.hero-recorrido`) y el vídeo toma el
-    relevo. Sin dependencias. Sin JS o con movimiento reducido es el hero de la v2.
-  - Textos nuevos pendientes de aprobación del cliente: «Hablemos de esta fase» y el asunto
-    «Consulta sobre la fase «…»». Si una propuesta se promueve, sus componentes sustituyen a los
-    de la home, `propuestas.css` pasa a `global.css` y se borran `src/pages/v2|v3/`.
-  - Tests en `tests/propuestas.spec.ts`. La skill está instalada solo en local
-    (`.claude/skills/ui-ux-pro-max/`, en `.gitignore`); se reinstala con
-    `npx skills add https://github.com/nextlevelbuilder/ui-ux-pro-max-skill --skill ui-ux-pro-max`.
 - `tests/smoke.spec.ts` — en `/` y las tres legales: un `h1`, sin errores de consola ni overflow,
   menú móvil, «Ir al contenido», landmarks, sin marcadores `[ ]` ni «--» ni rayas (en el texto,
   title, metas, alt, aria-label, JSON-LD y `content` de los «Ver más»), canonical en
   `magma-consulting.com`, JSON-LD que parsea, sin `noindex`, imágenes cargadas. Además: el
   `@graph` (dirección, 7 servicios con `provider`, 2 socias, WebSite), «Ver más», enlaces
-  externos en pestaña nueva, sección activa en el menú, mailto con asunto, legales → home, 404
-  y `robots.txt`.
+  externos en pestaña nueva, sección activa en el menú y su orden, mailto con asunto (también
+  los de cada fase), índice de fases, legales → home, 404 y `robots.txt`. Del hero: vídeo que se
+  pausa y no se descarga en móvil, símbolo decorativo, escena que acaba en vídeo y símbolo, y sin
+  escena con movimiento reducido.
 
 ## Reglas no obvias
 
@@ -152,8 +156,10 @@ sitio a la cabecera fija.
   (los cambios de color, como el de los retratos, no cuentan y se aplican siempre). Lo que
   anima: reveal al hacer scroll (escalonado con `--i` en Valores), menú móvil (opacidad y 8 px,
   `@starting-style`), «Ver más» (`::details-content` + `interpolate-size`), cabecera al hacer
-  scroll, hover de botones y fotos (solo con `hover: hover`), indicador de scroll (3 veces).
-  Descartado a propósito: entrada animada del hero (retrasaría el LCP), contadores, parallax.
+  scroll, hover de botones y de las tarjetas de fases (solo con `hover: hover`), indicador de
+  scroll (3 veces) y la escena de partículas del hero, que va ligada al scroll y nunca se mueve
+  sola. Descartado a propósito: entrada animada del hero (retrasaría el LCP; la escena no anima
+  el texto), contadores, parallax.
 - Prettier ordena las clases de Tailwind (`prettier-plugin-tailwindcss`) — no reordenarlas a
   mano. Los textos con un enlace o un `<span>` en medio necesitan `{' '}` explícito donde Prettier
   parte la línea (ver el pie y `/privacidad/`), o las palabras se pegan.

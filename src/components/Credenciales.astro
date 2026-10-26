@@ -1,4 +1,10 @@
 ---
+import Boton from './Boton.astro';
+
+// La prueba va justo después del hero (antes que la solución), así que la sección es de niebla
+// para no encadenar dos bloques oscuros, y termina con el CTA principal, que es donde más pesa:
+// después de la prueba.
+
 // Los hitos que cuenta el texto del cliente, en el orden en que los cuenta. Sin fechas: el
 // cliente no las ha dado. Las cifras van aquí como hitos, no como los números gigantes que
 // el cliente pidió quitar.
@@ -10,9 +16,9 @@ const hitos = [
 ];
 ---
 
-<section id="credenciales" class="seccion seccion-oscura" aria-labelledby="credenciales-title">
+<section id="credenciales" class="seccion seccion-niebla" aria-labelledby="credenciales-title">
   <div class="seccion-interior">
-    <p class="eyebrow eyebrow-oscuro">Trayectoria</p>
+    <p class="eyebrow">Trayectoria</p>
     <h2 id="credenciales-title">Del primer OMV completo a más de 100 empresas consolidadas</h2>
 
     {/* Línea de hitos: horizontal desde 780 px (un filete continuo con un punto por hito) y
@@ -20,19 +26,19 @@ const hitos = [
     <ol class="mt-10 mb-0 grid list-none grid-cols-4 p-0 max-[780px]:grid-cols-1" data-hitos>
       {hitos.map((h, i) => (
         <li
-          class="reveal relative border-t border-teal/40 pt-7 pr-6 before:absolute before:-top-[5px] before:left-0 before:size-[9px] before:rounded-full before:bg-teal max-[780px]:border-t-0 max-[780px]:border-l max-[780px]:pt-0 max-[780px]:pr-0 max-[780px]:pb-7 max-[780px]:pl-6 max-[780px]:before:top-[0.45rem] max-[780px]:before:-left-[5px] max-[780px]:last:pb-0"
+          class="reveal relative border-t border-teal pt-7 pr-6 before:absolute before:-top-[5px] before:left-0 before:size-[9px] before:rounded-full before:bg-teal max-[780px]:border-t-0 max-[780px]:border-l max-[780px]:border-teal max-[780px]:pt-0 max-[780px]:pr-0 max-[780px]:pb-7 max-[780px]:pl-6 max-[780px]:before:top-[0.45rem] max-[780px]:before:-left-[5px] max-[780px]:last:pb-0"
           style={`--i: ${i}`}
         >
-          <p class="m-0 font-display text-[clamp(1.2rem,1rem+0.55vw,1.45rem)] leading-tight font-extrabold text-teal-light">
+          <p class="m-0 font-display text-[clamp(1.2rem,1rem+0.55vw,1.45rem)] leading-tight font-extrabold text-teal-deep">
             {h.valor}
           </p>
-          <p class="mt-2 mb-0 max-w-[24ch] text-[0.95rem] text-white/75">{h.texto}</p>
+          <p class="mt-2 mb-0 max-w-[24ch] text-[0.95rem] text-ink-soft">{h.texto}</p>
         </li>
       ))}
     </ol>
 
     {/* Texto del cliente, sin tocar. Dos columnas desde 780 px. */}
-    <div class="reveal mt-12 grid grid-cols-2 gap-x-12 border-t border-white/15 pt-8 text-[1.05rem] max-[780px]:grid-cols-1">
+    <div class="reveal mt-12 grid grid-cols-2 gap-x-12 border-t border-mist-deep pt-8 text-[1.05rem] max-[780px]:grid-cols-1">
       <p>
         Las dos socias de la empresa llevan trabajando juntas en el mercado de las
         telecomunicaciones más de 20 años, formando parte de las plantillas de las empresas más
@@ -49,6 +55,10 @@ const hitos = [
         primera fila el enorme crecimiento de los operadores locales, acompañándolos desde el inicio
         en el desarrollo de sus negocios.
       </p>
+    </div>
+
+    <div class="reveal mt-10">
+      <Boton href="#contacto">Cuéntanos tu proyecto</Boton>
     </div>
   </div>
 </section>
