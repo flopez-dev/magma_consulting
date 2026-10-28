@@ -47,7 +47,7 @@ jobs:
       # comería _astro/.
       - run: touch dist/.nojekyll
 
-      - uses: actions/upload-pages-artifact@v3
+      - uses: actions/upload-pages-artifact@v5
         with:
           path: dist
 
