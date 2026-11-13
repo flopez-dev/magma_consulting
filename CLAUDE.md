@@ -194,9 +194,11 @@ despliega desde este repo.
 - `deploy-cloudflare.yml` necesita los secretos `CLOUDFLARE_API_TOKEN_MAGMA_CONSULTING` (ojo: no
   se llama `CLOUDFLARE_API_TOKEN`) y `CLOUDFLARE_ACCOUNT_ID` en GitHub. Si el último paso falla,
   mira primero los secretos y los permisos del token.
-- **El dominio todavía no está en Cloudflare** (octubre de 2026: DNS en Arsys, apex en el
-  WordPress). La zona tiene que darse de alta en la misma cuenta antes del primer deploy, sin
-  perder los registros de Microsoft 365 (MX, SPF, `MS=…`, `autodiscover`). Pasos en `README.md`.
+- **El dominio ya está en Cloudflare** (nameservers `rose` y `thomas`, comprobado el 14 de
+  noviembre de 2026; antes los DNS estaban en Arsys). La zona tiene que conservar los registros
+  de Microsoft 365 (MX, SPF, `MS=…`, `autodiscover`). Lo que falta del traspaso (registrador,
+  limpieza del correo antiguo de Arsys) sigue en `docs/migracion-produccion.md`; el histórico
+  de pasos, en `README.md`.
 - **Bot Fight Mode / JavaScript Detections de Cloudflare tiene que estar desactivado.** Si no,
   Cloudflare crea la cookie `cf_clearance` y `/cookies/` deja de ser cierta. Se comprueba con un
   navegador real, no con `curl`.

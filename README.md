@@ -55,8 +55,9 @@ Sin ellos, ese workflow falla en el último paso. Una vez creados, relánzalo de
 
 ### 2. El dominio en Cloudflare
 
-Hoy (octubre de 2026) los DNS de `magma-consulting.com` están en Arsys (`servidoresdns.net`)
-y el apex apunta al WordPress. Antes del primer deploy:
+Los DNS de `magma-consulting.com` ya están en Cloudflare (antes, hasta octubre de 2026, estaban
+en Arsys y el apex apuntaba al WordPress). Los pasos que se siguieron, útiles si hay que
+rehacer la zona o montar otro dominio:
 
 1. Dar de alta la zona `magma-consulting.com` en la **misma cuenta** de Cloudflare que recibe
    el deploy, y cambiar los nameservers en el registrador. Wrangler crea los registros del
