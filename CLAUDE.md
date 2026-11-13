@@ -77,7 +77,9 @@ hero. Ya no hay paridad visual con el original. La skill está instalada solo en
     alternar fondos (oscuro, niebla, blanco, niebla, blanco, oscuro).
   - `Footer.astro` — pie en tres bloques (logotipo completo en blanco, razón social y domicilio en `<address>`,
     secciones, contacto con correo y LinkedIn) y una fila con el año (lo actualiza un script) y
-    los enlaces legales con `aria-current`. Se monta fuera de `<main>`.
+    los enlaces legales con `aria-current`, y una última línea de crédito «Diseño y desarrollo web
+    por Sayora» (enlace a sayorastudio.com, datos en `creditos` de `sitio.ts`). Se monta fuera de
+    `<main>`.
   - `Legal.astro` — monta las páginas legales: `Header`, franja oscura con el `h1`, el texto en
     el slot (`.legal-contenido`) y `Footer`.
   - `Boton.astro`, `Icono.astro`, `Revelar.astro` (reveal-al-scroll de `.reveal`; sin JS o con
