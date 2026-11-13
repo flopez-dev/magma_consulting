@@ -100,7 +100,8 @@ hero. Ya no hay paridad visual con el original. La skill está instalada solo en
 - `src/fonts/` — `raleway.woff2` y `dm-sans.woff2` (variables, subconjunto latino) con sus
   licencias OFL. Viven en `src/` y no en `public/` para que Vite reescriba su URL con el base
   path.
-- `public/img/` — logo (`logo.svg`, la palabra), `simbolo.svg` (el símbolo en vector para el
+- `public/img/` — `sayora.svg` (símbolo de Sayora para el crédito del pie, extraído de su
+  favicon y pintado con una máscara CSS), logo (`logo.svg`, la palabra), `simbolo.svg` (el símbolo en vector para el
   hero, la cabecera, el pie y el favicon; vectorizado de `favicon.png`, coincide con él en un
   99,9 %: sustituir por el original si el cliente lo facilita), `logo-mark-512.png` para el
   JSON-LD, favicons (`.ico` y `.png` de respaldo del SVG), `og.jpg`, vídeo del hero,
