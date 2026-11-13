@@ -2,7 +2,7 @@
 import { secciones, contacto, legales } from '../lib/secciones';
 import { correo, direccion, linkedinHref, mailtoHref, titular } from '../lib/contacto';
 import { iconoCorreo, iconoLinkedin } from '../lib/iconos';
-import { nombreSitio } from '../lib/sitio';
+import { creditos, nombreSitio } from '../lib/sitio';
 import { withBase } from '../lib/withBase';
 import Icono from './Icono.astro';
 
@@ -105,6 +105,26 @@ const enlace =
         })}
       </nav>
     </div>
+
+    <p class="mt-4 mb-0 flex max-w-none flex-wrap items-center gap-x-[0.35em] text-[0.8rem] text-white/80">
+      Diseño y desarrollo web por
+      <a
+        class="inline-flex items-center gap-[0.4em] py-1 text-teal-light underline decoration-teal-light/40 underline-offset-4 transition-colors duration-200 ease-suave hover:decoration-teal-light focus-visible:decoration-teal-light"
+        href={creditos.href}
+        target="_blank"
+        rel="noopener"
+      >
+        {/* El símbolo de Sayora hecho máscara para pintarlo con el teal de Magma. */}
+        <span
+          class="size-[1.25em] flex-none bg-current [mask-position:center] [mask-repeat:no-repeat] [mask-size:contain]"
+          style={`mask-image:url(${withBase('/img/sayora.svg')});-webkit-mask-image:url(${withBase('/img/sayora.svg')})`}
+          aria-hidden="true"
+        ></span>
+        <span>
+          {creditos.nombre} <span class="sr-only">(se abre en una pestaña nueva)</span>
+        </span>
+      </a>
+    </p>
   </div>
 </footer>
 

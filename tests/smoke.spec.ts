@@ -207,6 +207,10 @@ test('los enlaces externos abren en pestaña nueva y lo anuncian', async ({ page
     await expect(enlace).toHaveAttribute('rel', /noopener/);
     await expect(enlace).toContainText('(se abre en una pestaña nueva)');
   }
+  // El crédito del estudio cierra el pie.
+  await expect(page.locator('body > footer a[href="https://sayorastudio.com"]')).toHaveText(
+    /Sayora/,
+  );
 });
 
 // Las páginas legales comparten cabecera y pie con la home: el logo lleva a la home y el

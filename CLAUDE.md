@@ -77,7 +77,9 @@ hero. Ya no hay paridad visual con el original. La skill está instalada solo en
     alternar fondos (oscuro, niebla, blanco, niebla, blanco, oscuro).
   - `Footer.astro` — pie en tres bloques (logotipo completo en blanco, razón social y domicilio en `<address>`,
     secciones, contacto con correo y LinkedIn) y una fila con el año (lo actualiza un script) y
-    los enlaces legales con `aria-current`. Se monta fuera de `<main>`.
+    los enlaces legales con `aria-current`, y una última línea de crédito «Diseño y desarrollo web
+    por Sayora» (enlace a sayorastudio.com, datos en `creditos` de `sitio.ts`). Se monta fuera de
+    `<main>`.
   - `Legal.astro` — monta las páginas legales: `Header`, franja oscura con el `h1`, el texto en
     el slot (`.legal-contenido`) y `Footer`.
   - `Boton.astro`, `Icono.astro`, `Revelar.astro` (reveal-al-scroll de `.reveal`; sin JS o con
@@ -98,7 +100,8 @@ hero. Ya no hay paridad visual con el original. La skill está instalada solo en
 - `src/fonts/` — `raleway.woff2` y `dm-sans.woff2` (variables, subconjunto latino) con sus
   licencias OFL. Viven en `src/` y no en `public/` para que Vite reescriba su URL con el base
   path.
-- `public/img/` — logo (`logo.svg`, la palabra), `simbolo.svg` (el símbolo en vector para el
+- `public/img/` — `sayora.svg` (símbolo de Sayora para el crédito del pie, extraído de su
+  favicon y pintado con una máscara CSS), logo (`logo.svg`, la palabra), `simbolo.svg` (el símbolo en vector para el
   hero, la cabecera, el pie y el favicon; vectorizado de `favicon.png`, coincide con él en un
   99,9 %: sustituir por el original si el cliente lo facilita), `logo-mark-512.png` para el
   JSON-LD, favicons (`.ico` y `.png` de respaldo del SVG), `og.jpg`, vídeo del hero,
@@ -192,9 +195,11 @@ despliega desde este repo.
 - `deploy-cloudflare.yml` necesita los secretos `CLOUDFLARE_API_TOKEN_MAGMA_CONSULTING` (ojo: no
   se llama `CLOUDFLARE_API_TOKEN`) y `CLOUDFLARE_ACCOUNT_ID` en GitHub. Si el último paso falla,
   mira primero los secretos y los permisos del token.
-- **El dominio todavía no está en Cloudflare** (octubre de 2026: DNS en Arsys, apex en el
-  WordPress). La zona tiene que darse de alta en la misma cuenta antes del primer deploy, sin
-  perder los registros de Microsoft 365 (MX, SPF, `MS=…`, `autodiscover`). Pasos en `README.md`.
+- **El dominio ya está en Cloudflare** (nameservers `rose` y `thomas`, comprobado el 14 de
+  noviembre de 2026; antes los DNS estaban en Arsys). La zona tiene que conservar los registros
+  de Microsoft 365 (MX, SPF, `MS=…`, `autodiscover`). Lo que falta del traspaso (registrador,
+  limpieza del correo antiguo de Arsys) sigue en `docs/migracion-produccion.md`; el histórico
+  de pasos, en `README.md`.
 - **Bot Fight Mode / JavaScript Detections de Cloudflare tiene que estar desactivado.** Si no,
   Cloudflare crea la cookie `cf_clearance` y `/cookies/` deja de ser cierta. Se comprueba con un
   navegador real, no con `curl`.

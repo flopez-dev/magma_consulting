@@ -9,4 +9,7 @@ export const descripcion =
 export const descripcionSocial =
   'Lanzamos OMV, vendemos fibra FTTH mayorista y diseñamos redes para operadores locales y nacionales y para empresas de telecomunicaciones.';
 
+// Crédito del estudio que hizo la web, en la última línea del pie.
+export const creditos = { nombre: 'Sayora', href: 'https://sayorastudio.com' };
+
 export const imagenAlt = 'Logotipo de Magma Consulting con el lema «Ayudamos al mundo a conectar»';
